@@ -22,6 +22,8 @@ To create the cartridge graphics i used a [template](https://www.deviantart.com/
 ![Waternet Cartridge Image](/images/waternet%20label%204.2%20x%203.7%20cm.png)
 
 ## Credits
+Waternet game concept is based on the Net and Netslide game from the [Simon Tatham's Portable Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtatham/puzzles/), it's my own implementation of these 2 game concepts
+
 ### Tutorials used
 * GamingMonsters "How to create a gameboy game" video tutorials on [youtube](https://www.youtube.com/watch?v=HIsWR_jLdwo&list=PLeEj4c2zF7PaFv5MPYhNAkBGrkx4iPGJo&index=1)
 
