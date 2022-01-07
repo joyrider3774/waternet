@@ -1,0 +1,12 @@
+/source/.vscode
+*.adb
+*.asm
+*.sav
+*.sym
+*.cdb
+*.gb
+*.ihx
+*.map
+*.lst
+
+*.o
