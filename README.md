@@ -32,7 +32,7 @@ Waternet game concept is based on the Net and Netslide game from the [Simon Tath
 * Music [implementation](https://www.gamedeveloper.com/programming/making-a-game-boy-game-in-2017-a-quot-sheep-it-up-quot-post-mortem-part-2-2-) based on system used in the [sheep it up](https://gamejolt.com/games/sheepitup/267335) gameboy game made by Dr. Ludos
 
 ### Cartridge Graphcis used
-* Game Boy [Cartridge Template](https://www.deviantart.com/armando92/art/Label-Template-for-Gameboy-Gameboy-Color-Carts-418758475) - armando92
+* [Game Boy Cartridge Template](https://www.deviantart.com/armando92/art/Label-Template-for-Gameboy-Gameboy-Color-Carts-418758475) - armando92
 * [Water droplets](https://www.cleanpng.com/png-circle-graphic-design-brand-pattern-cartoon-fine-d-440349/) - Baure
 * [Plumber Guy](https://www.cleanpng.com/png-commercial-cleaning-window-cleaner-maid-service-ja-4614244/) - Endara
 * [Plastic Pipes](https://www.cleanpng.com/png-piping-and-plumbing-fitting-plastic-pipework-chlor-5780276/) - Jaumo
