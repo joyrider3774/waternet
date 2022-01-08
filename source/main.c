@@ -12,11 +12,13 @@
 
 #include "maps/gamebackground.h"
 #include "maps/titlescreen_map.h"
+#include "maps/congratsscreen_map.h"
 #include "maps/othermaps.h"
 
 #include "tiles/blocks.h"
 #include "tiles/titlescreen.h"
 #include "tiles/selector.h"
+#include "tiles/congratsscreen.h"
 
 
 #define PAL_RED(C)   (((C)      ) & 0x1F)
@@ -81,11 +83,65 @@ const uint8_t music_notes [] ={
 #define PAUSE 15
 #define PAUSE2 6
 #define PAUSE3 14
+#define PAUSE4 10
 
 //Here is the "partition" table. Each note is defined by two numbers in this array
 //- The first number is the "note", an index to the "notes" tables array / 4 (as each note is defined by 4 entry in notes, we can use note 0,1,2,3... instead of note 0,4,8,12,16 - it's easier to read for us mere humans)
 //- The second number is the "delay" after the next note : the player will wait XX cycles (max: 240 - 4 seconds (60 cycles per seconds) and play the next "note"
 //Music Table Format: Note index in "music_notes" / 4, Delay before next note
+
+//https://onlinesequencer.net/2498607
+const uint8_t music_levelsCleared [] ={
+    D6,PAUSE4,
+    D6S,PAUSE4,
+    D6,PAUSE4,
+    P,PAUSE4,
+    D6,PAUSE4,
+    E6,PAUSE4,
+    F6,PAUSE4,
+    E6,PAUSE4,
+    E6,PAUSE4,
+    E6,PAUSE4,
+    D6,PAUSE4,
+    P,PAUSE4,
+    D6S,PAUSE4,
+    E6,PAUSE4,
+    D6S,PAUSE4,
+    P,PAUSE4,
+    E6,PAUSE4,
+    F6,PAUSE4,
+    E6,PAUSE4,
+    P,PAUSE4,
+    D6,PAUSE4,
+    D6S,PAUSE4,
+    D6,PAUSE4,
+    E6,PAUSE4,
+    E6,PAUSE4,
+    D6S,PAUSE4,
+    D6S,PAUSE4,
+    D6,PAUSE4,
+    D6,PAUSE4,
+    D6S,PAUSE4,
+    E6,PAUSE4,
+    D6S,PAUSE4,
+    P,PAUSE4,
+    E6,PAUSE4,
+    D6S,PAUSE4,
+    E6,PAUSE4,
+    D6S,PAUSE4,
+    D6S,PAUSE4,
+    E6,PAUSE4,
+    P,PAUSE4,
+    E6,PAUSE4,
+    F6,PAUSE4,
+    D6S,PAUSE4,
+    E6,PAUSE4,
+    P,PAUSE4,
+    F6,PAUSE4,
+    E6,PAUSE4,
+    F6,PAUSE4
+};
+
 
 //https://onlinesequencer.net/2484974
 const uint8_t music_won [] ={
@@ -269,7 +325,7 @@ uint8_t startPos, menuPos,
         i, j, x, y, rnd, index, cc, maxcc, clearbit, redrawLevelbit, fadein, fadeCounter, levelDone,
         cursorFrameCount, cursorFrame, prevJoyPad, titleStep, gameMode, posAdd, redrawLevelDoneBit,
         tmp, neighboursFound, selectedNeighbour, currentPoint, visitedRooms, music_note, music_tempo,
-        fadeStep, startFade, fadeSteps;
+        fadeStep, startFade, fadeSteps, music_length;
 
 int16_t selectionX, selectionY,i16;
 uint16_t rnd16, randomSeed, moves;
@@ -314,6 +370,40 @@ void initSound()
     NR50_REG = 0x77; // sets the volume for both left and right channel just set to max 0x77
     NR51_REG = 0xFF; // is 1111 1111 in binary, select which chanels we want to use in this case all of them. One bit for the L one bit for the R of all four channels
     resetMusic();
+}
+
+uint8_t playMusic(uint8_t musicArray[], uint8_t musicLength, uint8_t musicLoops )
+{
+    if(!musicLoops && (music_note > musicLength-1 )){
+       return 0;
+    }
+ 
+    //Play some music
+    if( music_tempo == 0 )
+    {
+        //Play current note ( << 2 is like a *4 (bitshift is faster than * for the GB), because music note is 0,1,2,3,4... while our actual note array uses 4 entry per note, 
+        //so we have to multiply note by 4 to get the actual registers index for each note)
+        NR21_REG = music_notes[ musicArray[music_note]<<2 ];
+        NR22_REG = music_notes[ (musicArray[music_note]<<2)+1 ];
+        NR23_REG = music_notes[ (musicArray[music_note]<<2)+2 ];
+        NR24_REG = music_notes[ (musicArray[music_note]<<2)+3 ];
+        
+        //Set the new delay to wait
+        music_tempo = musicArray[ music_note+1 ];
+        
+        //Skip to the next note
+        music_note += 2;
+    
+        if(musicLoops && (music_note > musicLength-1 )){
+            music_note = 0;
+        }
+    }
+    //Else wait for the next note to play
+    else 
+    {
+        music_tempo--;
+    }
+    return 1;
 }
 
 uint8_t playMusicWon()
@@ -395,6 +485,35 @@ void playMusicGame()
         music_note += 2;
         //Loop if needed //OLD : if( music_note > ( sizeof( music_intro) / sizeof (music_intro[0]) )-1 ){ //= sizeof( UINT8) is 1 with gbdk, so we don't need this useless division => save some CPU)
         if( music_note > sizeof(music_game)-1 ){
+            music_note = 0;
+        }
+    }
+    //Else wait for the next note to play
+    else 
+    {
+        music_tempo--;
+    }
+}
+
+void playMusicLevelsCleared()
+{
+    //Play some music
+    if( music_tempo == 0 )
+    {
+        //Play current note ( << 2 is like a *4 (bitshift is faster than * for the GB), because music note is 0,1,2,3,4... while our actual note array uses 4 entry per note, 
+        //so we have to multiply note by 4 to get the actual registers index for each note)
+        NR21_REG = music_notes[ music_levelsCleared[music_note]<<2 ];
+        NR22_REG = music_notes[ (music_levelsCleared[music_note]<<2)+1 ];
+        NR23_REG = music_notes[ (music_levelsCleared[music_note]<<2)+2 ];
+        NR24_REG = music_notes[ (music_levelsCleared[music_note]<<2)+3 ];
+        
+        //Set the new delay to wait
+        music_tempo = music_levelsCleared[ music_note+1 ];
+        
+        //Skip to the next note
+        music_note += 2;
+        //Loop if needed //OLD : if( music_note > ( sizeof( music_intro) / sizeof (music_intro[0]) )-1 ){ //= sizeof( UINT8) is 1 with gbdk, so we don't need this useless division => save some CPU)
+        if( music_note > sizeof(music_levelsCleared)-1 ){
             music_note = 0;
         }
     }
@@ -774,6 +893,35 @@ void printLevelSelectGame(uint8_t ax, uint8_t ay, unsigned char amsg[], uint8_t 
     }
 }
 
+void printCongratsScreen(uint8_t ax, uint8_t ay, unsigned char amsg[], uint8_t emptyBlock)
+{
+    memset(titleMessage, 0, 20);
+    sprintf(titleMessage, "%s", amsg);
+    for (i=0; i < 20; i++)
+    {
+        if (titleMessage[i] == ' ')
+        {
+            //if(get_bkg_tile_xy(ax + i, ay) != emptyBlock)
+            //{
+                set_bkg_tile_xy(ax + i, ay,emptyBlock);
+            //}
+        }
+        else
+        {
+            if (titleMessage[i] != 0)
+            {
+            //    if(get_bkg_tile_xy(ax + i, ay) != titleMessage[i])
+            //    {
+                    set_bkg_tile_xy(ax + i, ay, titleMessage[i]);
+            //    }
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+}
 
 void performantdelay(uint8_t numloops) 
 {
@@ -1487,11 +1635,11 @@ void levelSelect()
         //if fading (from white) wait till fade is done
         while (!fade())
         {
-            playMusicTitleScreen();
+            playMusic(music_intro, sizeof(music_intro), 1);
             performantdelay(1);
         }
         
-        playMusicTitleScreen();
+        playMusic(music_intro, sizeof(music_intro), 1);
 
         prevJoyPad = joyPad;
         joyPad = joypad();
@@ -1504,7 +1652,7 @@ void levelSelect()
             while(!fade())
             {
                 performantdelay(1);
-                playMusicTitleScreen();
+                playMusic(music_intro, sizeof(music_intro), 1);
             }
             startfade(FADEIN, 1);
         }
@@ -1717,7 +1865,7 @@ void updateBackgroundGame()
 
 }
 
-void InitGame()
+void initGame()
 {
     cursorFrameCount = 0;
     cursorFrame = 0;
@@ -1738,9 +1886,9 @@ void InitGame()
     resetMusic();
 }
 
-void Game()
+void game()
 {
-    InitGame();
+    initGame();
     uint8_t delay;
     delay = 1; 
     while(gameState == gsGame)
@@ -1749,14 +1897,14 @@ void Game()
        
         if (levelDone)
         {
-            while(playMusicWon())
+            while(playMusic(music_won, sizeof(music_won), 0))
             {
                 performantdelay(1);
             }
         }
         else
         {
-            playMusicGame();
+            playMusic(music_game, sizeof(music_game), 1);
         }
 
         cursorFrameCount++;
@@ -1983,10 +2131,15 @@ void Game()
                         SHOW_SPRITES;
                         resetMusic();
                     }
-                    else // go back to level selector atm. Probably need some congrats screen
+                    else //Goto some congrats screen
                     {
-                        gameState = gsLevelSelect; 
-                        initLevel(randomSeed);
+                        gameState = gsLevelsCleared;
+                        startfade(FADEOUT, 0);
+                        while(!fade())
+                        {
+                            performantdelay(1);
+                        }
+                        startfade(FADEIN, 1); 
                     }
                 }
             }
@@ -2083,7 +2236,6 @@ void updateBackgroundTitleScreen()
 
 }
 
-
 void initTitleScreen()
 {
     set_bkg_data(0, 128, titlescreen_data);
@@ -2101,11 +2253,11 @@ void titleScreen()
         while (!fade())
         {
             SHOW_BKG;
-            playMusicTitleScreen();
+            playMusic(music_intro, sizeof(music_intro), 1);
             performantdelay(1);
         }
 
-        playMusicTitleScreen();
+        playMusic(music_intro, sizeof(music_intro), 1);
         prevJoyPad = joyPad;
         joyPad = joypad();
         if ((joyPad & J_UP) && (!(prevJoyPad & J_UP)))
@@ -2196,7 +2348,7 @@ void titleScreen()
                 while(!fade())
                 {
                     performantdelay(1);
-                    playMusicTitleScreen();
+                    playMusic(music_intro, sizeof(music_intro), 1);
                 }
                 startfade(FADEIN, 0);
             }   
@@ -2204,6 +2356,67 @@ void titleScreen()
         updateSwitches(); 
         performantdelay(1);    
     } 
+}
+
+void initLevelsCleared()
+{
+    set_bkg_data(0, 91, congratsScreenTiles);
+    set_bkg_tiles(0, 0, congratsMapWidth, congratsMapHeight, congratsMap);
+    if(difficulty == diffVeryEasy)
+    {
+        printCongratsScreen(1, 7, "VERY EASY  LEVELS", 0);
+    }
+    if(difficulty == diffEasy)
+    {
+        printCongratsScreen(3, 7, "EASY LEVELS", 0);
+    }
+    if(difficulty == diffNormal)
+    {
+        printCongratsScreen(3, 7, "NORMAL LEVELS", 0);
+    }
+    if(difficulty == diffHard)
+    {
+        printCongratsScreen(3, 7, "HARD LEVELS", 0);
+    }
+    if(difficulty == diffVeryHard)
+    {
+        printCongratsScreen(1, 7, "VERY HARD  LEVELS", 0);
+    }
+    resetMusic();
+}
+
+void levelsCleared()
+{
+    initLevelsCleared();
+   
+    while (gameState == gsLevelsCleared)
+    {
+        while (!fade())
+        {
+            SHOW_BKG;
+            playMusic(music_levelsCleared, sizeof(music_levelsCleared), 1);
+            performantdelay(1);
+        }
+        playMusic(music_levelsCleared, sizeof(music_levelsCleared), 1);
+        prevJoyPad = joyPad;
+        joyPad = joypad();
+        if (((joyPad & J_A) && (!(prevJoyPad && J_A))) || 
+            ((joyPad & J_B) && (!(prevJoyPad && J_B))))
+        {
+            titleStep = tsGameMode;
+            gameState = gsTitle;
+            startfade(FADEOUT, 1);
+            while(!fade())
+            {
+                performantdelay(1);
+                playMusic(music_levelsCleared, sizeof(music_levelsCleared), 1);
+            }
+            startfade(FADEIN, 1);
+        }
+        updateSwitches(); 
+        performantdelay(1);    
+    }
+    resetMusic(); 
 }
 
 //intialisation of game & global variables
@@ -2270,7 +2483,10 @@ void main()
                 levelSelect();
                 break;
             case gsGame:
-                Game();
+                game();
+                break;
+            case gsLevelsCleared:
+                levelsCleared();
                 break;
         }        
     }

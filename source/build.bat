@@ -13,11 +13,13 @@ c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -Wf-ba0 -c -o savestat
 c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o tiles/blocks.o tiles/blocks.c
 c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o tiles/titlescreen.o tiles/titlescreen.c
 c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o tiles/selector.o tiles/selector.c
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o tiles/congratsscreen.o tiles/congratsscreen.c
 
 @REM Maps
 c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/gamebackground.o maps/gamebackground.c
 c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/titlescreen_map.o maps/titlescreen_map.c
 c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/othermaps.o maps/othermaps.c
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/congratsscreen_map.o maps/congratsscreen_map.c
 
 @REM Link it to binary
-c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wl-yt0x1b -Wl-yo2 -Wl-ya1 -Wm-yc -o waternet.gb maps/othermaps.o maps/titlescreen_map.o maps/gamebackground.o tiles/selector.o tiles/titlescreen.o tiles/blocks.o savestate.o main.o
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wl-yt0x1b -Wl-yo2 -Wl-ya1 -Wm-yc -o waternet.gb maps/congratsscreen_map.o maps/othermaps.o maps/titlescreen_map.o maps/gamebackground.o tiles/congratsscreen.o tiles/selector.o tiles/titlescreen.o tiles/blocks.o savestate.o main.o

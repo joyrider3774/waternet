@@ -10,6 +10,7 @@
 #define gsGame 0
 #define gsTitle 1
 #define gsLevelSelect 2
+#define gsLevelsCleared 3
 
 #define diffVeryEasy 0
 #define diffEasy 1
