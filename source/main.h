@@ -43,6 +43,11 @@
 #define arrowRight 121
 #define leftMenu 96
 
+#define musGame 1
+#define musTitle 2
+#define musLevelClear 3
+#define musAllLevelsClear 4
+
 typedef struct point
 {
     uint8_t x;

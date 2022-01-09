@@ -83,7 +83,7 @@ const uint8_t music_notes [] ={
 #define PAUSE 15
 #define PAUSE2 6
 #define PAUSE3 14
-#define PAUSE4 10
+#define PAUSE4 13
 
 //Here is the "partition" table. Each note is defined by two numbers in this array
 //- The first number is the "note", an index to the "notes" tables array / 4 (as each note is defined by 4 entry in notes, we can use note 0,1,2,3... instead of note 0,4,8,12,16 - it's easier to read for us mere humans)
@@ -325,8 +325,9 @@ uint8_t startPos, menuPos,
         i, j, x, y, rnd, index, cc, maxcc, clearbit, redrawLevelbit, fadein, fadeCounter, levelDone,
         cursorFrameCount, cursorFrame, prevJoyPad, titleStep, gameMode, posAdd, redrawLevelDoneBit,
         tmp, neighboursFound, selectedNeighbour, currentPoint, visitedRooms, music_note, music_tempo,
-        fadeStep, startFade, fadeSteps, music_length;
+        music_length, music_loop, prev_music, fadeStep, startFade, fadeSteps;
 
+uint8_t musicArray[255];
 int16_t selectionX, selectionY,i16;
 uint16_t rnd16, randomSeed, moves;
 uint8_t neighbours[4];
@@ -357,29 +358,50 @@ void initSaveState()
     } 
 }
 
-void resetMusic()
-{
-    music_note = 0;
-    music_tempo = 0;
-}
-
 void initSound()
 {
     // these registers must be in this specific order!
     NR52_REG = 0x80; // is 1000 0000 in binary and turns on sound
     NR50_REG = 0x77; // sets the volume for both left and right channel just set to max 0x77
     NR51_REG = 0xFF; // is 1111 1111 in binary, select which chanels we want to use in this case all of them. One bit for the L one bit for the R of all four channels
-    resetMusic();
 }
 
-uint8_t playMusic(uint8_t musicArray[], uint8_t musicLength, uint8_t musicLoops )
+void SelectMusic(uint8_t musicFile, uint8_t loop)
 {
-    if(!musicLoops && (music_note > musicLength-1 )){
-       return 0;
+    if (prev_music != musicFile)
+    {
+        prev_music = musicFile;
+        CRITICAL {
+            music_note = 0;
+            music_tempo = 0;
+            music_loop = loop;
+            memset(musicArray, 0, sizeof(musicArray));
+            switch (musicFile) 
+            {
+                case musTitle:
+                    memcpy(musicArray, music_intro, sizeof(music_intro));
+                    music_length = sizeof(music_intro);
+                    break;
+                case musLevelClear:
+                    memcpy(musicArray, music_won, sizeof(music_won));
+                    music_length = sizeof(music_won);
+                    break;
+                case musAllLevelsClear:
+                    memcpy(musicArray, music_levelsCleared, sizeof(music_levelsCleared));
+                    music_length = sizeof(music_levelsCleared);
+                    break;
+                case musGame:
+                    memcpy(musicArray, music_game, sizeof(music_game));
+                    music_length = sizeof(music_game);
+                    break;
+            }
+        }
     }
- 
-    //Play some music
-    if( music_tempo == 0 )
+}
+
+void playNote()
+{    
+    if(music_note < music_length)
     {
         //Play current note ( << 2 is like a *4 (bitshift is faster than * for the GB), because music note is 0,1,2,3,4... while our actual note array uses 4 entry per note, 
         //so we have to multiply note by 4 to get the actual registers index for each note)
@@ -390,74 +412,25 @@ uint8_t playMusic(uint8_t musicArray[], uint8_t musicLength, uint8_t musicLoops 
         
         //Set the new delay to wait
         music_tempo = musicArray[ music_note+1 ];
-        
+
         //Skip to the next note
         music_note += 2;
-    
-        if(musicLoops && (music_note > musicLength-1 )){
+        
+        if(music_loop && (music_note > music_length-1 ))
+        {
             music_note = 0;
         }
     }
-    //Else wait for the next note to play
-    else 
-    {
-        music_tempo--;
-    }
-    return 1;
+
 }
 
-uint8_t playMusicWon()
-{
-    if(music_note > sizeof(music_won)-1 ){
-       return 0;
-    }
- 
-    //Play some music
-    if( music_tempo == 0 )
-    {
-        //Play current note ( << 2 is like a *4 (bitshift is faster than * for the GB), because music note is 0,1,2,3,4... while our actual note array uses 4 entry per note, 
-        //so we have to multiply note by 4 to get the actual registers index for each note)
-        NR21_REG = music_notes[ music_won[music_note]<<2 ];
-        NR22_REG = music_notes[ (music_won[music_note]<<2)+1 ];
-        NR23_REG = music_notes[ (music_won[music_note]<<2)+2 ];
-        NR24_REG = music_notes[ (music_won[music_note]<<2)+3 ];
-        
-        //Set the new delay to wait
-        music_tempo = music_won[ music_note+1 ];
-        
-        //Skip to the next note
-        music_note += 2;
-        //Loop if needed //OLD : if( music_note > ( sizeof( music_intro) / sizeof (music_intro[0]) )-1 ){ //= sizeof( UINT8) is 1 with gbdk, so we don't need this useless division => save some CPU)
-    }
-    //Else wait for the next note to play
-    else 
-    {
-        music_tempo--;
-    }
-    return 1;
-}
 
-void playMusicTitleScreen()
+void musicTimer()
 {
     //Play some music
     if( music_tempo == 0 )
     {
-        //Play current note ( << 2 is like a *4 (bitshift is faster than * for the GB), because music note is 0,1,2,3,4... while our actual note array uses 4 entry per note, 
-        //so we have to multiply note by 4 to get the actual registers index for each note)
-        NR21_REG = music_notes[ music_intro[music_note]<<2 ];
-        NR22_REG = music_notes[ (music_intro[music_note]<<2)+1 ];
-        NR23_REG = music_notes[ (music_intro[music_note]<<2)+2 ];
-        NR24_REG = music_notes[ (music_intro[music_note]<<2)+3 ];
-        
-        //Set the new delay to wait
-        music_tempo = music_intro[ music_note+1 ];
-        
-        //Skip to the next note
-        music_note += 2;
-        //Loop if needed //OLD : if( music_note > ( sizeof( music_intro) / sizeof (music_intro[0]) )-1 ){ //= sizeof( UINT8) is 1 with gbdk, so we don't need this useless division => save some CPU)
-        if( music_note > sizeof(music_intro)-1 ){
-            music_note = 0;
-        }
+       playNote();
     }
     //Else wait for the next note to play
     else 
@@ -466,62 +439,28 @@ void playMusicTitleScreen()
     }
 }
 
-void playMusicGame()
+void initMusic()
 {
-    //Play some music
-    if( music_tempo == 0 )
-    {
-        //Play current note ( << 2 is like a *4 (bitshift is faster than * for the GB), because music note is 0,1,2,3,4... while our actual note array uses 4 entry per note, 
-        //so we have to multiply note by 4 to get the actual registers index for each note)
-        NR21_REG = music_notes[ music_game[music_note]<<2 ];
-        NR22_REG = music_notes[ (music_game[music_note]<<2)+1 ];
-        NR23_REG = music_notes[ (music_game[music_note]<<2)+2 ];
-        NR24_REG = music_notes[ (music_game[music_note]<<2)+3 ];
-        
-        //Set the new delay to wait
-        music_tempo = music_game[ music_note+1 ];
-        
-        //Skip to the next note
-        music_note += 2;
-        //Loop if needed //OLD : if( music_note > ( sizeof( music_intro) / sizeof (music_intro[0]) )-1 ){ //= sizeof( UINT8) is 1 with gbdk, so we don't need this useless division => save some CPU)
-        if( music_note > sizeof(music_game)-1 ){
-            music_note = 0;
-        }
+    CRITICAL {
+        add_TIM(musicTimer);
+        prev_music = 0;
+        music_note = 1;
+        music_length = 1;
+        music_tempo = 0;
+        music_loop = 0;
     }
-    //Else wait for the next note to play
-    else 
-    {
-        music_tempo--;
-    }
-}
 
-void playMusicLevelsCleared()
-{
-    //Play some music
-    if( music_tempo == 0 )
+    if (_cpu == CGB_TYPE)
     {
-        //Play current note ( << 2 is like a *4 (bitshift is faster than * for the GB), because music note is 0,1,2,3,4... while our actual note array uses 4 entry per note, 
-        //so we have to multiply note by 4 to get the actual registers index for each note)
-        NR21_REG = music_notes[ music_levelsCleared[music_note]<<2 ];
-        NR22_REG = music_notes[ (music_levelsCleared[music_note]<<2)+1 ];
-        NR23_REG = music_notes[ (music_levelsCleared[music_note]<<2)+2 ];
-        NR24_REG = music_notes[ (music_levelsCleared[music_note]<<2)+3 ];
-        
-        //Set the new delay to wait
-        music_tempo = music_levelsCleared[ music_note+1 ];
-        
-        //Skip to the next note
-        music_note += 2;
-        //Loop if needed //OLD : if( music_note > ( sizeof( music_intro) / sizeof (music_intro[0]) )-1 ){ //= sizeof( UINT8) is 1 with gbdk, so we don't need this useless division => save some CPU)
-        if( music_note > sizeof(music_levelsCleared)-1 ){
-            music_note = 0;
-        }
+        TMA_REG = 0x80;
+        TAC_REG = 0x4U;
     }
-    //Else wait for the next note to play
-    else 
+    else
     {
-        music_tempo--;
+        TMA_REG = 0xC0;
+        TAC_REG = 0x4U;    
     }
+    set_interrupts(TIM_IFLAG | VBL_IFLAG);
 }
 
 void playGameMoveSound()
@@ -1621,6 +1560,7 @@ void initLevelSelect()
     redrawLevelbit = 1;
     //Just in case there is some left over sprite
     HIDE_SPRITES;
+    SelectMusic(musTitle, 1);
 }
 
 void levelSelect()
@@ -1635,12 +1575,9 @@ void levelSelect()
         //if fading (from white) wait till fade is done
         while (!fade())
         {
-            playMusic(music_intro, sizeof(music_intro), 1);
             performantdelay(1);
         }
         
-        playMusic(music_intro, sizeof(music_intro), 1);
-
         prevJoyPad = joyPad;
         joyPad = joypad();
         if ((joyPad & J_B) && (!(prevJoyPad & J_B)))
@@ -1652,7 +1589,6 @@ void levelSelect()
             while(!fade())
             {
                 performantdelay(1);
-                playMusic(music_intro, sizeof(music_intro), 1);
             }
             startfade(FADEIN, 1);
         }
@@ -1882,8 +1818,9 @@ void initGame()
     clearbit = 1;
     redrawLevelbit = 1;
     redrawLevelDoneBit = 0;
+    SelectMusic(musGame, 1);
     SHOW_SPRITES;
-    resetMusic();
+    
 }
 
 void game()
@@ -1894,19 +1831,6 @@ void game()
     while(gameState == gsGame)
     {       
         updateBackgroundGame();
-       
-        if (levelDone)
-        {
-            while(playMusic(music_won, sizeof(music_won), 0))
-            {
-                performantdelay(1);
-            }
-        }
-        else
-        {
-            playMusic(music_game, sizeof(music_game), 1);
-        }
-
         cursorFrameCount++;
         if (cursorFrameCount >= MAXCURSORFRAMECOUNT)
         {
@@ -2094,8 +2018,7 @@ void game()
                     updateBackgroundGame();
                     //need to wait until its actually drawn on screen.
                     performantdelay(1);
-                    //Reset music counters so music won can be played in beginning of loop
-                    resetMusic();
+                    SelectMusic(musLevelClear, 0);
                     //hide cursor it's only sprite we use
                     HIDE_SPRITES;
                 }
@@ -2113,9 +2036,9 @@ void game()
                     //completely
                     clearbit = 1;  
                     redrawLevelbit = 1;
+                    SelectMusic(musGame, 1);
                     //show cursor again
                     SHOW_SPRITES;
-                    resetMusic();
                 }
                 else
                 {   
@@ -2127,9 +2050,9 @@ void game()
                         initLevel(randomSeed);
                         //redraw levelnr + level + background
                         clearbit = 1;
+                        SelectMusic(musGame, 1);
                         //show cursor again                         
                         SHOW_SPRITES;
-                        resetMusic();
                     }
                     else //Goto some congrats screen
                     {
@@ -2167,8 +2090,6 @@ void game()
             delay--;
         }
     }
-    //reset music here, in initlevelselect is not good as we can go from title to levelselect also
-    resetMusic();
 }
 
 void updateBackgroundTitleScreen()
@@ -2240,6 +2161,7 @@ void initTitleScreen()
 {
     set_bkg_data(0, 128, titlescreen_data);
     clearbit = 1;
+    SelectMusic(musTitle, 1);
 }
 
 void titleScreen()
@@ -2253,11 +2175,9 @@ void titleScreen()
         while (!fade())
         {
             SHOW_BKG;
-            playMusic(music_intro, sizeof(music_intro), 1);
             performantdelay(1);
         }
 
-        playMusic(music_intro, sizeof(music_intro), 1);
         prevJoyPad = joyPad;
         joyPad = joypad();
         if ((joyPad & J_UP) && (!(prevJoyPad & J_UP)))
@@ -2348,7 +2268,6 @@ void titleScreen()
                 while(!fade())
                 {
                     performantdelay(1);
-                    playMusic(music_intro, sizeof(music_intro), 1);
                 }
                 startfade(FADEIN, 0);
             }   
@@ -2382,7 +2301,7 @@ void initLevelsCleared()
     {
         printCongratsScreen(1, 7, "VERY HARD  LEVELS", 0);
     }
-    resetMusic();
+    SelectMusic(musAllLevelsClear, 1);
 }
 
 void levelsCleared()
@@ -2394,10 +2313,8 @@ void levelsCleared()
         while (!fade())
         {
             SHOW_BKG;
-            playMusic(music_levelsCleared, sizeof(music_levelsCleared), 1);
             performantdelay(1);
         }
-        playMusic(music_levelsCleared, sizeof(music_levelsCleared), 1);
         prevJoyPad = joyPad;
         joyPad = joypad();
         if (((joyPad & J_A) && (!(prevJoyPad && J_A))) || 
@@ -2409,14 +2326,12 @@ void levelsCleared()
             while(!fade())
             {
                 performantdelay(1);
-                playMusic(music_levelsCleared, sizeof(music_levelsCleared), 1);
             }
             startfade(FADEIN, 1);
         }
         updateSwitches(); 
         performantdelay(1);    
     }
-    resetMusic(); 
 }
 
 //intialisation of game & global variables
@@ -2448,6 +2363,7 @@ void init()
     prevJoyPad = joyPad;
     startfade(FADEIN, 1);
     initSound();
+    initMusic();
     initSaveState();
  }
 
