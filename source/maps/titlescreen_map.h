@@ -11,6 +11,6 @@ TITLESCREEN_MAP.H
 
 
 
-extern unsigned char titlescreen_map[];
+extern const unsigned char titlescreen_map[];
 
 /* End of TITLESCREEN_MAP.H */

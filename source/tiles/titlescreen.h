@@ -1,1 +1,1 @@
-extern unsigned char titlescreen_data[];
+extern const unsigned char titlescreen_data[];

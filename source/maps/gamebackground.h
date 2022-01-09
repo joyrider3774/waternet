@@ -22,6 +22,6 @@
 #define gameBackgroundHeight 18
 #define gameBackgroundBank 0
 
-extern unsigned char gameBackground[];
+extern const unsigned char gameBackground[];
 
 /* End of GAMEBACKGROUND.H */

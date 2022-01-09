@@ -14,6 +14,12 @@
 #include "maps/titlescreen_map.h"
 #include "maps/congratsscreen_map.h"
 #include "maps/othermaps.h"
+#include "maps/helprotatemap.h"
+#include "maps/helprotate2map.h"
+#include "maps/helprotateslidemap.h"
+#include "maps/helprotateslide2map.h"
+#include "maps/helpslidemap.h"
+#include "maps/helpslide2map.h"
 
 #include "tiles/blocks.h"
 #include "tiles/titlescreen.h"
@@ -325,7 +331,7 @@ uint8_t startPos, menuPos,
         i, j, x, y, rnd, index, cc, maxcc, clearbit, redrawLevelbit, fadein, fadeCounter, levelDone,
         cursorFrameCount, cursorFrame, prevJoyPad, titleStep, gameMode, posAdd, redrawLevelDoneBit,
         tmp, neighboursFound, selectedNeighbour, currentPoint, visitedRooms, music_note, music_tempo,
-        music_length, music_loop, prev_music, fadeStep, startFade, fadeSteps;
+        music_length, music_loop, prev_music, fadeStep, startFade, fadeSteps, mainMenu;
 
 uint8_t musicArray[255];
 int16_t selectionX, selectionY,i16;
@@ -814,18 +820,32 @@ void printLevelSelectGame(uint8_t ax, uint8_t ay, unsigned char amsg[], uint8_t 
                 }  
                 else
                 {
-                    if(titleMessage[i] == 0)
+                    if (titleMessage[i] == 'a')
                     {
-                        break;
+                        set_bkg_tile_xy(ax + i, ay, 119);
                     }
                     else
                     {
-                        //0-9
-                        if ((titleMessage[i] > 46) && (titleMessage[i] < 58))
+                        if (titleMessage[i] == 'b')
                         {
-                            set_bkg_tile_xy(ax + i, ay, titleMessage[i] + 32);
+                            set_bkg_tile_xy(ax + i, ay, 117);
+                        } 
+                        else
+                        {
+                            if(titleMessage[i] == 0)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                //0-9
+                                if ((titleMessage[i] > 46) && (titleMessage[i] < 58))
+                                {
+                                    set_bkg_tile_xy(ax + i, ay, titleMessage[i] + 32);
+                                }
+                            } 
                         }
-                    } 
+                    }
                 }
             }
         }    
@@ -1368,6 +1388,124 @@ void updateSwitches()
 	SHOW_BKG;
 }
 
+void updateCursorFrame()
+{
+    uint8_t tmpFrame;
+    cursorFrameCount++;
+    if (cursorFrameCount >= MAXCURSORFRAMECOUNT)
+    {
+        cursorFrame++;
+        cursorFrameCount = 0;
+        if (cursorFrame >= CURSORANIMCOUNT)
+        {
+            cursorFrame = 0;
+        }
+        tmpFrame = (cursorFrame * 4);
+       
+        //cursor 0
+        set_sprite_tile(0, 8 + tmpFrame);
+        set_sprite_tile(1, 9 + tmpFrame);
+        set_sprite_tile(2, 10 + tmpFrame);
+        set_sprite_tile(3, 11 + tmpFrame);
+        
+        //cursor 1
+        set_sprite_tile(4, 8 + tmpFrame);
+        set_sprite_tile(5, 9 + tmpFrame);
+        set_sprite_tile(6, 10 + tmpFrame);
+        set_sprite_tile(7, 11 + tmpFrame);
+       
+        //cursor 2
+        set_sprite_tile(8, 8 + tmpFrame);
+        set_sprite_tile(9, 9 + tmpFrame);
+        set_sprite_tile(10, 10 + tmpFrame);
+        set_sprite_tile(11, 11 + tmpFrame);
+       
+        //cursor 3
+        set_sprite_tile(12, 8 + tmpFrame);
+        set_sprite_tile(13, 9 + tmpFrame);
+        set_sprite_tile(14, 10 + tmpFrame);
+        set_sprite_tile(15, 11 + tmpFrame);
+    }
+}
+
+void hideCursors()
+{
+    //HIDE CURSOR SPRITES
+    //cursor 0
+    move_sprite(0, 0, 0);
+    move_sprite(1, 0, 0);
+    move_sprite(2, 0, 0);
+    move_sprite(3, 0, 0);
+    
+    //cursor 1
+    move_sprite(4, 0, 0);
+    move_sprite(5, 0, 0);
+    move_sprite(6, 0, 0);
+    move_sprite(7, 0, 0);
+    
+    //cursor 2
+    move_sprite(8, 0, 0);
+    move_sprite(9, 0, 0);
+    move_sprite(10, 0, 0);
+    move_sprite(11, 0, 0);
+    
+    //cursor 3
+    move_sprite(12, 0, 0);
+    move_sprite(13, 0, 0);
+    move_sprite(14, 0, 0);
+    move_sprite(15, 0, 0);
+    HIDE_SPRITES;
+}
+
+void showCursors()
+{
+    SHOW_SPRITES;
+}
+
+void setCursorPos(uint8_t cursorNr, uint8_t xPos, uint8_t yPos)
+{
+    if (cursorNr > 3)
+    {
+        return;
+    }
+    move_sprite((cursorNr<<2) + 0, 8 + ((xPos) << 3), 16 + ((yPos-1) << 3));
+    move_sprite((cursorNr<<2) + 1, 8 + ((xPos+1) << 3), 16 + ((yPos) << 3));
+    move_sprite((cursorNr<<2) + 2, 8 + ((xPos) << 3), 16 + ((yPos+1) << 3));
+    move_sprite((cursorNr<<2) + 3, 8 + ((xPos-1) << 3), 16 + ((yPos) << 3)); 
+}
+
+void initCursors()
+{
+    set_sprite_data(0, 24, selector);
+    
+    //cursor 0
+    set_sprite_tile(0, 8);
+    set_sprite_tile(1, 9);
+    set_sprite_tile(2, 10);
+    set_sprite_tile(3, 11);
+
+    //cursor 1
+    set_sprite_tile(4, 8);
+    set_sprite_tile(5, 9);
+    set_sprite_tile(6, 10);
+    set_sprite_tile(7, 11);
+
+    //cursor 2
+    set_sprite_tile(8, 8);
+    set_sprite_tile(9, 9);
+    set_sprite_tile(10, 10);
+    set_sprite_tile(11, 11);
+
+    //cursor 3
+    set_sprite_tile(12, 8);
+    set_sprite_tile(13, 9);
+    set_sprite_tile(14, 10);
+    set_sprite_tile(15, 11);
+    
+    cursorFrameCount = 0;
+    cursorFrame = 0;
+}
+
 void initLevel(uint16_t aRandomSeed)
 {
     levelDone = 0;
@@ -1434,10 +1572,7 @@ void initLevel(uint16_t aRandomSeed)
     //startpoint of tile with water and our cursor
     selectionX = boardWidth >> 1;
     selectionY = boardHeight >> 1;
-    move_sprite(0, 8 + ((boardX + selectionX) << 3), 16 + ((boardY + selectionY-1) << 3));
-    move_sprite(1, 8 + ((boardX + selectionX+1) << 3), 16 + ((boardY + selectionY) << 3));
-    move_sprite(2, 8 + ((boardX + selectionX) << 3), 16 + ((boardY + selectionY+1) << 3));
-    move_sprite(3, 8 + ((boardX + selectionX-1) << 3), 16 + ((boardY + selectionY) << 3));
+    setCursorPos(0, boardX + selectionX, boardY + selectionY);
 
     //level is currently the solution so we still need to shuffle it
     shuffleLevel();
@@ -1489,10 +1624,10 @@ void updateBackgroundLevelSelect()
         printNumber(6, 16, selectedLevel, 2, 61);
         
         //B:BACK
-        printLevelSelectGame(12, 16, "B:BACK", 61);
+        printLevelSelectGame(12, 16, "b:BACK", 61);
         
         //A:PLAY
-        printLevelSelectGame(12, 17, "A:PLAY", 61);
+        printLevelSelectGame(12, 17, "a:PLAY", 61);
         
         //Locked & Unlocked keywoard
         if(LevelLocks[gameMode][difficulty][selectedLevel-1] == 0)
@@ -1558,8 +1693,6 @@ void initLevelSelect()
     //need to clear background & it wil also draw the level
     clearbit = 1;
     redrawLevelbit = 1;
-    //Just in case there is some left over sprite
-    HIDE_SPRITES;
     SelectMusic(musTitle, 1);
 }
 
@@ -1592,7 +1725,8 @@ void levelSelect()
             }
             startfade(FADEIN, 1);
         }
-        if ((joyPad & J_A) && (!(prevJoyPad & J_A)))
+        if (((joyPad & J_A) && (!(prevJoyPad & J_A))) ||
+            ((joyPad & J_START) && (!(prevJoyPad && J_START))))
         {
             if(LevelLocks[gameMode][difficulty][selectedLevel-1] == 1)
             {
@@ -1723,7 +1857,7 @@ void updateBackgroundGame()
         printNumber(6, 16, selectedLevel, 2, 61);
         
         //B:BACK
-        printLevelSelectGame(12, 16, "B:BACK", 61);
+        printLevelSelectGame(12, 16, "b:BACK", 61);
         
         //MOVES:
         printLevelSelectGame(0, 17, "MOVES:", 61);
@@ -1731,19 +1865,19 @@ void updateBackgroundGame()
         //A:XXXXXX (XXXXXX="ROTATE" or XXXXXX="SLIDE " or XXXXXX="ROSLID")
         if(gameMode == gmRotate)
         {
-            printLevelSelectGame(12, 17, "A:ROTATE", 61);
+            printLevelSelectGame(12, 17, "a:ROTATE", 61);
         }
         else
         {
             if(gameMode == gmSlide)
             {
-                printLevelSelectGame(12, 17, "A:SLIDE ", 61);
+                printLevelSelectGame(12, 17, "a:SLIDE ", 61);
             }
             else
             {
                 if(gameMode == gmRotateSlide)
                 {
-                    printLevelSelectGame(12, 17, "A:ROSLID", 61);
+                    printLevelSelectGame(12, 17, "a:ROSLID", 61);
                 }
             }
         }
@@ -1803,24 +1937,18 @@ void updateBackgroundGame()
 
 void initGame()
 {
-    cursorFrameCount = 0;
-    cursorFrame = 0;
+    SelectMusic(musGame, 1);
     //set background tiles
     set_bkg_data(0, 128, Blocks);
     //set sprite for selector / cursor
-    set_sprite_data(0, 24, selector);
-    
-    set_sprite_tile(0, 8 + (cursorFrame * 4));
-    set_sprite_tile(1, 9 + (cursorFrame * 4));
-    set_sprite_tile(2, 10 + (cursorFrame * 4));
-    set_sprite_tile(3, 11 + (cursorFrame * 4));
+    initCursors();
+    setCursorPos(0, boardX + selectionX, boardY + selectionY);
+    showCursors();
 
     clearbit = 1;
     redrawLevelbit = 1;
     redrawLevelDoneBit = 0;
-    SelectMusic(musGame, 1);
-    SHOW_SPRITES;
-    
+
 }
 
 void game()
@@ -1831,20 +1959,7 @@ void game()
     while(gameState == gsGame)
     {       
         updateBackgroundGame();
-        cursorFrameCount++;
-        if (cursorFrameCount >= MAXCURSORFRAMECOUNT)
-        {
-            cursorFrame++;
-            cursorFrameCount = 0;
-            if (cursorFrame >= CURSORANIMCOUNT)
-            {
-                cursorFrame = 0;
-            }
-            set_sprite_tile(0, 8 + (cursorFrame * 4));
-            set_sprite_tile(1, 9 + (cursorFrame * 4));
-            set_sprite_tile(2, 10 + (cursorFrame * 4));
-            set_sprite_tile(3, 11 + (cursorFrame * 4));
-        }
+        updateCursorFrame();
 
         prevJoyPad = joyPad;
         joyPad = joypad();
@@ -1863,10 +1978,7 @@ void game()
                 {
                     selectionY = -posAdd;
                 }
-                move_sprite(0, 8 + ((boardX + selectionX) << 3), 16 + ((boardY + selectionY-1) << 3));
-                move_sprite(1, 8 + ((boardX + selectionX+1) << 3), 16 + ((boardY + selectionY) << 3));
-                move_sprite(2, 8 + ((boardX + selectionX) << 3), 16 + ((boardY + selectionY+1) << 3));
-                move_sprite(3, 8 + ((boardX + selectionX-1) << 3), 16 + ((boardY + selectionY) << 3));
+                setCursorPos(0, boardX + selectionX, boardY + selectionY);
                 delay = 10;
             }
         } 
@@ -1885,10 +1997,7 @@ void game()
                 {
                     selectionY = boardHeight -1 +posAdd;
                 }
-                move_sprite(0, 8 + ((boardX + selectionX) << 3), 16 + ((boardY + selectionY-1) << 3));
-                move_sprite(1, 8 + ((boardX + selectionX+1) << 3), 16 + ((boardY + selectionY) << 3));
-                move_sprite(2, 8 + ((boardX + selectionX) << 3), 16 + ((boardY + selectionY+1) << 3));
-                move_sprite(3, 8 + ((boardX + selectionX-1) << 3), 16 + ((boardY + selectionY) << 3));
+                setCursorPos(0, boardX + selectionX, boardY + selectionY);
                 delay = 10;
             }
         }
@@ -1907,10 +2016,7 @@ void game()
                 {
                     selectionX = -posAdd;
                 }
-                move_sprite(0, 8 + ((boardX + selectionX) << 3), 16 + ((boardY + selectionY-1) << 3));
-                move_sprite(1, 8 + ((boardX + selectionX+1) << 3), 16 + ((boardY + selectionY) << 3));
-                move_sprite(2, 8 + ((boardX + selectionX) << 3), 16 + ((boardY + selectionY+1) << 3));
-                move_sprite(3, 8 + ((boardX + selectionX-1) << 3), 16 + ((boardY + selectionY) << 3));
+                setCursorPos(0, boardX + selectionX, boardY + selectionY);
                 delay = 10;
             }
         }
@@ -1930,10 +2036,7 @@ void game()
                 {
                     selectionX = boardWidth -1 + posAdd;
                 }
-                move_sprite(0, 8 + ((boardX + selectionX) << 3), 16 + ((boardY + selectionY-1) << 3));
-                move_sprite(1, 8 + ((boardX + selectionX+1) << 3), 16 + ((boardY + selectionY) << 3));
-                move_sprite(2, 8 + ((boardX + selectionX) << 3), 16 + ((boardY + selectionY+1) << 3));
-                move_sprite(3, 8 + ((boardX + selectionX-1) << 3), 16 + ((boardY + selectionY) << 3));
+                setCursorPos(0, boardX + selectionX, boardY + selectionY);
                 delay = 10;
             }
         }
@@ -2020,7 +2123,7 @@ void game()
                     performantdelay(1);
                     SelectMusic(musLevelClear, 0);
                     //hide cursor it's only sprite we use
-                    HIDE_SPRITES;
+                    hideCursors();
                 }
             }
             else
@@ -2037,8 +2140,8 @@ void game()
                     clearbit = 1;  
                     redrawLevelbit = 1;
                     SelectMusic(musGame, 1);
-                    //show cursor again
-                    SHOW_SPRITES;
+                    //show cursor again (it's actually to early but i'm not fixing that)
+                    showCursors();
                 }
                 else
                 {   
@@ -2051,8 +2154,8 @@ void game()
                         //redraw levelnr + level + background
                         clearbit = 1;
                         SelectMusic(musGame, 1);
-                        //show cursor again                         
-                        SHOW_SPRITES;
+                        //show cursor again (it's actually to early but i'm not fixing that)
+                        showCursors();
                     }
                     else //Goto some congrats screen
                     {
@@ -2071,6 +2174,7 @@ void game()
         {
             if(!levelDone)
             {
+                hideCursors();
                 playMenuBackSound();
                 gameState = gsLevelSelect;                
                 //need to reset the level to initial state when going back to level selector
@@ -2099,24 +2203,40 @@ void updateBackgroundTitleScreen()
     {
         set_bkg_tiles(0, 0, titlescreenMapWidth, titlescreenMapHeight, titlescreen_map);
         
-        if (titleStep == tsDifficulty)
+        if (titleStep == tsMainMenu)
         {
-            printTitle(6,8, "VERY EASY", 98);
-            printTitle(6,9, "EASY", 98);
-            printTitle(6,10, "NORMAL", 98);
-            printTitle(6,11, "HARD", 98);
-            printTitle(6,12, "VERY HARD", 98);
-            printTitle(6,13, "RANDOM", 98);
+            printTitle(6,8, "MAIN MENU", 98);
+            printTitle(8,10, "START", 98);
+            printTitle(8,11, "HELP", 98);
         }
         else
         {
-            if (titleStep == tsGameMode)
+            if (titleStep == tsDifficulty)
             {
-                printTitle(4,8, "SELECT  MODE", 98);
-                printTitle(7,10, "ROTATE", 98);
-                printTitle(7,11, "SLIDE", 98);
-                printTitle(7,12, "ROSLID", 98);
+                printTitle(6,8, "VERY EASY", 98);
+                printTitle(6,9, "EASY", 98);
+                printTitle(6,10, "NORMAL", 98);
+                printTitle(6,11, "HARD", 98);
+                printTitle(6,12, "VERY HARD", 98);
+                printTitle(6,13, "RANDOM", 98);
+            }
+            else
+            {
+                if (titleStep == tsGameMode)
+                {
+                    if (mainMenu == mmStartGame)
+                    {
+                        printTitle(4,8, "SELECT  MODE", 98);
+                    }
+                    else
+                    {
+                        printTitle(6,8, "MODE HELP", 98);
+                    }
+                    printTitle(7,10, "ROTATE", 98);
+                    printTitle(7,11, "SLIDE", 98);
+                    printTitle(7,12, "ROSLID", 98);
 
+                }
             }
         }
     }
@@ -2124,32 +2244,49 @@ void updateBackgroundTitleScreen()
     if(clearbit || redrawLevelbit)
     {
         //set menu tile
-        if (titleStep == tsGameMode)
+        if (titleStep == tsMainMenu)
         {
             //clear menu selector
-            for (y = gmRotate; y <= gmRotateSlide; y++)
+            for (y = mmStartGame ; y < mmCount; y++)
             {
-                if (y != gameMode)
+                if (y != mainMenu)
                 {
-                    printTitle(6, 10 + y, " ", 98);
+                    printTitle(7, 10 + y, " ", 98);
                 }
             }
 
-            set_bkg_tile_xy(6, 10 + gameMode, leftMenu); 
+            set_bkg_tile_xy(7, 10 + mainMenu, leftMenu); 
         }
         else
-        if(titleStep == tsDifficulty)
         {
-            //clear menu selector
-            for (y = diffVeryEasy; y <= diffRandom; y++)
+            //set menu tile
+            if (titleStep == tsGameMode)
             {
-                if (y != difficulty)
+                //clear menu selector
+                for (y = gmRotate; y < gmCount; y++)
                 {
-                    printTitle(5, 8 + y, " ", 98);
+                    if (y != gameMode)
+                    {
+                        printTitle(6, 10 + y, " ", 98);
+                    }
                 }
-            }
 
-            set_bkg_tile_xy(5, 8 + difficulty, leftMenu);
+                set_bkg_tile_xy(6, 10 + gameMode, leftMenu); 
+            }
+            else
+            if(titleStep == tsDifficulty)
+            {
+                //clear menu selector
+                for (y = diffVeryEasy; y < diffCount; y++)
+                {
+                    if (y != difficulty)
+                    {
+                        printTitle(5, 8 + y, " ", 98);
+                    }
+                }
+
+                set_bkg_tile_xy(5, 8 + difficulty, leftMenu);
+            }
         }
         redrawLevelbit = 0;
         clearbit = 0;        
@@ -2182,95 +2319,153 @@ void titleScreen()
         joyPad = joypad();
         if ((joyPad & J_UP) && (!(prevJoyPad & J_UP)))
         {
-            if (titleStep == tsGameMode)
+            if (titleStep == tsMainMenu)
             {
-                if(gameMode > gmRotate)
+                if(mainMenu > mmStartGame)
                 {
                     playMenuSelectSound();
-                    gameMode--;
+                    mainMenu--;
                     redrawLevelbit = 1;
                 }
             } 
             else
             {
-                if(titleStep == tsDifficulty)
+                if (titleStep == tsGameMode)
                 {
-                    if(difficulty > diffVeryEasy)
+                    if(gameMode > gmRotate)
                     {
                         playMenuSelectSound();
-                        difficulty--;
+                        gameMode--;
                         redrawLevelbit = 1;
+                    }
+                } 
+                else
+                {
+                    if(titleStep == tsDifficulty)
+                    {
+                        if(difficulty > diffVeryEasy)
+                        {
+                            playMenuSelectSound();
+                            difficulty--;
+                            redrawLevelbit = 1;
+                        }
                     }
                 }
             }
         }
         if ((joyPad & J_DOWN) && (!(prevJoyPad & J_DOWN)))
         {
-            if (titleStep == tsGameMode)
+            if (titleStep == tsMainMenu)
             {
-                if(gameMode < gmRotateSlide)
+                if(mainMenu < mmHelp)
                 {
                     playMenuSelectSound();
-                    gameMode++;
+                    mainMenu++;
                     redrawLevelbit = 1;
                 }
-            } 
+            }
             else
             {
-                if(difficulty < diffRandom)
+                if (titleStep == tsGameMode)
                 {
-                    playMenuSelectSound();
-                    difficulty++;
-                    redrawLevelbit = 1;
+                    if(gameMode < gmRotateSlide)
+                    {
+                        playMenuSelectSound();
+                        gameMode++;
+                        redrawLevelbit = 1;
+                    }
+                } 
+                else
+                {
+                    if(difficulty < diffRandom)
+                    {
+                        playMenuSelectSound();
+                        difficulty++;
+                        redrawLevelbit = 1;
+                    }
                 }
             }
         }
         if ((joyPad & J_B) && (!(prevJoyPad && J_B)))
         {
-            if (titleStep > tsGameMode)
+            if (titleStep > tsMainMenu)
             {
                 titleStep--;
                 clearbit = 1;
                 playMenuBackSound();
             }
         }
-        if ((joyPad & J_A) && (!(prevJoyPad && J_A)))
+        if (((joyPad & J_A) && (!(prevJoyPad && J_A))) ||
+            ((joyPad & J_START) && (!(prevJoyPad && J_START))))
         {
             playMenuAcknowlege();
-            if (titleStep < tsDifficulty)
+            if(mainMenu == mmHelp)
             {
-                titleStep++;
-                clearbit = 1;
-            }
-            else
-            {
-                if (difficulty == diffRandom)
+                if (titleStep < tsGameMode)
                 {
-                    selectedLevel = 1;
+                    titleStep++;
+                    clearbit = 1;
                 }
                 else
-                //select last unlocked level
                 {
-                    for (i = 0; i < levelCount; i++)
+                    switch (gameMode)
                     {
-                        if(LevelLocks[gameMode][difficulty][i] == 1)
-                        {
-                            selectedLevel = i + 1;
-                        }
-                        else
-                        {
+                        case gmRotate:
+                            gameState = gsHelpRotate;
                             break;
+                        case gmSlide:
+                            gameState = gsHelpSlide;
+                            break;
+                        case gmRotateSlide:
+                            gameState = gsHelpRotateSlide;
+                            break; 
+                    }
+                    startfade(FADEOUT, 1);
+                    while(!fade())
+                    {
+                        performantdelay(1);
+                    }
+                    startfade(FADEIN, 0);
+                }
+            }
+            if(mainMenu == mmStartGame)
+            {
+            
+                if (titleStep < tsDifficulty)
+                {
+                    titleStep++;
+                    clearbit = 1;
+                }
+                else
+                {
+                    if (difficulty == diffRandom)
+                    {
+                        selectedLevel = 1;
+                    }
+                    else
+                    //select last unlocked level
+                    {
+                        for (i = 0; i < levelCount; i++)
+                        {
+                            if(LevelLocks[gameMode][difficulty][i] == 1)
+                            {
+                                selectedLevel = i + 1;
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
                     }
-                }
-                gameState = gsLevelSelect;
-                startfade(FADEOUT, 1);
-                while(!fade())
-                {
-                    performantdelay(1);
-                }
-                startfade(FADEIN, 0);
-            }   
+                    gameState = gsLevelSelect;
+                    startfade(FADEOUT, 1);
+                    while(!fade())
+                    {
+                        performantdelay(1);
+                    }
+                    startfade(FADEIN, 0);
+                } 
+            }  
         }
         updateSwitches(); 
         performantdelay(1);    
@@ -2318,9 +2513,11 @@ void levelsCleared()
         prevJoyPad = joyPad;
         joyPad = joypad();
         if (((joyPad & J_A) && (!(prevJoyPad && J_A))) || 
-            ((joyPad & J_B) && (!(prevJoyPad && J_B))))
+            ((joyPad & J_B) && (!(prevJoyPad && J_B))) ||
+            ((joyPad & J_START) && (!(prevJoyPad && J_START))))
         {
-            titleStep = tsGameMode;
+            playMenuAcknowlege();
+            titleStep = tsMainMenu;
             gameState = gsTitle;
             startfade(FADEOUT, 1);
             while(!fade())
@@ -2332,6 +2529,268 @@ void levelsCleared()
         updateSwitches(); 
         performantdelay(1);    
     }
+}
+
+void initHelpRotateSlide()
+{
+    set_bkg_data(0, 128, Blocks);
+    set_bkg_tiles(0, 0, helpRotateSlideMapWidth, helpRotateSlideMapHeight, helpRotateSlideMap);
+    SelectMusic(musTitle, 1);
+}
+
+void helpRotateSlide()
+{
+    initHelpRotateSlide();
+   
+    while (gameState == gsHelpRotateSlide)
+    {
+        while (!fade())
+        {
+            SHOW_BKG;
+            performantdelay(1);
+        }
+        prevJoyPad = joyPad;
+        joyPad = joypad();
+        if (((joyPad & J_A) && (!(prevJoyPad && J_A))) ||
+            ((joyPad & J_START) && (!(prevJoyPad && J_START))))
+
+        {
+            playMenuAcknowlege();
+            gameState = gsHelpRotateSlide2;
+            startfade(FADEOUT, 0);
+            while(!fade())
+            {
+                performantdelay(1);
+            }
+            startfade(FADEIN, 0);
+        }
+        updateSwitches(); 
+        performantdelay(1);    
+    }
+}
+
+void initHelpRotateSlide2()
+{
+    set_bkg_data(0, 128, Blocks);
+    set_bkg_tiles(0, 0, helpRotateSlide2MapWidth, helpRotateSlide2MapHeight, helpRotateSlide2Map);
+    SelectMusic(musTitle, 1);
+    cursorFrameCount = 0;
+
+    //DRAW CURSOR SPRITES
+    initCursors();
+
+    setCursorPos(0, 1, 5);
+    setCursorPos(1, 14, 5);
+    setCursorPos(2, 2, 12);
+    setCursorPos(3, 15, 12);
+
+    showCursors();
+}
+
+void helpRotateSlide2()
+{
+    initHelpRotateSlide2();
+   
+    while (gameState == gsHelpRotateSlide2)
+    {
+        while (!fade())
+        {
+            SHOW_BKG;
+            performantdelay(1);
+        }
+        updateCursorFrame();
+        prevJoyPad = joyPad;
+        joyPad = joypad();
+        if (((joyPad & J_A) && (!(prevJoyPad && J_A)))  ||
+            ((joyPad & J_START) && (!(prevJoyPad && J_START))))
+        {
+            playMenuAcknowlege();
+            gameState = gsTitle;
+            startfade(FADEOUT, 0);
+            while(!fade())
+            {
+                performantdelay(1);
+            }
+            startfade(FADEIN, 1);
+        }
+        updateSwitches(); 
+        performantdelay(1);    
+    }
+
+    hideCursors();
+}
+
+void initHelpRotate()
+{
+    set_bkg_data(0, 128, Blocks);
+    set_bkg_tiles(0, 0, helpRotateMapWidth, helpRotateMapHeight, helpRotateMap);
+    SelectMusic(musTitle, 1);
+}
+
+void helpRotate()
+{
+    initHelpRotate();
+   
+    while (gameState == gsHelpRotate)
+    {
+        while (!fade())
+        {
+            SHOW_BKG;
+            performantdelay(1);
+        }
+        prevJoyPad = joyPad;
+        joyPad = joypad();
+        if (((joyPad & J_A) && (!(prevJoyPad && J_A))) ||
+            ((joyPad & J_START) && (!(prevJoyPad && J_START))))
+        {
+            playMenuAcknowlege();
+            gameState = gsHelpRotate2;
+            startfade(FADEOUT, 0);
+            while(!fade())
+            {
+                performantdelay(1);
+            }
+            startfade(FADEIN, 0);
+        }
+        updateSwitches(); 
+        performantdelay(1);    
+    }
+}
+
+void initHelpRotate2()
+{
+    set_bkg_data(0, 128, Blocks);
+    set_bkg_tiles(0, 0, helpRotate2MapWidth, helpRotate2MapHeight, helpRotate2Map);
+    SelectMusic(musTitle, 1);
+
+    //DRAW CURSOR SPRITES
+    initCursors();
+    setCursorPos(0, 2, 7);
+    setCursorPos(1, 15, 7);
+    showCursors();
+}
+
+void helpRotate2()
+{
+    initHelpRotate2();
+   
+    while (gameState == gsHelpRotate2)
+    {
+        while (!fade())
+        {
+            SHOW_BKG;
+            performantdelay(1);
+        }
+
+       updateCursorFrame();
+
+        prevJoyPad = joyPad;
+        joyPad = joypad();
+        if (((joyPad & J_A) && (!(prevJoyPad && J_A))) ||
+            ((joyPad & J_START) && (!(prevJoyPad && J_START))))
+        {
+            playMenuAcknowlege();
+            gameState = gsTitle;
+            startfade(FADEOUT, 0);
+            while(!fade())
+            {
+                performantdelay(1);
+            }
+            startfade(FADEIN, 1);
+        }
+        updateSwitches(); 
+        performantdelay(1);    
+    }
+
+    hideCursors();
+}
+
+
+void initHelpSlide()
+{
+    set_bkg_data(0, 128, Blocks);
+    set_bkg_tiles(0, 0, helpSlideMapWidth, helpSlideMapHeight, helpSlideMap);
+    SelectMusic(musTitle, 1);
+}
+
+void helpSlide()
+{
+    initHelpSlide();
+   
+    while (gameState == gsHelpSlide)
+    {
+        while (!fade())
+        {
+            SHOW_BKG;
+            performantdelay(1);
+        }
+        prevJoyPad = joyPad;
+        joyPad = joypad();
+        if (((joyPad & J_A) && (!(prevJoyPad && J_A))) ||
+            ((joyPad & J_START) && (!(prevJoyPad && J_START))))
+        {
+            playMenuAcknowlege();
+            gameState = gsHelpSlide2;
+            startfade(FADEOUT, 0);
+            while(!fade())
+            {
+                performantdelay(1);
+            }
+            startfade(FADEIN, 0);
+        }
+        updateSwitches(); 
+        performantdelay(1);    
+    }
+}
+
+void initHelpSlide2()
+{
+    set_bkg_data(0, 128, Blocks);
+    set_bkg_tiles(0, 0, helpSlide2MapWidth, helpSlide2MapHeight, helpSlide2Map);
+    SelectMusic(musTitle, 1);
+    
+    //DRAW CURSOR SPRITES
+    initCursors();
+
+    setCursorPos(0, 1, 8);
+    setCursorPos(1, 14, 8);
+
+    showCursors();
+}
+
+void helpSlide2()
+{
+    initHelpSlide2();
+   
+    while (gameState == gsHelpSlide2)
+    {
+        while (!fade())
+        {
+            SHOW_BKG;
+            performantdelay(1);
+        }
+        
+       updateCursorFrame();
+        
+        prevJoyPad = joyPad;
+        joyPad = joypad();
+        if (((joyPad & J_A) && (!(prevJoyPad && J_A))) ||
+            ((joyPad & J_START) && (!(prevJoyPad && J_START))))
+        {
+            playMenuAcknowlege();
+            gameState = gsTitle;
+            startfade(FADEOUT, 0);
+            while(!fade())
+            {
+                performantdelay(1);
+            }
+            startfade(FADEIN, 1);
+        }
+        updateSwitches(); 
+        performantdelay(1);    
+    }
+    
+    hideCursors();
 }
 
 //intialisation of game & global variables
@@ -2356,8 +2815,9 @@ void init()
     fadein = 1;
     difficulty = diffNormal;
     selectedLevel = 1;
+    mainMenu = mmStartGame;
     gameState = gsTitle;
-    titleStep = tsGameMode;
+    titleStep = tsMainMenu;
     gameMode = gmRotate;
     joyPad = joypad();
     prevJoyPad = joyPad;
@@ -2403,6 +2863,24 @@ void main()
                 break;
             case gsLevelsCleared:
                 levelsCleared();
+                break;
+            case gsHelpSlide:
+                helpSlide();
+                break;
+            case gsHelpSlide2:
+                helpSlide2();
+                break;
+            case gsHelpRotateSlide:
+                helpRotateSlide();
+                break;
+            case gsHelpRotateSlide2:
+                helpRotateSlide2();
+                break;
+            case gsHelpRotate:
+                helpRotate();
+                break;
+            case gsHelpRotate2:
+                helpRotate2();
                 break;
         }        
     }

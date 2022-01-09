@@ -11,6 +11,12 @@
 #define gsTitle 1
 #define gsLevelSelect 2
 #define gsLevelsCleared 3
+#define gsHelpRotate 4
+#define gsHelpRotate2 5
+#define gsHelpRotateSlide 6
+#define gsHelpRotateSlide2 7
+#define gsHelpSlide 8
+#define gsHelpSlide2 9
 
 #define diffVeryEasy 0
 #define diffEasy 1
@@ -25,8 +31,13 @@
 #define gmRotateSlide 2
 #define gmCount 3
 
-#define tsGameMode 0
-#define tsDifficulty 1
+#define mmStartGame 0
+#define mmHelp 1
+#define mmCount 2
+
+#define tsMainMenu 0
+#define tsGameMode 1
+#define tsDifficulty 2
 
 #define FADEIN 1
 #define FADEOUT 0

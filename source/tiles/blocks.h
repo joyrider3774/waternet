@@ -22,10 +22,14 @@
 
 */
 
+#ifndef __blocks_h_INCLUDE
+#define __blocks_h_INCLUDE
 
 /* Bank of tiles. */
 #define BlocksBank 0
 /* Start of tile array. */
-extern unsigned char Blocks[];
+extern const unsigned char Blocks[];
+
+#endif
 
 /* End of BLOCKS.H */

@@ -22,6 +22,6 @@
 #define congratsMapHeight 18
 #define congratsMapBank 0
 
-extern unsigned char congratsMap[];
+extern const unsigned char congratsMap[];
 
 /* End of CONGRATSSCREEN_MAP.H */

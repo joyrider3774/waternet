@@ -26,6 +26,6 @@
 /* Bank of tiles. */
 #define selectorBank 0
 /* Start of tile array. */
-extern unsigned char selector[];
+extern const unsigned char selector[];
 
 /* End of SELECTOR.H */

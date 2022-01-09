@@ -20,6 +20,13 @@ c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/gamebackgro
 c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/titlescreen_map.o maps/titlescreen_map.c
 c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/othermaps.o maps/othermaps.c
 c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/congratsscreen_map.o maps/congratsscreen_map.c
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/helpslidemap.o maps/helpslidemap.c
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/helpslide2map.o maps/helpslide2map.c
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/helprotatemap.o maps/helprotatemap.c
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/helprotate2map.o maps/helprotate2map.c
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/helprotateslidemap.o maps/helprotateslidemap.c
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/helprotateslide2map.o maps/helprotateslide2map.c
+
 
 @REM Link it to binary
-c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wl-yt0x1b -Wl-yo2 -Wl-ya1 -Wm-yc -o waternet.gb maps/congratsscreen_map.o maps/othermaps.o maps/titlescreen_map.o maps/gamebackground.o tiles/congratsscreen.o tiles/selector.o tiles/titlescreen.o tiles/blocks.o savestate.o main.o
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wl-yt0x1b -Wl-yo2 -Wl-ya1 -Wm-yc -o waternet.gb maps/helprotateslide2map.o maps/helprotateslidemap.o maps/helprotate2map.o  maps/helprotatemap.o maps/helpslide2map.o maps/helpslidemap.o maps/congratsscreen_map.o maps/othermaps.o maps/titlescreen_map.o maps/gamebackground.o tiles/congratsscreen.o tiles/selector.o tiles/titlescreen.o tiles/blocks.o savestate.o main.o

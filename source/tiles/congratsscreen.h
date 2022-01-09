@@ -26,6 +26,6 @@
 /* Bank of tiles. */
 #define congratsScreenTilesBank 0
 /* Start of tile array. */
-extern unsigned char congratsScreenTiles[];
+extern const unsigned char congratsScreenTiles[];
 
 /* End of CONGRATSSCREEN.H */
