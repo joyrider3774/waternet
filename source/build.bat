@@ -5,6 +5,10 @@
 
 @REM Main Source files
 c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o main.o main.c
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o sound.o sound.c
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o cursor.o cursor.c
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o graphics.o graphics.c
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o printfuncs.o printfuncs.c
 
 @REM SaveState for SRAM
 c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -Wf-ba0 -c -o savestate.o savestate.c
@@ -29,4 +33,4 @@ c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wm-yc -c -o maps/helprotates
 
 
 @REM Link it to binary
-c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wl-yt0x1b -Wl-yo2 -Wl-ya1 -Wm-yc -o waternet.gb maps/helprotateslide2map.o maps/helprotateslidemap.o maps/helprotate2map.o  maps/helprotatemap.o maps/helpslide2map.o maps/helpslidemap.o maps/congratsscreen_map.o maps/othermaps.o maps/titlescreen_map.o maps/gamebackground.o tiles/congratsscreen.o tiles/selector.o tiles/titlescreen.o tiles/blocks.o savestate.o main.o
+c:\gbdk\bin\lcc -Wa-l -Wl-m -Wf--debug -Wl-y -Wl-w -Wl-yt0x1b -Wl-yo2 -Wl-ya1 -Wm-yc -o waternet.gb maps/helprotateslide2map.o maps/helprotateslidemap.o maps/helprotate2map.o  maps/helprotatemap.o maps/helpslide2map.o maps/helpslidemap.o maps/congratsscreen_map.o maps/othermaps.o maps/titlescreen_map.o maps/gamebackground.o tiles/congratsscreen.o tiles/selector.o tiles/titlescreen.o tiles/blocks.o printfuncs.o graphics.o cursor.o sound.o savestate.o main.o

@@ -39,13 +39,6 @@
 #define tsGameMode 1
 #define tsDifficulty 2
 
-#define FADEIN 1
-#define FADEOUT 0
-
-
-#define MAXCURSORFRAMECOUNT 5
-#define CURSORANIMCOUNT 4
-
 #define levelCount 25
 
 #define arrowDown 122
@@ -53,11 +46,6 @@
 #define arrowLeft 123
 #define arrowRight 121
 #define leftMenu 96
-
-#define musGame 1
-#define musTitle 2
-#define musLevelClear 3
-#define musAllLevelsClear 4
 
 typedef struct point
 {
