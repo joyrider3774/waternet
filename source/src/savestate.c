@@ -16,6 +16,7 @@ void initSaveState()
 {
     uint8_t i, j, y;
     #ifndef MEGADUCK
+    ENABLE_RAM;
     if (strcmp(header, "waternet_001") != 0)
     {
         for (j=0; j<gmCount; j++)
@@ -32,6 +33,7 @@ void initSaveState()
         }
         strcpy(header, "waternet_001");
     }
+    DISABLE_RAM;
     #endif
 }
 
