@@ -10,3 +10,7 @@
 *.lst
 
 *.o
+*.pocket
+*.duck
+*.gbc
+*.gg
