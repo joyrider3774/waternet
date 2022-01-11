@@ -11,10 +11,7 @@
 #include "graphics.h"
 #include "printfuncs.h"
 
-//no sram on megaduck
-#ifndef MEGADUCK
 #include "savestate.h"
-#endif
 
 #include "../res/gamebackgroundmap.h"
 #include "../res/titlescreenmap.h"
@@ -44,28 +41,6 @@ uint8_t neighbours[4];
 uint8_t cellStack[maxBoardSize+1];
 point lookUpTable[maxBoardSize];
 unsigned char level[maxBoardSize];
-
-void initSaveState()
-{
-    #ifndef MEGADUCK
-    if (strcmp(header, "waternet_001") != 0)
-    {
-        for (j=0; j<gmCount; j++)
-        {
-            for (i=0; i<diffCount; i++)
-            {
-                for (y = 0; y<levelCount; y++)
-                {
-                    LevelLocks[j][i][y] = 0;
-                }
-                //unlock first level
-                LevelLocks[j][i][0] = 1; 
-            }
-        }
-        strcpy(header, "waternet_001");
-    }
-    #endif
-}
 
 
 //generates a lookup table containing per "tile" value the possible x & y position
@@ -721,21 +696,18 @@ void updateBackgroundLevelSelect()
         printLevelSelectGame(12, 17, "a:PLAY", 61);
         
         //Locked & Unlocked keywoard
-        #ifndef MEGADUCK
-        if(LevelLocks[gameMode][difficulty][selectedLevel-1] == 0)
+        uint8_t tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);
+        if(!tmpUnlocked)
         {
             printLevelSelectGame(0, 17, "LOCKED  ", 79);
         }
         else
         {
-            if(LevelLocks[gameMode][difficulty][selectedLevel-1] == 1)
+            if(tmpUnlocked)
             {
-        #endif
                 printLevelSelectGame(0, 17, "UNLOCKED", 79);
-        #ifndef MEGADUCK
             }
         }
-        #endif
         
         //Draw arrows for vertical / horizontal movement
         if(gameMode != gmRotate)
@@ -793,8 +765,9 @@ void initLevelSelect()
 
 void levelSelect()
 {
-    uint8_t delay;
+    uint8_t delay, tmpUnlocked;
     delay = 1;
+    tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);
     initLevelSelect();
     while (gameState == gsLevelSelect)
     {        
@@ -823,19 +796,15 @@ void levelSelect()
         if (((joyPad & J_A) && (!(prevJoyPad & J_A))) ||
             ((joyPad & J_START) && (!(prevJoyPad && J_START))))
         {
-            #ifndef MEGADUCK
-            if(LevelLocks[gameMode][difficulty][selectedLevel-1] == 1)
+            if(tmpUnlocked)
             {
-            #endif
                 gameState = gsGame;
                 playMenuAcknowlege();
-            #ifndef MEGADUCK
             }
             else
             {
                 playErrorSound();
             }
-            #endif
         }
         if ((joyPad & J_LEFT) && (delay == 0))
         {
@@ -843,7 +812,7 @@ void levelSelect()
             {
                 //ned new seed based on time
                 playMenuSelectSound();
-                randomSeed = sys_time;
+                randomSeed = clock();
                 initLevel(randomSeed);
                 //redraw background + level as size can differ
                 clearbit = 1;
@@ -859,22 +828,19 @@ void levelSelect()
                     //as level dimensions remain the same
                     redrawLevelbit = 1;
                 }
-            }
-            #ifndef MEGADUCK
-            if(LevelLocks[gameMode][difficulty][selectedLevel-1] == 0)
+            } 
+            tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);           
+            if(tmpUnlocked == 0)
             {
                 printLevelSelectGame(0, 17, "LOCKED  ", 79);
             }
             else
             {
-                if(LevelLocks[gameMode][difficulty][selectedLevel-1] == 1)
+                if(tmpUnlocked == 1)
                 {
-            #endif
                     printLevelSelectGame(0, 17, "UNLOCKED", 79);
-            #ifndef MEGADUCK
                 }
             }
-            #endif
             printNumber(6, 16, selectedLevel, 2, 61);
             delay = 6;
         }
@@ -884,7 +850,7 @@ void levelSelect()
             {
                 playMenuSelectSound();
                 //ned new seed based on time
-                randomSeed = sys_time;
+                randomSeed = clock();
                 initLevel(randomSeed);
                 clearbit = 1;
             }
@@ -898,21 +864,18 @@ void levelSelect()
                     redrawLevelbit = 1;
                 }
             }
-            #ifndef MEGADUCK
-            if(LevelLocks[gameMode][difficulty][selectedLevel-1] == 0)
+            tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);
+            if(tmpUnlocked == 0)
             {
                 printLevelSelectGame(0, 17, "LOCKED  ", 79);
             }
             else
             {
-                if(LevelLocks[gameMode][difficulty][selectedLevel-1] == 1)
+                if(tmpUnlocked == 1)
                 {
-            #endif
                     printLevelSelectGame(0, 17, "UNLOCKED", 79);
-            #ifndef MEGADUCK
                 }
             }
-            #endif
             printNumber(6, 16, selectedLevel, 2, 61);
             delay = 6;
         }
@@ -1239,7 +1202,7 @@ void game()
                 if (difficulty == diffRandom)
                 {
                     //ned new seed based on time
-                    randomSeed = sys_time;
+                    randomSeed = clock();
                     initLevel(randomSeed);
                     //redraw level + background 
                     //otherwise with random if level is smaller than previous one the level is not cleared
@@ -1257,9 +1220,7 @@ void game()
                     if (selectedLevel < maxLevel)
                     {
                         selectedLevel++;
-                        #ifndef MEGADUCK
-                        LevelLocks[gameMode][difficulty][selectedLevel-1] = 1;
-                        #endif
+                        unlockLevel(gameMode, difficulty, selectedLevel-1);
                         initLevel(randomSeed);
                         //redraw levelnr + level + background
                         clearbit = 1;
@@ -1555,22 +1516,8 @@ void titleScreen()
                         selectedLevel = 1;
                     }
                     else
-                    //select last unlocked level
                     {
-                        selectedLevel = 1;
-                        #ifndef MEGADUCK
-                        for (i = 0; i < levelCount; i++)
-                        {
-                            if(LevelLocks[gameMode][difficulty][i] == 1)
-                            {
-                                selectedLevel = i + 1;
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                        #endif
+                        selectedLevel = lastUnlockedLevel(gameMode, difficulty);
                     }
                     gameState = gsLevelSelect;
                     startfade(FADEOUT, 1);
@@ -1912,11 +1859,6 @@ void init()
 {
     setBlackPalette();
     DISPLAY_ON;
-    #ifdef NINTENDO
-    ENABLE_RAM_MBC1;
-    #else
-    ENABLE_RAM;
-    #endif
     prevBoardHeight = 0;
     prevBoardWidth = 0;
     maxcc = 0;
@@ -1959,7 +1901,7 @@ void main()
                 //but not when going back from
                 //level playing to level selector
                 //when calling init level there
-                randomSeed = sys_time;
+                randomSeed = clock();
                 initLevel(randomSeed);                
                 break;
             case gsLevelSelect:

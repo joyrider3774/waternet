@@ -14,7 +14,7 @@ unsigned char titleMessage[20];
 void printNumber(uint8_t ax, uint8_t ay, uint16_t aNumber, uint8_t maxDigits, uint8_t emptyBlock)
 {
     memset(number, 0, 10);
-    sprintf(number, "%d", aNumber);
+    sprintf(number, "%u", aNumber);
     for (c=0; c < maxDigits; c++)
     {
         if (number[c] != 0)

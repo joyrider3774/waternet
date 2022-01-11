@@ -2,7 +2,11 @@
 #define SAVESTATE_H
 
 #include "main.h"
-extern uint8_t header[20];
-extern uint8_t LevelLocks[gmCount][diffCount][levelCount];
+
+void initSaveState();
+
+uint8_t lastUnlockedLevel(uint8_t mode, uint8_t diff);
+uint8_t levelUnlocked(uint8_t mode, uint8_t diff, uint8_t level);
+void unlockLevel(uint8_t mode, uint8_t diff, uint8_t level);
 
 #endif
