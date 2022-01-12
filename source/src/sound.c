@@ -13,13 +13,13 @@
 //      Sheep it up! - A tiny GB/GBC game for the bitbitjam4 game jam
 //		by Dr. Ludos (http://www.ludoscience.com)
 
-uint8_t music_note, music_tempo, music_length, music_loop, prev_music;
+uint8_t music_note, music_tempo, music_length, music_loop, prev_music, sustain_note, sfx_sustain;
 uint8_t musicArray[255];
 
 //Here is kind of "quick'n dirty" custom music player made using solely the Channel 2 of the GB
 //The main parameters of the channel are set manually, then this table defines "notes", as in "frequencies" to play that will go to the NR23 & NR24 registers
 //Here is the "note table". Each note is defined by 4 hexa numbers, directly setting the values for NR21, NR22, NR23 and NR24 registers, in that order
-const uint8_t music_notes[44] ={
+const uint8_t music_notes_gb[44] ={
     0x82, 0x00, 0x00, 0x00, //for silence
     0x82, 0x77, 0x16, 0x84, //C  4
     0x82, 0x77, 0x50, 0x84, //C# 4
@@ -31,6 +31,20 @@ const uint8_t music_notes[44] ={
     0x82, 0x77, 0x39, 0x87, //E 6
     0x82, 0x77, 0x44, 0x87, //F 6
     0x82, 0x77, 0x15, 0x85, //E 4
+};
+
+const uint16_t music_notes_gg [11] ={
+    0,  //for silence
+    428, //C  4
+    403, //C# 4
+    381, //D  4
+    359, //D# 4
+    340, //E  4
+    89, //D# 6
+    95, //D 6
+    84, //E 6
+    80, //F 6
+    320, //E 4
 };
 
 //helper defines
@@ -53,7 +67,7 @@ const uint8_t music_notes[44] ={
 //Here is the "partition" table. Each note is defined by two numbers in this array
 //- The first number is the "note", an index to the "notes" tables array / 4 (as each note is defined by 4 entry in notes, we can use note 0,1,2,3... instead of note 0,4,8,12,16 - it's easier to read for us mere humans)
 //- The second number is the "delay" after the next note : the player will wait XX cycles (max: 240 - 4 seconds (60 cycles per seconds) and play the next "note"
-//Music Table Format: Note index in "music_notes" / 4, Delay before next note
+//Music Table Format: Note index in "music_notes_gb" / 4, Delay before next note
 
 //https://onlinesequencer.net/2498607
 const uint8_t music_levelsCleared[96] ={
@@ -333,20 +347,35 @@ void playNote()
         //Play current note ( << 2 is like a *4 (bitshift is faster than * for the GB), because music note is 0,1,2,3,4... while our actual note array uses 4 entry per note, 
         //so we have to multiply note by 4 to get the actual registers index for each note)
         #ifdef NINTENDO
-        NR21_REG = music_notes[ musicArray[music_note]<<2 ];
-        NR22_REG = music_notes[ (musicArray[music_note]<<2)+1 ];
-        NR23_REG = music_notes[ (musicArray[music_note]<<2)+2 ];
-        NR24_REG = music_notes[ (musicArray[music_note]<<2)+3 ];
+        NR21_REG = music_notes_gb[ musicArray[music_note]<<2 ];
+        NR22_REG = music_notes_gb[ (musicArray[music_note]<<2)+1 ];
+        NR23_REG = music_notes_gb[ (musicArray[music_note]<<2)+2 ];
+        NR24_REG = music_notes_gb[ (musicArray[music_note]<<2)+3 ];
+        sustain_note = 0;
+        #else 
+        PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_MAX;
+        PSG = PSG_LATCH | PSG_CH1 |  (music_notes_gg[ musicArray[music_note] ]) & 0xf;
+	    PSG = ((music_notes_gg[ musicArray[music_note] ]) >> 4) & 0x3f;
+        sustain_note = 10;
         #endif
         //Set the new delay to wait
         music_tempo = musicArray[ music_note+1 ];
 
         //Skip to the next note
         music_note += 2;
-        
-        if(music_loop && (music_note > music_length-1 ))
+               
+        if (music_note > music_length-1 )
         {
-            music_note = 0;
+            if(music_loop)
+            {
+                music_note = 0;
+            }
+            else
+            {
+                #ifdef SEGA
+                PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_OFF;
+                #endif
+            }
         }
     }
 
@@ -358,19 +387,38 @@ void musicTimer()
     //Play some music
     if( music_tempo == 0 )
     {
-       playNote();
+        playNote();     
     }
     //Else wait for the next note to play
     else 
     {
         music_tempo--;
+        if(sustain_note == 0)
+        {
+            #ifdef SEGA
+            PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_MAX;
+            PSG = PSG_LATCH | PSG_CH1 |  0;
+	        PSG = 0;
+            #endif    
+        }
+        else
+        {
+            sustain_note--;
+        }
     }
 }
 
 void initMusic()
 {
+    
     CRITICAL {
+        #ifdef NINTENDO
         add_TIM(musicTimer);
+        #else
+        add_VBL(processSoundSega);
+        #endif
+        sfx_sustain = 0;
+        sustain_note = 0;
         prev_music = 0;
         music_note = 1;
         music_length = 1;
@@ -389,7 +437,45 @@ void initMusic()
         TAC_REG = 0x4U;    
     }
     #endif
-    set_interrupts(TIM_IFLAG | VBL_IFLAG);
+    set_interrupts(TIM_IFLAG | VBL_IFLAG); 
+}
+
+void stopSoundSega()
+{
+    #ifdef SEGA
+    //music 0 frequency
+    PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_MAX;
+    PSG = PSG_LATCH | PSG_CH1 |  0;
+	PSG = 0; 
+
+    //sound 0 frequency
+    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
+    PSG = PSG_LATCH | PSG_CH0 |  0;
+	PSG = 0;  
+
+    //Noise
+    PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | PSG_VOLUME_OFF;
+    #endif
+}
+
+void processSoundSega()
+{
+    #ifdef SEGA
+    musicTimer();
+    if(sfx_sustain == 0)
+    {
+        //tone
+        PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
+        PSG = PSG_LATCH | PSG_CH0 |  0;
+	    PSG = 0;
+        //noise (error sound)
+        PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | PSG_VOLUME_OFF;
+    }
+    else
+    {
+        sfx_sustain--;
+    }
+    #endif
 }
 
 void playGameMoveSound()
@@ -400,6 +486,12 @@ void playGameMoveSound()
     NR12_REG = 0x63;
     NR13_REG = 0x06;
     NR14_REG = 0x87;
+    #else
+    //tone
+    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
+    PSG = PSG_LATCH | PSG_CH0 | 0x6;
+	PSG = 0x6;
+    sfx_sustain = SFX_SUSTAIN;
     #endif
 }
 
@@ -410,7 +502,12 @@ void playErrorSound()
     NR11_REG = 0xC2;
     NR12_REG = 0x93;
     NR13_REG = 0x73;
-    NR14_REG = 0xC6; 
+    NR14_REG = 0xC6;
+    #else
+    //noise channel
+    PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | PSG_VOLUME_MAX;
+    PSG = PSG_LATCH | PSG_CH3 | 0x2;
+    sfx_sustain = SFX_SUSTAIN*3;
     #endif
 }
 
@@ -421,7 +518,13 @@ void playMenuSelectSound()
     NR11_REG = 0x00;
     NR12_REG = 0x63;
     NR13_REG = 0x9E;
-    NR14_REG = 0x87;     
+    NR14_REG = 0x87;
+    #else
+    //tone
+    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
+    PSG = PSG_LATCH | PSG_CH0 | 0x3;
+	PSG = 0x3;
+    sfx_sustain = SFX_SUSTAIN;
     #endif
 }
 
@@ -432,7 +535,13 @@ void playMenuBackSound()
     NR11_REG = 0x81;
     NR12_REG = 0x63;
     NR13_REG = 0xE8;
-    NR14_REG = 0x83;       
+    NR14_REG = 0x83;
+    #else
+    //tone
+    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
+    PSG = PSG_LATCH | PSG_CH0 | 0xF;
+	PSG = 0xf;
+    sfx_sustain = SFX_SUSTAIN;
     #endif
 }
 
@@ -443,7 +552,13 @@ void playMenuAcknowlege()
     NR11_REG = 0x03;
     NR12_REG = 0x5e;
     NR13_REG = 0xd0;
-    NR14_REG = 0x87;     
+    NR14_REG = 0x87;
+    #else
+    //tone
+    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
+    PSG = PSG_LATCH | PSG_CH0 | 0x7;
+	PSG = 0x7;
+    sfx_sustain = SFX_SUSTAIN;
     #endif
 }
 
@@ -454,6 +569,12 @@ void playGameAction()
     NR11_REG = 0x80;
     NR12_REG = 0x63;
     NR13_REG = 0x6f;
-    NR14_REG = 0x86;     
+    NR14_REG = 0x86;
+    #else
+    //tone
+    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
+    PSG = PSG_LATCH | PSG_CH0 | 0x9;
+	PSG = 0x9;
+    sfx_sustain = SFX_SUSTAIN;
     #endif
 }
