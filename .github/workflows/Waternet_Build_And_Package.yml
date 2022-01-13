@@ -68,7 +68,7 @@ jobs:
           
       - name: Build
         run: |
-          set GBDK_HOME=$cwd/waternet_gamboy/gdbk_build/gbdk
+          export GBDK_HOME=$cwd/waternet_gamboy/gdbk_build/gbdk
           echo $GBDK_HOME
           cd waternet_gamboy
           cd source
