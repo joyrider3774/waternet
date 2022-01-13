@@ -71,6 +71,7 @@ jobs:
         run: |
           set GBDK_HOME=%CD%\gdbk_build\gbdk
           cd waternet_gamboy
+          cd source
           msys2 -c "make ${{ matrix.rom }}"
           cd ..
       
