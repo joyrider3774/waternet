@@ -63,14 +63,14 @@ jobs:
         shell: cmd
         run: |
           cd gdbk_build
-          7z x 'Windows-x64 build.zip'
+          7z x "Windows-x64 build.zip"
           
       - name: Build
         shell: cmd
         run: |
           set GBDK_HOME=%CD%\gdbk_build\gbdk
           cd waternet_gamboy
-          msys2 -c 'make ${{ matrix.rom }}'
+          msys2 -c "make ${{ matrix.rom }}"
           cd ..
       
       - name: Package Build
