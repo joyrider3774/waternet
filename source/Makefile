@@ -1,6 +1,11 @@
 # If you move this project you can change the directory
 # to match your GBDK root directory (ex: GBDK_HOME = "C:/GBDK/"
+
+
+ifeq ($(strip $(GBDK_HOME)),) 
 GBDK_HOME = c:/gbdk/
+endif
+
 LCC = $(GBDK_HOME)bin/lcc
 
 # Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
@@ -10,7 +15,7 @@ TARGETS=gb gbc pocket megaduck gg sms
 
 # Configure platform specific LCC flags here:
 LCCFLAGS_gb      = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wm-ys -Wl-yt0x1B # (-Wl-yt0x1B Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)) (-Wl-yo2 = 2 x 16k rom bank) (-Wl-ya1 = 1x 8k ram bank)
-LCCFLAGS_pocket  = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wm-ys -Wl-yt0x1B # Usually the same as required for .gb
+LCCFLAGS_pocket  = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wm-ys -Wl-yt0x1B -Wm-yc # Usually the same as required for .gbc
 LCCFLAGS_duck    = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wm-ys -Wl-yt0x1B # Usually the same as required for .gb
 LCCFLAGS_gbc     = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wm-ys -Wl-yt0x1B -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
 LCCFLAGS_sms     = -Wl-yo4 -Wl-ya1 
