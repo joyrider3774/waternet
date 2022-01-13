@@ -93,7 +93,7 @@ jobs:
           mkdir package
           cd source
           cd build
-          7z a ../package/waternet ${{ matrix.name }}.zip waternet.${{ matrix.ext }}
+          7z a "../package/waternet ${{ matrix.name }}.zip" "waternet.${{ matrix.ext }}"
           cd ..
           cd ..
           cd ..
@@ -102,5 +102,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.name }} build
-          path: waternet_gamboy/package/waternet ${{ matrix.name }}.zip
+          path: "waternet_gamboy/package/waternet ${{ matrix.name }}.zip"
           # retention-days: 30
