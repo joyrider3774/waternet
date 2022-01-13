@@ -52,12 +52,6 @@ jobs:
           update: false
           install: >-
             base-devel
-
-      - name: Grab gbdk-2020
-        run: |
-          # temporary use this artifact until release gets updates
-          curl -L -o gbdk.zip https://github.com/gbdk-2020/gbdk-2020/suites/4897103053/artifacts/140584335/zip
-          7z x gbdk.zip      
        
        # ==== Build Steps ====
       - name: Check out Sources
@@ -65,11 +59,16 @@ jobs:
         with:
           path: waternet_gamboy
           submodules: false
+      - name: Grab GBDK
+        shell: cmd
+        run: |
+          cd gdbk_build
+          7z x Windows-x64 build.zip
           
       - name: Build
         shell: cmd
         run: |
-          set GBDK_HOME=%CD%\gbdk
+          set GBDK_HOME=%CD%\gdbk_build\gbdk
           cd waternet_gamboy
           msys2 -c 'make ${{ matrix.rom }}'
           cd ..
