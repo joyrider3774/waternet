@@ -104,5 +104,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.name }} build
-          path: "waternet_gamboy/waternet_gamboy/waternet_gamboy/package/waternet ${{ matrix.name }}.zip"
+          path: waternet_gamboy/waternet_gamboy/package/waternet ${{ matrix.name }}.zip
           # retention-days: 30
