@@ -53,11 +53,12 @@ jobs:
           install: >-
             base-devel
             mingw-w64-x86_64-toolchain
-            
+            curl.exe `
+
       - name: Grab gbdk-2020
         run: |
           # temporary use this artifact until release gets updates
-          curl -L https://github.com/gbdk-2020/gbdk-2020/suites/4897103053/artifacts/140584335 --output gbdk.zip
+          curl -L -o gbdk.zip https://github.com/gbdk-2020/gbdk-2020/suites/4897103053/artifacts/140584335/zip
           7z x gbdk.zip      
        
        # ==== Build Steps ====
