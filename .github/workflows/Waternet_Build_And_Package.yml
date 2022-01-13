@@ -68,6 +68,8 @@ jobs:
           cd waternet_gamboy
           cd gdbk_build
           7z x "Windows-x64 build.zip"
+          cd ..
+          cd ..
           
       - name: Build
         run: |
