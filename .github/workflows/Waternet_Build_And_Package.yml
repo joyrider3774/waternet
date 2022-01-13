@@ -63,7 +63,7 @@ jobs:
         shell: cmd
         run: |
           cd gdbk_build
-          7z x Windows-x64 build.zip
+          7z x 'Windows-x64 build.zip'
           
       - name: Build
         shell: cmd
