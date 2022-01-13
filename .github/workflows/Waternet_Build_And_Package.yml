@@ -57,7 +57,7 @@ jobs:
       - name: Grab gbdk-2020
         run: |
           # temporary use this artifact until release gets updates
-          curl -Lo gbdk.zip https://github.com/gbdk-2020/gbdk-2020/suites/4897103053/artifacts/140584335
+          curl -L https://github.com/gbdk-2020/gbdk-2020/suites/4897103053/artifacts/140584335 --output gbdk.zip
           7z x gbdk.zip      
        
        # ==== Build Steps ====
