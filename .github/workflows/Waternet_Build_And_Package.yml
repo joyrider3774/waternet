@@ -82,9 +82,9 @@ jobs:
         run: |
           mkdir -p "package/{{ matrix.rom }}"
           cd "package/{{ matrix.rom }}"
-          cp source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }} ./
-          cp ../LICENSE ./
-          cp ../README.md ./
+          cp "../source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" ./
+          cp "../LICENSE" ./
+          cp "../README.md" ./
           cp "../images/waternet label 4.2 x 3.7 cm.png" ./
           cd ..
           
