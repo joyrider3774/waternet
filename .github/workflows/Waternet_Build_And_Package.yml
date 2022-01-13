@@ -93,7 +93,9 @@ jobs:
           mkdir package
           cd source
           cd build
-          7z a "../package/waternet ${{ matrix.name }}.zip" "waternet.${{ matrix.ext }}"
+          cd ${{ matrix.ext }}
+          7z a "../../package/waternet ${{ matrix.name }}.zip" "waternet.${{ matrix.ext }}"
+          cd ..
           cd ..
           cd ..
           cd ..
