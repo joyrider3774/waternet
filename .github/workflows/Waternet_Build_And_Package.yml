@@ -25,19 +25,25 @@ jobs:
           - gg
           - pocket
           - sms
-          - duck
+          - megaduck
         include:
           - rom: gb
+            ext: gb
             name: Nintedo Game Boy
           - rom: gbc
+            ext: gbc
             name: Nintedo Game Boy Color
           - rom: gg
+            ext: gg
             name: Sega Game Gear
           - rom: pocket
+            ext: pockect
             name: Analogue Pocket
           - rom: sms
+            ext: sms
             name: Sega Master System
-          - rom: duck
+          - rom: megaduck
+            ext: duck
             name: Mega Duck
     runs-on: windows-latest
     defaults:
@@ -86,7 +92,7 @@ jobs:
           cd waternet_gamboy
           mkdir package
           cd build
-          7z a ../package/waternet ${{ matrix.name }}.zip waternet.${{ matrix.rom }}
+          7z a ../package/waternet ${{ matrix.name }}.zip waternet.${{ matrix.ext }}
           cd ..
           cd ..
           
