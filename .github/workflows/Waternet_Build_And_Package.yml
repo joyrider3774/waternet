@@ -52,8 +52,6 @@ jobs:
           update: false
           install: >-
             base-devel
-            mingw-w64-x86_64-toolchain
-            curl.exe `
 
       - name: Grab gbdk-2020
         run: |
