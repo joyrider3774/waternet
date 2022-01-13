@@ -60,7 +60,8 @@ jobs:
           release: false
           update: false
           install: >-
-            make 7z
+            make
+            p7zip
        
        # ==== Build Steps ====
       - name: Check out Sources
