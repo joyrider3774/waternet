@@ -67,35 +67,28 @@ jobs:
       - name: Check out Sources
         uses: actions/checkout@v2
         with:
-          path: waternet_gamboy
           submodules: false
       - name: Grab GBDK
         run: |
-          cd waternet_gamboy
           cd gdbk_build
           7z x "Windows-x64 build.zip"
-          cd ..
           cd ..
           
       - name: Build
         run: |
-          export GBDK_HOME="$PWD/waternet_gamboy/gdbk_build/gbdk/"
+          export GBDK_HOME="$PWD/gdbk_build/gbdk/"
           echo $GBDK_HOME
-          cd waternet_gamboy
           cd source
           make ${{ matrix.rom }}
-          cd ..
           cd ..
       
       - name: Package Build
         run: |
-          cd waternet_gamboy
           mkdir package
           cd source
           cd build
           cd ${{ matrix.ext }}
-          7z a "../../package/Waternet - ${{ matrix.name }}.zip" "waternet.${{ matrix.ext }}"
-          cd ..
+          7z a "../../../package/Waternet - ${{ matrix.name }}.zip" "waternet.${{ matrix.ext }}"
           cd ..
           cd ..
           cd ..
