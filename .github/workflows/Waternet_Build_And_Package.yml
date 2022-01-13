@@ -40,7 +40,10 @@ jobs:
           - rom: duck
             name: Mega Duck
     runs-on: windows-latest
-    
+    defaults:
+      run:
+        shell: msys2 {0}
+        
     steps:
       # ==== dependencies ====
       - name: Windows Depends MSYS2/MinGW64
@@ -52,12 +55,6 @@ jobs:
           update: false
           install: >-
             base-devel
-
-      - name: Grab gbdk-2020
-        run: |
-          # temporary use this artifact until release gets updates
-          curl -L -o gbdk.zip https://github.com/gbdk-2020/gbdk-2020/suites/4897103053/artifacts/140584335/zip
-          7z x gbdk.zip      
        
        # ==== Build Steps ====
       - name: Check out Sources
@@ -65,17 +62,26 @@ jobs:
         with:
           path: waternet_gamboy
           submodules: false
-          
-      - name: Build
+      - name: Grab GBDK
         shell: cmd
         run: |
-          set GBDK_HOME=%CD%\gbdk
           cd waternet_gamboy
-          msys2 -c 'make ${{ matrix.rom }}'
+          cd gdbk_build
+          7z x "Windows-x64 build.zip"
+          cd ..
+          cd ..
+          
+      - name: Build
+        run: |
+          export GBDK_HOME="$PWD/waternet_gamboy/gdbk_build/gbdk"
+          echo $GBDK_HOME
+          cd waternet_gamboy
+          cd source
+          make ${{ matrix.rom }}
+          cd ..
           cd ..
       
       - name: Package Build
-        shell: cmd
         run: |
           cd waternet_gamboy
           mkdir package
