@@ -29,10 +29,10 @@ jobs:
         include:
           - rom: gb
             ext: gb
-            name: Nintedo Game Boy
+            name: Nintendo Game Boy
           - rom: gbc
             ext: gbc
-            name: Nintedo Game Boy Color
+            name: Nintendo Game Boy Color
           - rom: gg
             ext: gg
             name: Sega Game Gear
@@ -94,7 +94,7 @@ jobs:
           cd source
           cd build
           cd ${{ matrix.ext }}
-          7z a "../../package/waternet ${{ matrix.name }}.zip" "waternet.${{ matrix.ext }}"
+          7z a "../../package/Waternet - ${{ matrix.name }}.zip" "waternet.${{ matrix.ext }}"
           cd ..
           cd ..
           cd ..
@@ -104,5 +104,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.name }} build
-          path: waternet_gamboy/package/waternet ${{ matrix.name }}.zip
+          path: waternet_gamboy/package/Waternet - ${{ matrix.name }}.zip
           # retention-days: 30
