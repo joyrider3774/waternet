@@ -6,7 +6,7 @@ LCC = $(GBDK_HOME)bin/lcc
 # Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
 # They can also be built/cleaned individually: "make gg" and "make gg-clean"
 # Possible are: gb gbc pocket megaduck sms gg
-TARGETS=gb gbc pocket megaduck gg
+TARGETS=gb gbc pocket megaduck gg sms
 
 # Configure platform specific LCC flags here:
 LCCFLAGS_gb      = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wm-ys -Wl-yt0x1B # (-Wl-yt0x1B Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)) (-Wl-yo2 = 2 x 16k rom bank) (-Wl-ya1 = 1x 8k ram bank)

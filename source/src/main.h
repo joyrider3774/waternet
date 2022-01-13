@@ -47,6 +47,16 @@
 #define arrowRight 121
 #define leftMenu 97
 
+//only SMS has different screen res 
+//it is used to center the screen
+#ifdef MASTERSYSTEM
+#define SCREENSTARTX 6
+#define SCREENSTARTY 3
+#else
+#define SCREENSTARTX 0
+#define SCREENSTARTY 0
+#endif
+
 typedef struct point
 {
     uint8_t x;

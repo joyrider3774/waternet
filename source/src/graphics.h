@@ -22,6 +22,7 @@
 #define FADEIN 1
 #define FADEOUT 0
 
+void clearBackgroundLayer(uint8_t tile);
 void startfade(uint8_t afadein, uint8_t ForTitle);
 uint8_t fade();
 void setBlackPalette();

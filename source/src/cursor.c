@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <gbdk/platform.h>
 #include "cursor.h"
+#include "main.h"
 #include "../res/selectortiles.h"
 
 uint8_t cursorFrameCount, cursorFrame;
@@ -77,10 +78,10 @@ void setCursorPos(uint8_t cursorNr, uint8_t xPos, uint8_t yPos)
     {
         return;
     }
-    move_sprite((cursorNr<<2) + 0, DEVICE_SPRITE_PX_OFFSET_X + ((xPos) << 3), DEVICE_SPRITE_PX_OFFSET_Y + ((yPos-1) << 3));
-    move_sprite((cursorNr<<2) + 1, DEVICE_SPRITE_PX_OFFSET_X + ((xPos+1) << 3), DEVICE_SPRITE_PX_OFFSET_Y + ((yPos) << 3));
-    move_sprite((cursorNr<<2) + 2, DEVICE_SPRITE_PX_OFFSET_X + ((xPos) << 3), DEVICE_SPRITE_PX_OFFSET_Y + ((yPos+1) << 3));
-    move_sprite((cursorNr<<2) + 3, DEVICE_SPRITE_PX_OFFSET_X + ((xPos-1) << 3), DEVICE_SPRITE_PX_OFFSET_Y + ((yPos) << 3)); 
+    move_sprite((cursorNr<<2) + 0, DEVICE_SPRITE_PX_OFFSET_X + ((xPos + SCREENSTARTX) << 3), DEVICE_SPRITE_PX_OFFSET_Y + ((yPos - 1 + SCREENSTARTY) << 3));
+    move_sprite((cursorNr<<2) + 1, DEVICE_SPRITE_PX_OFFSET_X + ((xPos + 1 + SCREENSTARTX) << 3), DEVICE_SPRITE_PX_OFFSET_Y + ((yPos + SCREENSTARTY) << 3));
+    move_sprite((cursorNr<<2) + 2, DEVICE_SPRITE_PX_OFFSET_X + ((xPos + SCREENSTARTX) << 3), DEVICE_SPRITE_PX_OFFSET_Y + ((yPos + 1 + SCREENSTARTY) << 3));
+    move_sprite((cursorNr<<2) + 3, DEVICE_SPRITE_PX_OFFSET_X + ((xPos - 1 + SCREENSTARTX) << 3), DEVICE_SPRITE_PX_OFFSET_Y + ((yPos + SCREENSTARTY) << 3)); 
 }
 
 void initCursors()

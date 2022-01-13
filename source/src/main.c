@@ -676,7 +676,7 @@ void updateBackgroundLevelSelect()
                 {
                    // if (get_bkg_tile_xy(x,y) != levelSelectBackground[i16])
                    // {
-                        set_bkg_tile_xy(x, y, gameBackgroundMap[i16]);
+                        set_bkg_tile_xy(x + SCREENSTARTX, y + SCREENSTARTY, gameBackgroundMap[i16]);
                    // }
                 }
                 i16++;
@@ -684,28 +684,28 @@ void updateBackgroundLevelSelect()
         }
 
         //LEVEL:
-        printLevelSelectGame(0, 16, "LEVEL:", 61);
+        printLevelSelectGame(0 + SCREENSTARTX, 16 + SCREENSTARTY, "LEVEL:", 61);
         
         //[LEVEL NR] 2 chars
-        printNumber(6, 16, selectedLevel, 2, 61);
+        printNumber(6 + SCREENSTARTX, 16 + SCREENSTARTY, selectedLevel, 2, 61);
         
         //B:BACK
-        printLevelSelectGame(12, 16, "b:BACK", 61);
+        printLevelSelectGame(12 + SCREENSTARTX, 16 + SCREENSTARTY, "b:BACK", 61);
         
         //A:PLAY
-        printLevelSelectGame(12, 17, "a:PLAY", 61);
+        printLevelSelectGame(12 + SCREENSTARTX, 17 + SCREENSTARTY, "a:PLAY", 61);
         
         //Locked & Unlocked keywoard
         uint8_t tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);
         if(!tmpUnlocked)
         {
-            printLevelSelectGame(0, 17, "LOCKED  ", 79);
+            printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "LOCKED  ", 79);
         }
         else
         {
             if(tmpUnlocked)
             {
-                printLevelSelectGame(0, 17, "UNLOCKED", 79);
+                printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "UNLOCKED", 79);
             }
         }
         
@@ -714,21 +714,21 @@ void updateBackgroundLevelSelect()
         {
 
             //corners to empty
-            set_bkg_tile_xy(boardX -1, boardY -1, 0x31);
-            set_bkg_tile_xy(boardX + boardWidth, boardY -1, 0x31);
-            set_bkg_tile_xy(boardX + boardWidth, boardY + boardHeight, 0x31);
-            set_bkg_tile_xy(boardX -1, boardY + boardHeight, 0x31);
+            set_bkg_tile_xy(boardX -1 + SCREENSTARTX, boardY -1 + SCREENSTARTY, 0x31);
+            set_bkg_tile_xy(boardX + boardWidth + SCREENSTARTX, boardY -1 + SCREENSTARTY, 0x31);
+            set_bkg_tile_xy(boardX + boardWidth + SCREENSTARTX, boardY + boardHeight + SCREENSTARTY, 0x31);
+            set_bkg_tile_xy(boardX -1 + SCREENSTARTX, boardY + boardHeight + SCREENSTARTY, 0x31);
 
             for (x = 0; x != boardWidth; x++)
             {
-                set_bkg_tile_xy(boardX + x, boardY -1, arrowDown);
-                set_bkg_tile_xy(boardX + x, boardY + boardHeight, arrowUp);
+                set_bkg_tile_xy(boardX + x + SCREENSTARTX, boardY -1 + SCREENSTARTY, arrowDown);
+                set_bkg_tile_xy(boardX + x + SCREENSTARTX, boardY + boardHeight + SCREENSTARTY, arrowUp);
             }
 
             for (y = 0; y != boardHeight; y++)
             {
-                set_bkg_tile_xy(boardX - 1, boardY + y, arrowRight);
-                set_bkg_tile_xy(boardX + boardWidth, boardY + y, arrowLeft);
+                set_bkg_tile_xy(boardX - 1 + SCREENSTARTX, boardY + y + SCREENSTARTY, arrowRight);
+                set_bkg_tile_xy(boardX + boardWidth + SCREENSTARTX, boardY + y + SCREENSTARTY, arrowLeft);
             }
         }
     }
@@ -748,7 +748,7 @@ void updateBackgroundLevelSelect()
         //     }
         //     i16+=boardWidth;
         // }
-        set_bkg_tiles(boardX, boardY, boardWidth, boardHeight, level);
+        set_bkg_tiles(boardX + SCREENSTARTX, boardY + SCREENSTARTY, boardWidth, boardHeight, level);
         clearbit = 0;
         redrawLevelbit = 0;
     }
@@ -757,6 +757,7 @@ void updateBackgroundLevelSelect()
 void initLevelSelect()
 {
     set_bkg_data(0, 128, blockTiles);
+    clearBackgroundLayer(48);
     //need to clear background & it wil also draw the level
     clearbit = 1;
     redrawLevelbit = 1;
@@ -800,6 +801,12 @@ void levelSelect()
             {
                 gameState = gsGame;
                 playMenuAcknowlege();
+                startfade(FADEOUT, 0);
+                while(!fade())
+                {
+                    performantdelay(1);
+                }
+                startfade(FADEIN, 0);
             }
             else
             {
@@ -832,16 +839,16 @@ void levelSelect()
             tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);           
             if(tmpUnlocked == 0)
             {
-                printLevelSelectGame(0, 17, "LOCKED  ", 79);
+                printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "LOCKED  ", 79);
             }
             else
             {
                 if(tmpUnlocked == 1)
                 {
-                    printLevelSelectGame(0, 17, "UNLOCKED", 79);
+                    printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "UNLOCKED", 79);
                 }
             }
-            printNumber(6, 16, selectedLevel, 2, 61);
+            printNumber(6 + SCREENSTARTX, 16 + SCREENSTARTY, selectedLevel, 2, 61);
             delay = 6;
         }
         if ((joyPad & J_RIGHT) && (delay == 0))
@@ -867,16 +874,16 @@ void levelSelect()
             tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);
             if(tmpUnlocked == 0)
             {
-                printLevelSelectGame(0, 17, "LOCKED  ", 79);
+                printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "LOCKED  ", 79);
             }
             else
             {
                 if(tmpUnlocked == 1)
                 {
-                    printLevelSelectGame(0, 17, "UNLOCKED", 79);
+                    printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "UNLOCKED", 79);
                 }
             }
-            printNumber(6, 16, selectedLevel, 2, 61);
+            printNumber(6 + SCREENSTARTX, 16 + SCREENSTARTY, selectedLevel, 2, 61);
             delay = 6;
         }
         updateSwitches();
@@ -913,7 +920,7 @@ void updateBackgroundGame()
 
                     //if (get_bkg_tile_xy(x,y) != gameBackgroundMap[i16])
                     //{
-                        set_bkg_tile_xy(x, y, gameBackgroundMap[i16]);
+                        set_bkg_tile_xy(x + SCREENSTARTX, y + SCREENSTARTY, gameBackgroundMap[i16]);
                     //}
                 }
                 i16++;
@@ -921,33 +928,33 @@ void updateBackgroundGame()
         }
 
          //LEVEL:
-        printLevelSelectGame(0, 16, "LEVEL:", 61);
+        printLevelSelectGame(0 + SCREENSTARTX, 16 + SCREENSTARTY, "LEVEL:", 61);
         
         //[LEVEL NR] 2 chars
-        printNumber(6, 16, selectedLevel, 2, 61);
+        printNumber(6 + SCREENSTARTX, 16 + SCREENSTARTY, selectedLevel, 2, 61);
         
         //B:BACK
-        printLevelSelectGame(12, 16, "b:BACK", 61);
+        printLevelSelectGame(12 + SCREENSTARTX, 16 + SCREENSTARTY, "b:BACK", 61);
         
         //MOVES:
-        printLevelSelectGame(0, 17, "MOVES:", 61);
+        printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "MOVES:", 61);
 
         //A:XXXXXX (XXXXXX="ROTATE" or XXXXXX="SLIDE " or XXXXXX="ROSLID")
         if(gameMode == gmRotate)
         {
-            printLevelSelectGame(12, 17, "a:ROTATE", 61);
+            printLevelSelectGame(12 + SCREENSTARTX, 17 + SCREENSTARTY, "a:ROTATE", 61);
         }
         else
         {
             if(gameMode == gmSlide)
             {
-                printLevelSelectGame(12, 17, "a:SLIDE ", 61);
+                printLevelSelectGame(12 + SCREENSTARTX, 17 + SCREENSTARTY, "a:SLIDE ", 61);
             }
             else
             {
                 if(gameMode == gmRotateSlide)
                 {
-                    printLevelSelectGame(12, 17, "a:ROSLID", 61);
+                    printLevelSelectGame(12 + SCREENSTARTX, 17 + SCREENSTARTY, "a:ROSLID", 61);
                 }
             }
         }
@@ -955,21 +962,21 @@ void updateBackgroundGame()
         if(gameMode != gmRotate)
         {
             //corners to empty
-            set_bkg_tile_xy(boardX -1, boardY -1, 0x31);
-            set_bkg_tile_xy(boardX + boardWidth, boardY -1, 0x31);
-            set_bkg_tile_xy(boardX + boardWidth, boardY + boardHeight, 0x31);
-            set_bkg_tile_xy(boardX -1, boardY + boardHeight, 0x31);
+            set_bkg_tile_xy(boardX -1 + SCREENSTARTX, boardY -1 + SCREENSTARTY, 0x31);
+            set_bkg_tile_xy(boardX + boardWidth + SCREENSTARTX, boardY -1 + SCREENSTARTY, 0x31);
+            set_bkg_tile_xy(boardX + boardWidth + SCREENSTARTX, boardY + boardHeight + SCREENSTARTY, 0x31);
+            set_bkg_tile_xy(boardX -1 + SCREENSTARTX, boardY + boardHeight + SCREENSTARTY, 0x31);
             
             for (x = 0; x != boardWidth; x++)
             {
-                set_bkg_tile_xy(boardX + x, boardY -1, arrowDown);
-                set_bkg_tile_xy(boardX + x, boardY + boardHeight, arrowUp);
+                set_bkg_tile_xy(boardX + x + SCREENSTARTX, boardY -1 + SCREENSTARTY, arrowDown);
+                set_bkg_tile_xy(boardX + x + SCREENSTARTX, boardY + boardHeight + SCREENSTARTY, arrowUp);
             }
 
             for (y = 0; y != boardHeight; y++)
             {
-                set_bkg_tile_xy(boardX - 1, boardY + y, arrowRight);
-                set_bkg_tile_xy(boardX + boardWidth, boardY + y, arrowLeft);
+                set_bkg_tile_xy(boardX - 1 + SCREENSTARTX, boardY + y + SCREENSTARTY, arrowRight);
+                set_bkg_tile_xy(boardX + boardWidth + SCREENSTARTX, boardY + y + SCREENSTARTY, arrowLeft);
             }
         }
     }
@@ -988,9 +995,9 @@ void updateBackgroundGame()
         //     }
         //     i16+=boardWidth;
         // }
-        set_bkg_tiles(boardX, boardY, boardWidth, boardHeight, level);
+        set_bkg_tiles(boardX + SCREENSTARTX, boardY + SCREENSTARTY, boardWidth, boardHeight, level);
         //can put this inside here as well as it most probably changed also when level changed
-        printNumber(6,17, moves, 5, 61);
+        printNumber(6 + SCREENSTARTX,17 + SCREENSTARTY, moves, 5, 61);
         
         //clearbit is reset here otherwise too early because of "if" clearbit above
         redrawLevelbit = 0;
@@ -999,7 +1006,7 @@ void updateBackgroundGame()
     //level done
     if(redrawLevelDoneBit)
     {
-        set_bkg_tiles(5, lookUpTable[startPos].y + boardY, 10, 1, leveldone_map);
+        set_bkg_tiles(5 + SCREENSTARTX, lookUpTable[startPos].y + boardY + SCREENSTARTY, 10, 1, leveldone_map);
         redrawLevelDoneBit = 0;
     }
 
@@ -1010,6 +1017,7 @@ void initGame()
     SelectMusic(musGame, 1);
     //set background tiles
     set_bkg_data(0, 128, blockTiles);
+    clearBackgroundLayer(48);
     //set sprite for selector / cursor
     initCursors();
     setCursorPos(0, boardX + selectionX, boardY + selectionY);
@@ -1029,8 +1037,12 @@ void game()
     while(gameState == gsGame)
     {       
         updateBackgroundGame();
-        updateCursorFrame();
+        while(!fade())
+        {
+            performantdelay(1);
+        }
 
+        updateCursorFrame();
         prevJoyPad = joyPad;
         joyPad = joypad();
         if ((joyPad & J_DOWN) && (delay == 0))
@@ -1249,6 +1261,12 @@ void game()
                 hideCursors();
                 playMenuBackSound();
                 gameState = gsLevelSelect;                
+                startfade(FADEOUT, 0);
+                while(!fade())
+                {
+                    performantdelay(1);
+                }
+                startfade(FADEIN, 0);
                 //need to reset the level to initial state when going back to level selector
                 //could not find a better way unfortunatly
                 //also we do not want to reset the randomseed used for random level generating
@@ -1273,24 +1291,24 @@ void updateBackgroundTitleScreen()
     //if background needs clearing draw background and menu
     if(clearbit)
     {
-        set_bkg_tiles(0, 0, titlescreenMapWidth, titlescreenMapHeight, titlescreenMap);
+        set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, titlescreenMapWidth, titlescreenMapHeight, titlescreenMap);
         
         if (titleStep == tsMainMenu)
         {
-            printTitle(6,8, "MAIN MENU", 0);
-            printTitle(8,10, "START", 0);
-            printTitle(8,11, "HELP", 0);
+            printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY, "MAIN MENU", 0);
+            printTitle(8 + SCREENSTARTX, 10 + SCREENSTARTY, "START", 0);
+            printTitle(8 + SCREENSTARTX, 11 + SCREENSTARTY, "HELP", 0);
         }
         else
         {
             if (titleStep == tsDifficulty)
             {
-                printTitle(6,8, "VERY EASY", 0);
-                printTitle(6,9, "EASY", 0);
-                printTitle(6,10, "NORMAL", 0);
-                printTitle(6,11, "HARD", 0);
-                printTitle(6,12, "VERY HARD", 0);
-                printTitle(6,13, "RANDOM", 0);
+                printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY, "VERY EASY", 0);
+                printTitle(6 + SCREENSTARTX, 9 + SCREENSTARTY, "EASY", 0);
+                printTitle(6 + SCREENSTARTX, 10 + SCREENSTARTY, "NORMAL", 0);
+                printTitle(6 + SCREENSTARTX, 11 + SCREENSTARTY, "HARD", 0);
+                printTitle(6 + SCREENSTARTX, 12 + SCREENSTARTY, "VERY HARD", 0);
+                printTitle(6 + SCREENSTARTX, 13 + SCREENSTARTY, "RANDOM", 0);
             }
             else
             {
@@ -1298,15 +1316,15 @@ void updateBackgroundTitleScreen()
                 {
                     if (mainMenu == mmStartGame)
                     {
-                        printTitle(4,8, "SELECT  MODE", 0);
+                        printTitle(4 + SCREENSTARTX, 8 + SCREENSTARTY, "SELECT  MODE", 0);
                     }
                     else
                     {
-                        printTitle(6,8, "MODE HELP", 0);
+                        printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY, "MODE HELP", 0);
                     }
-                    printTitle(7,10, "ROTATE", 0);
-                    printTitle(7,11, "SLIDE", 0);
-                    printTitle(7,12, "ROSLID", 0);
+                    printTitle(7 + SCREENSTARTX, 10 + SCREENSTARTY, "ROTATE", 0);
+                    printTitle(7 + SCREENSTARTX, 11 + SCREENSTARTY, "SLIDE", 0);
+                    printTitle(7 + SCREENSTARTX, 12 + SCREENSTARTY, "ROSLID", 0);
 
                 }
             }
@@ -1323,11 +1341,11 @@ void updateBackgroundTitleScreen()
             {
                 if (y != mainMenu)
                 {
-                    printTitle(7, 10 + y, " ", 0);
+                    printTitle(7 + SCREENSTARTX, 10 + y + SCREENSTARTY, " ", 0);
                 }
             }
 
-            set_bkg_tile_xy(7, 10 + mainMenu, leftMenu); 
+            set_bkg_tile_xy(7 + SCREENSTARTX, 10 + mainMenu + SCREENSTARTY, leftMenu); 
         }
         else
         {
@@ -1339,11 +1357,11 @@ void updateBackgroundTitleScreen()
                 {
                     if (y != gameMode)
                     {
-                        printTitle(6, 10 + y, " ", 0);
+                        printTitle(6 + SCREENSTARTX, 10 + y + SCREENSTARTY, " ", 0);
                     }
                 }
 
-                set_bkg_tile_xy(6, 10 + gameMode, leftMenu); 
+                set_bkg_tile_xy(6 + SCREENSTARTX, 10 + gameMode + SCREENSTARTY, leftMenu); 
             }
             else
             if(titleStep == tsDifficulty)
@@ -1353,11 +1371,11 @@ void updateBackgroundTitleScreen()
                 {
                     if (y != difficulty)
                     {
-                        printTitle(5, 8 + y, " ", 0);
+                        printTitle(5 + SCREENSTARTX, 8 + y + SCREENSTARTY, " ", 0);
                     }
                 }
 
-                set_bkg_tile_xy(5, 8 + difficulty, leftMenu);
+                set_bkg_tile_xy(5 + SCREENSTARTX, 8 + difficulty + SCREENSTARTY, leftMenu);
             }
         }
         redrawLevelbit = 0;
@@ -1369,7 +1387,8 @@ void updateBackgroundTitleScreen()
 void initTitleScreen()
 {
     set_bkg_data(0, 126, titleTiles);
-    set_bkg_tiles(0, 0, titlescreenMapWidth, titlescreenMapHeight, titlescreenMap);
+    clearBackgroundLayer(0);
+    set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, titlescreenMapWidth, titlescreenMapHeight, titlescreenMap);
     clearbit = 1;
     SelectMusic(musTitle, 1);
 }
@@ -1537,26 +1556,27 @@ void titleScreen()
 void initLevelsCleared()
 {
     set_bkg_data(0, 91, congratsScreenTiles);
-    set_bkg_tiles(0, 0, congratsMapWidth, congratsMapHeight, congratsMap);
+    clearBackgroundLayer(0);
+    set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, congratsMapWidth, congratsMapHeight, congratsMap);
     if(difficulty == diffVeryEasy)
     {
-        printCongratsScreen(1, 7, "VERY EASY  LEVELS", 0);
+        printCongratsScreen(1 + SCREENSTARTX, 7 + SCREENSTARTY, "VERY EASY  LEVELS", 0);
     }
     if(difficulty == diffEasy)
     {
-        printCongratsScreen(3, 7, "EASY LEVELS", 0);
+        printCongratsScreen(3 + SCREENSTARTX, 7 + SCREENSTARTY, "EASY LEVELS", 0);
     }
     if(difficulty == diffNormal)
     {
-        printCongratsScreen(3, 7, "NORMAL LEVELS", 0);
+        printCongratsScreen(3 + SCREENSTARTX, 7 + SCREENSTARTY, "NORMAL LEVELS", 0);
     }
     if(difficulty == diffHard)
     {
-        printCongratsScreen(3, 7, "HARD LEVELS", 0);
+        printCongratsScreen(3 + SCREENSTARTX, 7 + SCREENSTARTY, "HARD LEVELS", 0);
     }
     if(difficulty == diffVeryHard)
     {
-        printCongratsScreen(1, 7, "VERY HARD  LEVELS", 0);
+        printCongratsScreen(1 + SCREENSTARTX, 7 + SCREENSTARTY, "VERY HARD  LEVELS", 0);
     }
     SelectMusic(musAllLevelsClear, 1);
 }
@@ -1564,7 +1584,7 @@ void initLevelsCleared()
 void levelsCleared()
 {
     initLevelsCleared();
-   
+    
     while (gameState == gsLevelsCleared)
     {
         while (!fade())
@@ -1596,7 +1616,8 @@ void levelsCleared()
 void initHelpRotateSlide()
 {
     set_bkg_data(0, 128, blockTiles);
-    set_bkg_tiles(0, 0, helpRotateSlideMapWidth, helpRotateSlideMapHeight, helpRotateSlideMap);
+    clearBackgroundLayer(48);
+    set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpRotateSlideMapWidth, helpRotateSlideMapHeight, helpRotateSlideMap);
     SelectMusic(musTitle, 1);
 }
 
@@ -1634,7 +1655,8 @@ void helpRotateSlide()
 void initHelpRotateSlide2()
 {
     set_bkg_data(0, 128, blockTiles);
-    set_bkg_tiles(0, 0, helpRotateSlide2MapWidth, helpRotateSlide2MapHeight, helpRotateSlide2Map);
+    clearBackgroundLayer(48);
+    set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpRotateSlide2MapWidth, helpRotateSlide2MapHeight, helpRotateSlide2Map);
     SelectMusic(musTitle, 1);
 
     //DRAW CURSOR SPRITES
@@ -1684,7 +1706,8 @@ void helpRotateSlide2()
 void initHelpRotate()
 {
     set_bkg_data(0, 128, blockTiles);
-    set_bkg_tiles(0, 0, helpRotateMapWidth, helpRotateMapHeight, helpRotateMap);
+    clearBackgroundLayer(48);
+    set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpRotateMapWidth, helpRotateMapHeight, helpRotateMap);
     SelectMusic(musTitle, 1);
 }
 
@@ -1721,7 +1744,8 @@ void helpRotate()
 void initHelpRotate2()
 {
     set_bkg_data(0, 128, blockTiles);
-    set_bkg_tiles(0, 0, helpRotate2MapWidth, helpRotate2MapHeight, helpRotate2Map);
+    clearBackgroundLayer(48);
+    set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpRotate2MapWidth, helpRotate2MapHeight, helpRotate2Map);
     SelectMusic(musTitle, 1);
 
     //DRAW CURSOR SPRITES
@@ -1770,7 +1794,8 @@ void helpRotate2()
 void initHelpSlide()
 {
     set_bkg_data(0, 128, blockTiles);
-    set_bkg_tiles(0, 0, helpSlideMapWidth, helpSlideMapHeight, helpSlideMap);
+    clearBackgroundLayer(48);
+    set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpSlideMapWidth, helpSlideMapHeight, helpSlideMap);
     SelectMusic(musTitle, 1);
 }
 
@@ -1807,7 +1832,8 @@ void helpSlide()
 void initHelpSlide2()
 {
     set_bkg_data(0, 128, blockTiles);
-    set_bkg_tiles(0, 0, helpSlide2MapWidth, helpSlide2MapHeight, helpSlide2Map);
+    clearBackgroundLayer(48);
+    set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpSlide2MapWidth, helpSlide2MapHeight, helpSlide2Map);
     SelectMusic(musTitle, 1);
     
     //DRAW CURSOR SPRITES
@@ -1857,6 +1883,12 @@ void helpSlide2()
 //intialisation of game & global variables
 void init() 
 {
+    #ifdef NINTENDO
+    if(_cpu == CGB_TYPE)
+    {
+        cpu_fast();
+    }
+    #endif
     setBlackPalette();
     DISPLAY_ON;
     prevBoardHeight = 0;

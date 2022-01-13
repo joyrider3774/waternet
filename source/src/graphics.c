@@ -4,26 +4,30 @@
 #include "graphics.h"
 
 uint8_t fadein, fadeCounter,fadeStep, startFade, fadeSteps;
-uint16_t  toPallette[4];
+palette_color_t  toPallette[4];
 
-const uint16_t blackPallette[4] = {
+const palette_color_t blackPallette[4] = {
 	0, 0, 0, 0
 };
 
-const uint16_t bkgPaletteGame[4] = {
-	RGB8(128u,128u,128u), RGB8(0,0,128u), RGB8(0,0,255u), RGB8(0,0,64u)
+const palette_color_t bkgPaletteGame[4] = {
+    RGB8(128u,128u,128u), RGB8(0,0,128u), RGB8(0,0,255u), RGB8(0,0,64u)
 };
 
-const uint16_t bkgPaletteTitle[4] = {
-	RGB8(128u,128u,128u), RGB8(0,0,255u), RGB8(0,0,128u), RGB8(0,0,64u)
+const palette_color_t bkgPaletteTitle[4] = {
+    RGB8(128u,128u,128u), RGB8(0,0,255u), RGB8(0,0,128u), RGB8(0,0,64u)
 };
+
+void clearBackgroundLayer(uint8_t tile)
+{
+    fill_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, tile);
+}
 
 void setBlackPalette()
 {
     #ifdef NINTENDO
     if (_cpu == CGB_TYPE) 
     {
-        cpu_fast();
     #endif
         set_bkg_palette(0, 1, blackPallette);
     #ifdef NINTENDO
@@ -87,7 +91,7 @@ void startfade(uint8_t afadein, uint8_t ForTitle)
 }
 
 //based on zgdb source
-uint16_t fadeBlack(uint8_t step, uint16_t color) 
+palette_color_t fadeBlack(uint8_t step, palette_color_t color) 
 {
     return RGB(
         PAL_RED(color) >> (step),
@@ -100,7 +104,7 @@ uint16_t fadeBlack(uint8_t step, uint16_t color)
 void fadeInCGB() 
 {
     uint8_t c;
-    uint16_t palette[4];
+    palette_color_t palette[4];
 
     for(c = 0; c != 4; c++) 
     {
@@ -113,7 +117,7 @@ void fadeInCGB()
 void fadeOutCGB()
 {
     uint8_t c;
-    uint16_t palette[4];
+    palette_color_t palette[4];
 
     for(c = 0; c != 4; c++) {
         palette[c] = fadeBlack(fadeStep, toPallette[c]);
