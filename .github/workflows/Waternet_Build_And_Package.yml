@@ -60,7 +60,7 @@ jobs:
           release: false
           update: false
           install: >-
-            base-devel
+            make 7z
        
        # ==== Build Steps ====
       - name: Check out Sources
@@ -69,7 +69,6 @@ jobs:
           path: waternet_gamboy
           submodules: false
       - name: Grab GBDK
-        shell: cmd
         run: |
           cd waternet_gamboy
           cd gdbk_build
