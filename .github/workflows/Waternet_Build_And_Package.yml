@@ -77,7 +77,7 @@ jobs:
           echo $GBDK_HOME
           cd waternet_gamboy
           cd source
-          msys2 -c "make ${{ matrix.rom }}"
+          make ${{ matrix.rom }}
           cd ..
           cd ..
       
