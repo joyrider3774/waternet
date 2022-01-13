@@ -40,7 +40,10 @@ jobs:
           - rom: duck
             name: Mega Duck
     runs-on: windows-latest
-    
+    defaults:
+      run:
+        shell: msys2 {0}
+        
     steps:
       # ==== dependencies ====
       - name: Windows Depends MSYS2/MinGW64
