@@ -81,21 +81,10 @@ jobs:
           cd source
           make ${{ matrix.rom }}
           cd ..
-      
-      - name: Package Build
-        run: |
-          mkdir -p package
-          cd source
-          cd build
-          cd ${{ matrix.ext }}
-          7z a "../../../package/Waternet - ${{ matrix.name }}.zip" "waternet.${{ matrix.ext }}"
-          cd ..
-          cd ..
-          cd ..
           
       - name: Store build
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.name }} build
-          path: package/Waternet - ${{ matrix.name }}.zip
+          name: Waternet - ${{ matrix.name }}
+          path: source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}
           # retention-days: 30
