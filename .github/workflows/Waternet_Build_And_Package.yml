@@ -84,7 +84,7 @@ jobs:
           cp "source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" package
           cp LICENSE package
           cp README.md package
-          cp "images/waternet label 4.2 x 3.7 cm.png" package
+          cp "cartridge_labels/waternet.${{ matrix.rom }}.png" package
           
       - name: Store build
         uses: actions/upload-artifact@v2
