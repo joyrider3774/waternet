@@ -1,21 +1,17 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Waternet Build And Package
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
-  # push:
-  #  branches: [ main ]
+  push:
+   branches: [ main ]
   # pull_request:
   #  branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
     strategy:
       matrix:
@@ -25,19 +21,25 @@ jobs:
           - gg
           - pocket
           - sms
-          - duck
+          - megaduck
         include:
           - rom: gb
-            name: Nintedo Game Boy
+            ext: gb
+            name: Nintendo Game Boy
           - rom: gbc
-            name: Nintedo Game Boy Color
+            ext: gbc
+            name: Nintendo Game Boy Color
           - rom: gg
+            ext: gg
             name: Sega Game Gear
           - rom: pocket
+            ext: pocket
             name: Analogue Pocket
           - rom: sms
+            ext: sms
             name: Sega Master System
-          - rom: duck
+          - rom: megaduck
+            ext: duck
             name: Mega Duck
     runs-on: windows-latest
     defaults:
@@ -54,45 +56,39 @@ jobs:
           release: false
           update: false
           install: >-
-            base-devel
+            make
+            p7zip
        
        # ==== Build Steps ====
       - name: Check out Sources
         uses: actions/checkout@v2
         with:
-          path: waternet_gamboy
           submodules: false
       - name: Grab GBDK
-        shell: cmd
         run: |
-          cd waternet_gamboy
           cd gdbk_build
           7z x "Windows-x64 build.zip"
-          cd ..
           cd ..
           
       - name: Build
         run: |
-          export GBDK_HOME="$PWD/waternet_gamboy/gdbk_build/gbdk/"
+          export GBDK_HOME="$PWD/gdbk_build/gbdk/"
           echo $GBDK_HOME
-          cd waternet_gamboy
           cd source
           make ${{ matrix.rom }}
           cd ..
-          cd ..
-      
-      - name: Package Build
+          
+      - name: Prepare artifacts
         run: |
-          cd waternet_gamboy
-          mkdir package
-          cd build
-          7z a ../package/waternet ${{ matrix.name }}.zip waternet.${{ matrix.rom }}
-          cd ..
-          cd ..
+          mkdir -p package
+          cp "source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" package
+          cp LICENSE package
+          cp README.md package
+          cp "images/waternet label 4.2 x 3.7 cm.png" package
           
       - name: Store build
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.name }} build
-          path: waternet_gamboy/package/waternet ${{ matrix.name }}.zip
+          name: Waternet - ${{ matrix.name }}
+          path: package/
           # retention-days: 30

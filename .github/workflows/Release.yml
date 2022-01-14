@@ -1,0 +1,45 @@
+name: Release A Version
+
+on:
+  # push:
+  #   branches: [ main ]
+  # pull_request:
+  #   branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download Artifacts
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: Waternet_Build_And_Package.yml
+          workflow_conclusion: success
+          path: artifacts
+      - name: ReZip Artifacts
+        working-directory: artifacts
+        run: |
+          7z a "Waternet Nintendo Game Boy.zip" "Waternet - Nintendo Game Boy/."
+          7z a "Waternet Nintendo Game Boy Color.zip" "Waternet - Nintendo Game Boy Color/."
+          7z a "Waternet Sega Game Gear.zip" "Waternet - Sega Game Gear/."
+          7z a "Waternet Sega Master System.zip" "Waternet - Sega Master System/."
+          7z a "Waternet Mega Duck.zip" "Waternet - Mega Duck/."
+          7z a "Waternet Analogue Pocket.zip" "Waternet - Analogue Pocket/."
+      - name: Make Draft Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Waternet vx.x
+          draft: true
+          files: |
+            artifacts/Waternet Nintendo Game Boy.zip
+            artifacts/Waternet Nintendo Game Boy Color.zip
+            artifacts/Waternet Sega Game Gear.zip
+            artifacts/Waternet Sega Master System.zip
+            artifacts/Waternet Mega Duck.zip
+            artifacts/Waternet Analogue Pocket.zip
