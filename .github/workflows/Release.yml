@@ -1,0 +1,33 @@
+name: Release A Version
+
+on:
+  # push:
+  #   branches: [ main ]
+  # pull_request:
+  #   branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+      - name: Make Draft Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: |
+            artifacts/Waternet - Nintendo Game Boy/
+            artifacts/Waternet - Nintendo Game Boy Color/
+            artifacts/Waternet - Sega Game Gear/
+            artifacts/Waternet - Sega Master System/
+            artifacts/Waternet - Mega Duck/
+            artifacts/Waternet - Analogue Pocket/
