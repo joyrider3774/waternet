@@ -45,6 +45,7 @@ Waternet game concept is based on the Net and Netslide game from the [Simon Tath
 
 ### Cartridge Graphcis used
 * [Game Boy Cartridge Template](https://www.deviantart.com/armando92/art/Label-Template-for-Gameboy-Gameboy-Color-Carts-418758475) - armando92
+* [Game Gear Cartridge Template](https://www.smspower.org/forums/files/gg_label_design_v10_126.png) - SegaSonicFan Designs
 * [Water droplets](https://www.cleanpng.com/png-circle-graphic-design-brand-pattern-cartoon-fine-d-440349/) - Baure
 * [Plumber Guy](https://www.cleanpng.com/png-commercial-cleaning-window-cleaner-maid-service-ja-4614244/) - Endara
 * [Plastic Pipes](https://www.cleanpng.com/png-piping-and-plumbing-fitting-plastic-pipework-chlor-5780276/) - Jaumo
