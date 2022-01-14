@@ -10,7 +10,6 @@ Waternet is a multiplatform puzzle game written for old consoles and handhelds l
 ### Game Boy
 <img src="images/gb_menu.jpg" height="450"> <img src="images/gb_level.jpg" height="450">
 
-
 ## Graphics 
 Graphics (tiles), i created in [Game Boy Tile Designer](http://www.devrs.com/gb/hmgd/gbtd.html) and the titlescreen graphic is based on a modified title screen image from my waternet game i made for [gp2x](https://www.willemssoft.be/index.php?main=5&sub=6&action=productdetails&id=218) and [windows](https://www.willemssoft.be/index.php?main=46&sub=7&action=productdetails&id=220). I designed the title screen in the [Gimp Image Editor](https://www.gimp.org/) to just have the word waternet, the waterdrop and the menu box to fit it all on the Game Boy screen. Afterwards i used [Game Boy Png Converter](https://github.com/gingemonster/GameBoyPngConverter) to convert the titlescreen to an optimized tilemap and tiles. 
 
@@ -35,6 +34,9 @@ To create the cartridge graphics i used a [template](https://www.deviantart.com/
 ### Game Gear
 <img src="/cartridge_labels/waternet.gg.png" height="250">
 
+### Master System - 10.3  x 2 cm.
+<img src="/cartridge_labels/waternet.sms.png" height="150">
+
 ## Credits
 Waternet game concept is based on the Net and Netslide game from the [Simon Tatham's Portable Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtatham/puzzles/), it's my own implementation of these 2 game concepts
 
@@ -49,6 +51,7 @@ Waternet game concept is based on the Net and Netslide game from the [Simon Tath
 ### Cartridge Graphcis used
 * [Game Boy Cartridge Template](https://www.deviantart.com/armando92/art/Label-Template-for-Gameboy-Gameboy-Color-Carts-418758475) - armando92
 * [Game Gear Cartridge Template](https://www.smspower.org/forums/files/gg_label_design_v10_126.png) - SegaSonicFan Designs
+* [Master System Cartridge Template](https://www.deviantart.com/borracho2x/art/Template-Sega-Master-System-805970013) - borracho2x
 * [Water droplets](https://www.cleanpng.com/png-circle-graphic-design-brand-pattern-cartoon-fine-d-440349/) - Baure
 * [Plumber Guy](https://www.cleanpng.com/png-commercial-cleaning-window-cleaner-maid-service-ja-4614244/) - Endara
 * [Plastic Pipes](https://www.cleanpng.com/png-piping-and-plumbing-fitting-plastic-pipework-chlor-5780276/) - Jaumo
