@@ -22,10 +22,8 @@ jobs:
           workflow: Waternet_Build_And_Package.yml
           workflow_conclusion: success
           path: artifacts
-      - name: List Artifacts
-        run: ls -R
-        working-directory: artifacts
       - name: ReZip Artifacts
+        working-directory: artifacts
         run: |
           7z a "Waternet - Nintendo Game Boy.zip" "Waternet - Nintendo Game Boy/*"
           7z a "Waternet - Nintendo Game Boy Color.zip" "Waternet - Nintendo Game Boy Color/*"
