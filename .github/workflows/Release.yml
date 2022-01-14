@@ -20,6 +20,8 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: artifacts
+      - name: List Artifacts
+        run: ls -R artifacts
       - name: Make Draft Release
         uses: softprops/action-gh-release@v1
         with:
