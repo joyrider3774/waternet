@@ -32,6 +32,9 @@ To create the cartridge graphics i used a [template](https://www.deviantart.com/
 ### Game Boy (Color) - 4.2 x 3.7 cm.
 <img src="/cartridge_labels/waternet.gbc.png" height="250">
 
+### Game Gear
+<img src="/cartridge_labels/waternet.gg.png" height="250">
+
 ## Credits
 Waternet game concept is based on the Net and Netslide game from the [Simon Tatham's Portable Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtatham/puzzles/), it's my own implementation of these 2 game concepts
 
