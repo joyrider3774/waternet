@@ -3,7 +3,7 @@ Waternet is a multiplatform puzzle game written for old consoles and handhelds l
 
 ## Photo's of the game running on real hardware
 
-### Analogue Pocket
+### Analogue Pocket (thanks to [bbbbbr](https://github.com/bbbbbr))
 <img src="images/ap_gb_menu.jpg" height="300"> <img src="images/ap_gb_level.jpg" height="300">
 <img src="images/ap_gbc_menu.jpg" height="300"> <img src="images/ap_gbc_level.jpg" height="300">
 
