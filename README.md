@@ -1,5 +1,5 @@
-# Waternet for Game Boy (Color), Game Gear, Master System, Analogue Pocket and Mega Duck.
-Waternet is a multiplatform puzzle game written for old consoles and handles (GB, GBC, GG, SMS, MEGADUCK and Analogue Pocket) using the gbdk sdk. 
+# Waternet Multiplatform Retro Game
+Waternet is a multiplatform puzzle game written for old consoles and handhelds like Game Boy (Color), Game Gear, Master System, Analogue Pocket and Mega Duck using the gbdk sdk. 
 
 ## Graphics 
 Graphics (tiles), i created in [Game Boy Tile Designer](http://www.devrs.com/gb/hmgd/gbtd.html) and the titlescreen graphic is based on a modified title screen image from my waternet game i made for [gp2x](https://www.willemssoft.be/index.php?main=5&sub=6&action=productdetails&id=218) and [windows](https://www.willemssoft.be/index.php?main=46&sub=7&action=productdetails&id=220). I designed the title screen in the [Gimp Image Editor](https://www.gimp.org/) to just have the word waternet, the waterdrop and the menu box to fit it all on the Game Boy screen. Afterwards i used [Game Boy Png Converter](https://github.com/gingemonster/GameBoyPngConverter) to convert the titlescreen to an optimized tilemap and tiles. 
