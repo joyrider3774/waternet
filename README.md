@@ -17,9 +17,10 @@ You can find the music files i used for the game below:
 To test my rom on real Game Boy hardware i used a flash cartridge named EZ-Flash Jr. It allowed me to put my compiled rom on a sd card and the load that rom from the gameboy itself. I'm guessing these flash cardridges flash a certain chip on the fly or so when you select it or some other way, but it allowed me to test my game's on a real Game Boy and Game Boy Color. I highly advise anyone making Game Boy games to do something similar as initially everything looked fine on an emulator on pc but as soon as i tested on the real hardware i noticed some tiles were not really visible and i had to adapt the tiles i initially created.
 
 ## Cartridge Graphics
-To create the cartridge graphics i used a [template](https://www.deviantart.com/armando92/art/Label-Template-for-Gameboy-Gameboy-Color-Carts-418758475) made by armando92 to start with in Gimp and then added different pictures i found on [cleanpng](https://www.cleanpng.com) to create the Cartridge Label and the logo i created using a [free logo creator](https://www.flamingtext.com/) site. You can see the end result below. The cartridge is aimed to be used as a 4.2x3.7 cm print.
+To create the cartridge graphics i used a [template](https://www.deviantart.com/armando92/art/Label-Template-for-Gameboy-Gameboy-Color-Carts-418758475) made by armando92 to start with in Gimp and then added different pictures i found on [cleanpng](https://www.cleanpng.com) to create the Cartridge Label and the logo i created using a [free logo creator](https://www.flamingtext.com/) site. You can see the end result below. 
 
-![Waternet Cartridge Image](/images/waternet%20label%204.2%20x%203.7%20cm.png)
+* Game Boy (Color) - 4.2 x 3.7 cm.
+![Waternet Cartridge Image](/cartridge_labels/waternet.gbc.png)
 
 ## Credits
 Waternet game concept is based on the Net and Netslide game from the [Simon Tatham's Portable Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtatham/puzzles/), it's my own implementation of these 2 game concepts
