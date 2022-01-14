@@ -41,6 +41,7 @@ Waternet game concept is based on the Net and Netslide game from the [Simon Tath
 ### Code Credits
 * Fading function for Game Boy Color is based on ZGB's implementation - https://github.com/Zal0/ZGB
 * Music [implementation](https://www.gamedeveloper.com/programming/making-a-game-boy-game-in-2017-a-quot-sheep-it-up-quot-post-mortem-part-2-2-) based on system used in the [sheep it up](https://gamejolt.com/games/sheepitup/267335) gameboy game made by Dr. Ludos
+* Music on Sega hardwarde wouldn't have been possible without the help from [SelvinPL's Sega Sound example](https://github.com/SelvinPL/SegaSound)
 
 ### Cartridge Graphcis used
 * [Game Boy Cartridge Template](https://www.deviantart.com/armando92/art/Label-Template-for-Gameboy-Gameboy-Color-Carts-418758475) - armando92
