@@ -81,7 +81,7 @@ jobs:
       - name: Prepare artifacts
         run: |
           mkdir -p package
-          cp "../source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" package
+          cp "source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" package
           cp LICENSE" package
           cp README.md" package
           cp images/waternet label 4.2 x 3.7 cm.png" package
