@@ -80,17 +80,15 @@ jobs:
           
       - name: Prepare artifacts
         run: |
-          mkdir -p "package/{{ matrix.rom }}"
-          cd "package/{{ matrix.rom }}"
-          cp "../source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" ./
-          cp "../LICENSE" ./
-          cp "../README.md" ./
-          cp "../images/waternet label 4.2 x 3.7 cm.png" ./
-          cd ..
+          mkdir -p package
+          cp "../source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" package
+          cp LICENSE" package
+          cp README.md" package
+          cp images/waternet label 4.2 x 3.7 cm.png" package
           
       - name: Store build
         uses: actions/upload-artifact@v2
         with:
           name: Waternet - ${{ matrix.name }}
-          path: package\{{ matrix.rom }}/
+          path: package/
           # retention-days: 30
