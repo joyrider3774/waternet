@@ -25,21 +25,21 @@ jobs:
       - name: ReZip Artifacts
         working-directory: artifacts
         run: |
-          7z a "Waternet - Nintendo Game Boy.zip" "Waternet - Nintendo Game Boy/*"
-          7z a "Waternet - Nintendo Game Boy Color.zip" "Waternet - Nintendo Game Boy Color/*"
-          7z a "Waternet - Sega Game Gear.zip" "Waternet - Sega Game Gear/*"
-          7z a "Waternet - Sega Master System.zip" "Waternet - Sega Master System/*"
-          7z a "Waternet - Mega Duck.zip" "Waternet - Mega Duck/*"
-          7z a "Waternet - Analogue Pocket.zip" "Waternet - Analogue Pocket/*"
+          7z a "Waternet Nintendo Game Boy.zip" "Waternet - Nintendo Game Boy/*"
+          7z a "Waternet Nintendo Game Boy Color.zip" "Waternet - Nintendo Game Boy Color/*"
+          7z a "Waternet Sega Game Gear.zip" "Waternet - Sega Game Gear/*"
+          7z a "Waternet Sega Master System.zip" "Waternet - Sega Master System/*"
+          7z a "Waternet Mega Duck.zip" "Waternet - Mega Duck/*"
+          7z a "Waternet Analogue Pocket.zip" "Waternet - Analogue Pocket/*"
       - name: Make Draft Release
         uses: softprops/action-gh-release@v1
         with:
           name: Waternet vx.x
           draft: true
           files: |
-            artifacts/Waternet - Nintendo Game Boy.zip
-            artifacts/Waternet - Nintendo Game Boy Color.zip
-            artifacts/Waternet - Sega Game Gear.zip
-            artifacts/Waternet - Sega Master System.zip
-            artifacts/Waternet - Mega Duck.zip
-            artifacts/Waternet - Analogue Pocket.zip
+            artifacts/Waternet Nintendo Game Boy.zip
+            artifacts/Waternet Nintendo Game Boy Color.zip
+            artifacts/Waternet Sega Game Gear.zip
+            artifacts/Waternet Sega Master System.zip
+            artifacts/Waternet Mega Duck.zip
+            artifacts/Waternet Analogue Pocket.zip
