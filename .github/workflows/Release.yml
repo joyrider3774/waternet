@@ -17,8 +17,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Download Artifacts
-        uses: actions/download-artifact@v2
+        uses: dawidd6/action-download-artifact@v2
         with:
+          workflow: Waternet_Build_And_Package.yml
+          workflow_conclusion: success
           path: artifacts
       - name: List Artifacts
         run: ls -R
