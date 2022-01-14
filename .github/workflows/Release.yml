@@ -21,7 +21,8 @@ jobs:
         with:
           path: artifacts
       - name: List Artifacts
-        run: ls -R artifacts
+        run: ls -R
+        working-directory: artifacts
       - name: Make Draft Release
         uses: softprops/action-gh-release@v1
         with:
