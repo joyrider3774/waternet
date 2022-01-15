@@ -74,7 +74,6 @@ jobs:
       - name: Prepare artifacts
         run: |
           mkdir -p package
-          pandoc-2.17.0.1/pandoc.exe ./README.md -s -o package/readme.pdf
           cp "source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" package
           cp LICENSE package
           cp "cartridge_labels/waternet.${{ matrix.rom }}.png" package
