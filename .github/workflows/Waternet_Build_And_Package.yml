@@ -58,8 +58,12 @@ jobs:
           install: >-
             make
             p7zip
-            pandoc
-       
+            
+      - name: Grab pandoc binary
+        run: |
+          curl -Lo pandoc.zip https://github.com/jgm/pandoc/releases/download/2.17.0.1/pandoc-2.17.0.1-windows-x86_64.zip
+          7z x pandoc.zip
+          
        # ==== Build Steps ====
       - name: Check out Sources
         uses: actions/checkout@v2
@@ -82,10 +86,11 @@ jobs:
       - name: Prepare artifacts
         run: |
           mkdir -p package
+          pandoc-2.17.0.1/pandoc.exe ./README.md -s -o package/readme.pdf
           cp "source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" package
           cp LICENSE package
-          pandoc README.md -s -o package/README.pdf
           cp "cartridge_labels/waternet.${{ matrix.rom }}.png" package
+               
                
       - name: Store build
         uses: actions/upload-artifact@v2
