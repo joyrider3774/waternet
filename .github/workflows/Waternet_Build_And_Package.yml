@@ -58,6 +58,7 @@ jobs:
           install: >-
             make
             p7zip
+            pandoc
        
        # ==== Build Steps ====
       - name: Check out Sources
@@ -83,15 +84,9 @@ jobs:
           mkdir -p package
           cp "source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" package
           cp LICENSE package
+          pandoc README.md -s -o package/README.pdf
           cp "cartridge_labels/waternet.${{ matrix.rom }}.png" package
-      
-      - name: Convert Readme.md to PDF
-        uses: mkrakowitzer/actions-makepdfs@master
-        with:
-          markdown_dir: .
-          media_dir: images
-          output_dir: package
-          
+               
       - name: Store build
         uses: actions/upload-artifact@v2
         with:
