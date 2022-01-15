@@ -85,7 +85,7 @@ jobs:
           cp LICENSE package
           cp "cartridge_labels/waternet.${{ matrix.rom }}.png" package
       
-      - name: Convert Readme.md to PDF:
+      - name: Convert Readme.md to PDF
         uses: baileyjm02/markdown-to-pdf@v1
         with:
           input_dir: .
