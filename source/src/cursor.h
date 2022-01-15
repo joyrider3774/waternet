@@ -1,8 +1,8 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-#define MAXCURSORFRAMECOUNT 5
-#define CURSORANIMCOUNT 3
+#define MAXCURSORFRAMECOUNT 10
+#define CURSORANIMCOUNT 4
 
 void updateCursorFrame();
 void hideCursors();
