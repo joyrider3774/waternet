@@ -76,7 +76,7 @@ jobs:
           mkdir -p package
           cp "source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" package
           cp LICENSE package
-          cp "cartridge_labels/waternet.${{ matrix.rom }}.png" package
+          cp "images/cartridge_labels/waternet.${{ matrix.rom }}.png" package
       
       - name: Make Readme.pdf
         uses: baileyjm02/markdown-to-pdf@v1
