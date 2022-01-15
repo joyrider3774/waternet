@@ -13,7 +13,7 @@
 //      Sheep it up! - A tiny GB/GBC game for the bitbitjam4 game jam
 //		by Dr. Ludos (http://www.ludoscience.com)
 
-uint8_t music_note, music_tempo, music_length, music_loop, prev_music, sustain_note, sfx_sustain;
+uint8_t music_note, music_tempo, music_length, music_loop, prev_music, sustain_note, sfx_sustain, music_on, sound_on;
 uint8_t musicArray[255];
 
 //Here is kind of "quick'n dirty" custom music player made using solely the Channel 2 of the GB
@@ -387,7 +387,10 @@ void musicTimer()
     //Play some music
     if( music_tempo == 0 )
     {
-        playNote();     
+        if(music_on)
+        {
+            playNote();
+        }
     }
     //Else wait for the next note to play
     else 
@@ -480,6 +483,10 @@ void processSoundSega()
 
 void playGameMoveSound()
 {
+    if(!sound_on)
+    {
+        return;
+    }
     #ifdef NINTENDO
     NR10_REG = 0x00;
     NR11_REG = 0x40;
@@ -497,6 +504,10 @@ void playGameMoveSound()
 
 void playErrorSound()
 {
+    if(!sound_on)
+    {
+        return;
+    }
     #ifdef NINTENDO
     NR10_REG = 0x19;
     NR11_REG = 0xC2;
@@ -513,6 +524,10 @@ void playErrorSound()
 
 void playMenuSelectSound()
 {
+    if(!sound_on)
+    {
+        return;
+    }
     #ifdef NINTENDO
     NR10_REG = 0x00;
     NR11_REG = 0x00;
@@ -530,6 +545,10 @@ void playMenuSelectSound()
 
 void playMenuBackSound()
 {
+    if(!sound_on)
+    {
+        return;
+    }
     #ifdef NINTENDO
     NR10_REG = 0x00;
     NR11_REG = 0x81;
@@ -547,6 +566,10 @@ void playMenuBackSound()
 
 void playMenuAcknowlege()
 {
+    if(!sound_on)
+    {
+        return;
+    }
     #ifdef NINTENDO
     NR10_REG = 0x57;
     NR11_REG = 0x03;
@@ -564,6 +587,10 @@ void playMenuAcknowlege()
 
 void playGameAction()
 {
+    if(!sound_on)
+    {
+        return;
+    }
     #ifdef NINTENDO
     NR10_REG = 0x00;
     NR11_REG = 0x80;

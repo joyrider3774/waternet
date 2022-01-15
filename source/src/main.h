@@ -33,11 +33,17 @@
 
 #define mmStartGame 0
 #define mmHelp 1
-#define mmCount 2
+#define mmOptions 2
+#define mmCount 3
+
+#define opMusic 0
+#define opSound 1
+#define opCount 2
 
 #define tsMainMenu 0
 #define tsGameMode 1
 #define tsDifficulty 2
+#define tsOptions 3
 
 #define levelCount 25
 

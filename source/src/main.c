@@ -33,7 +33,8 @@ uint8_t startPos, menuPos,
         gameState, boardWidth, boardHeight, boardSize, prevBoardWidth, prevBoardHeight,
         i, j, x, y, rnd, index, cc, maxcc, clearbit, redrawLevelbit, levelDone,
         prevJoyPad, titleStep, gameMode, posAdd, redrawLevelDoneBit,
-        tmp, neighboursFound, selectedNeighbour, currentPoint, visitedRooms,  mainMenu;
+        tmp, neighboursFound, selectedNeighbour, currentPoint, visitedRooms,  mainMenu,
+        option;
         
 int16_t selectionX, selectionY,i16;
 uint16_t rnd16, randomSeed, moves;
@@ -1296,8 +1297,9 @@ void updateBackgroundTitleScreen()
         if (titleStep == tsMainMenu)
         {
             printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY, "MAIN MENU", 0);
-            printTitle(8 + SCREENSTARTX, 10 + SCREENSTARTY, "START", 0);
-            printTitle(8 + SCREENSTARTX, 11 + SCREENSTARTY, "HELP", 0);
+            printTitle(7 + SCREENSTARTX, 10 + SCREENSTARTY, "START", 0);
+            printTitle(7 + SCREENSTARTX, 11 + SCREENSTARTY, "HELP", 0);
+            printTitle(7 + SCREENSTARTX, 12 + SCREENSTARTY, "OPTIONS", 0);
         }
         else
         {
@@ -1327,12 +1329,39 @@ void updateBackgroundTitleScreen()
                     printTitle(7 + SCREENSTARTX, 12 + SCREENSTARTY, "ROSLID", 0);
 
                 }
+                else
+                {
+                    if (titleStep == tsOptions)
+                    {
+                        printTitle(7 + SCREENSTARTX, 8 + SCREENSTARTY, "OPTIONS", 0);
+                    }
+                }
             }
         }
     }
     
     if(clearbit || redrawLevelbit)
     {
+        if(titleStep == tsOptions)
+        {
+            if(music_on)
+            {
+                printTitle(6 + SCREENSTARTX, 10 + SCREENSTARTY, "MUSIC ON ", 0);
+            }
+            else
+            {
+                printTitle(6 + SCREENSTARTX, 10 + SCREENSTARTY, "MUSIC OFF", 0);
+            }
+
+            if(sound_on)
+            {
+                printTitle(6 + SCREENSTARTX, 11 + SCREENSTARTY, "SOUND ON ", 0);
+            }
+            else
+            {
+                printTitle(6 + SCREENSTARTX, 11 + SCREENSTARTY, "SOUND OFF", 0);
+            }
+        }
         //set menu tile
         if (titleStep == tsMainMenu)
         {
@@ -1341,11 +1370,11 @@ void updateBackgroundTitleScreen()
             {
                 if (y != mainMenu)
                 {
-                    printTitle(7 + SCREENSTARTX, 10 + y + SCREENSTARTY, " ", 0);
+                    printTitle(6 + SCREENSTARTX, 10 + y + SCREENSTARTY, " ", 0);
                 }
             }
 
-            set_bkg_tile_xy(7 + SCREENSTARTX, 10 + mainMenu + SCREENSTARTY, leftMenu); 
+            set_bkg_tile_xy(6 + SCREENSTARTX, 10 + mainMenu + SCREENSTARTY, leftMenu); 
         }
         else
         {
@@ -1364,18 +1393,36 @@ void updateBackgroundTitleScreen()
                 set_bkg_tile_xy(6 + SCREENSTARTX, 10 + gameMode + SCREENSTARTY, leftMenu); 
             }
             else
-            if(titleStep == tsDifficulty)
             {
-                //clear menu selector
-                for (y = diffVeryEasy; y < diffCount; y++)
+                if(titleStep == tsDifficulty)
                 {
-                    if (y != difficulty)
+                    //clear menu selector
+                    for (y = diffVeryEasy; y < diffCount; y++)
                     {
-                        printTitle(5 + SCREENSTARTX, 8 + y + SCREENSTARTY, " ", 0);
+                        if (y != difficulty)
+                        {
+                            printTitle(5 + SCREENSTARTX, 8 + y + SCREENSTARTY, " ", 0);
+                        }
                     }
-                }
 
-                set_bkg_tile_xy(5 + SCREENSTARTX, 8 + difficulty + SCREENSTARTY, leftMenu);
+                    set_bkg_tile_xy(5 + SCREENSTARTX, 8 + difficulty + SCREENSTARTY, leftMenu);
+                }
+                else
+                {
+                    if(titleStep == tsOptions)
+                    {
+                        //clear menu selector
+                        for (y = opMusic; y < opCount; y++)
+                        {
+                            if (y != option)
+                            {
+                                printTitle(5 + SCREENSTARTX, 10 + y + SCREENSTARTY, " ", 0);
+                            }
+                        }
+
+                        set_bkg_tile_xy(5 + SCREENSTARTX, 10 + option + SCREENSTARTY, leftMenu);
+                    }    
+                }
             }
         }
         redrawLevelbit = 0;
@@ -1442,6 +1489,18 @@ void titleScreen()
                             redrawLevelbit = 1;
                         }
                     }
+                    else
+                    {
+                        if(titleStep == tsOptions)
+                        {
+                            if(option > opMusic)
+                            {
+                                playMenuSelectSound();
+                                option--;
+                                redrawLevelbit = 1;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1449,7 +1508,7 @@ void titleScreen()
         {
             if (titleStep == tsMainMenu)
             {
-                if(mainMenu < mmHelp)
+                if(mainMenu < mmCount-1)
                 {
                     playMenuSelectSound();
                     mainMenu++;
@@ -1460,7 +1519,7 @@ void titleScreen()
             {
                 if (titleStep == tsGameMode)
                 {
-                    if(gameMode < gmRotateSlide)
+                    if(gameMode < gmCount-1)
                     {
                         playMenuSelectSound();
                         gameMode++;
@@ -1469,28 +1528,77 @@ void titleScreen()
                 } 
                 else
                 {
-                    if(difficulty < diffRandom)
+                    if(titleStep == tsDifficulty)
                     {
-                        playMenuSelectSound();
-                        difficulty++;
-                        redrawLevelbit = 1;
+                        if(difficulty < diffCount-1)
+                        {
+                            playMenuSelectSound();
+                            difficulty++;
+                            redrawLevelbit = 1;
+                        }
+                    }
+                    else
+                    {
+                        if(titleStep == tsOptions)
+                        {
+                            if(option < opCount-1)
+                            {
+                                playMenuSelectSound();
+                                option++;
+                                redrawLevelbit = 1;
+                            }
+                        }
                     }
                 }
             }
         }
         if ((joyPad & J_B) && (!(prevJoyPad && J_B)))
         {
-            if (titleStep > tsMainMenu)
+            if (titleStep == tsOptions)
             {
-                titleStep--;
+                titleStep = tsMainMenu;
                 clearbit = 1;
                 playMenuBackSound();
+            }
+            else
+            {
+                if (titleStep > tsMainMenu)
+                {
+                    titleStep--;
+                    clearbit = 1;
+                    playMenuBackSound();
+                }
             }
         }
         if (((joyPad & J_A) && (!(prevJoyPad && J_A))) ||
             ((joyPad & J_START) && (!(prevJoyPad && J_START))))
         {
             playMenuAcknowlege();
+            if (mainMenu == mmOptions)
+            {
+                if(titleStep != tsOptions)
+                {
+                    titleStep = tsOptions;
+                    clearbit = 1;
+                }
+                else
+                {
+                    switch(option)
+                    {
+                        case opMusic:
+                            music_on = !music_on;
+                            setMusicOn(music_on);
+                            redrawLevelbit = 1;
+                            break;
+                        case opSound:
+                            sound_on = !sound_on;
+                            setSoundOn(sound_on);
+                            redrawLevelbit = 1;
+                            break;
+                    }
+                }
+            }
+
             if(mainMenu == mmHelp)
             {
                 if (titleStep < tsGameMode)
@@ -1894,6 +2002,7 @@ void init()
     prevBoardHeight = 0;
     prevBoardWidth = 0;
     maxcc = 0;
+    option = 0;
     difficulty = diffNormal;
     selectedLevel = 1;
     mainMenu = mmStartGame;
@@ -1902,6 +2011,8 @@ void init()
     gameMode = gmRotate;
     joyPad = joypad();
     prevJoyPad = joyPad;
+    music_on = isMusicOn();
+    sound_on = isSoundOn();
     startfade(FADEIN, 1);
     initSound();
     initMusic();
