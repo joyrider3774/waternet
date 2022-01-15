@@ -41,33 +41,26 @@ jobs:
           - rom: megaduck
             ext: duck
             name: Mega Duck
-    runs-on: windows-latest
-    defaults:
-      run:
-        shell: msys2 {0}
+    runs-on: ubuntu-latest
         
     steps:
       # ==== dependencies ====
-      - name: Windows Depends MSYS2/MinGW64
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: MINGW64
-          path-type: minimal #strict
-          release: false
-          update: false
-          install: >-
-            make
-            p7zip
-       
+      - name: Install Make
+        run: sudo apt-get install -y make
+
+      - name: Install p7zip
+        run: sudo apt-get install -y make
+        
        # ==== Build Steps ====
       - name: Check out Sources
         uses: actions/checkout@v2
         with:
           submodules: false
+      
       - name: Grab GBDK
         run: |
           cd gdbk_build
-          7z x "Windows-x64 build.zip"
+          tar -xvf "Linux-x64 build.tar.gz"
           cd ..
           
       - name: Build
@@ -83,9 +76,19 @@ jobs:
           mkdir -p package
           cp "source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" package
           cp LICENSE package
-          cp README.md package
-          cp "cartridge_labels/waternet.${{ matrix.rom }}.png" package
-          
+          cp "images/cartridge_labels/waternet.${{ matrix.rom }}.png" package
+      
+      - name: Make Readme.pdf
+        uses: baileyjm02/markdown-to-pdf@v1
+        with:
+          input_dir: .
+          output_dir: package
+          images_dir: images
+          # for example <img src="./images/file-name.png">
+          image_import: images
+          # Default is true, can set to false to only get PDF files
+          build_html: false
+               
       - name: Store build
         uses: actions/upload-artifact@v2
         with:

@@ -16,7 +16,7 @@ ifeq ($(OS),Windows_NT)
 	rmdir /s /q "$(BINDIR)"
 else
 	rm -rf $(OBJDIR)
-    rm -rf $(BINDIR)
+	rm -rf $(BINDIR)
 endif
 	
 gb-clean:

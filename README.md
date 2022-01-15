@@ -46,13 +46,13 @@ to start with in Gimp and then added different pictures i found on [cleanpng](ht
 using a [free logo creator](https://www.flamingtext.com/) site. You can see the end result below. 
 
 ### Game Boy (Color) - 4.2 x 3.7 cm.
-<img src="/cartridge_labels/waternet.gbc.png" height="250">
+<img src="images/cartridge_labels/waternet.gbc.png" height="250">
 
 ### Game Gear
-<img src="/cartridge_labels/waternet.gg.png" height="250">
+<img src="images/cartridge_labels/waternet.gg.png" height="250">
 
 ### Master System - 10.3  x 2 cm.
-<img src="/cartridge_labels/waternet.sms.png" height="150">
+<img src="images/cartridge_labels/waternet.sms.png" height="150">
 
 ## Credits
 Waternet game concept is based on the Net and Netslide game from the [Simon Tatham's Portable Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtatham/puzzles/),
