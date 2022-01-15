@@ -83,8 +83,17 @@ jobs:
           mkdir -p package
           cp "source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" package
           cp LICENSE package
-          cp README.md package
           cp "cartridge_labels/waternet.${{ matrix.rom }}.png" package
+      
+      - name: Convert Readme.md to PDF:
+        steps:
+          - uses: baileyjm02/markdown-to-pdf@v1
+            with:
+              input_dir: .
+              output_dir: package
+              images_dir: images
+              image_import: ./images
+              build_html: false       
           
       - name: Store build
         uses: actions/upload-artifact@v2
