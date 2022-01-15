@@ -86,13 +86,11 @@ jobs:
           cp "cartridge_labels/waternet.${{ matrix.rom }}.png" package
       
       - name: Convert Readme.md to PDF
-        uses: baileyjm02/markdown-to-pdf@v1
+        uses: mkrakowitzer/actions-makepdfs@master
         with:
-          input_dir: .
+          markdown_dir: .
+          media_dir: images
           output_dir: package
-          images_dir: images
-          image_import: ./images
-          build_html: false       
           
       - name: Store build
         uses: actions/upload-artifact@v2
