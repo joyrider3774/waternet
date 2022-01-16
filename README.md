@@ -21,9 +21,7 @@ You need to connect all the pipes so water flows through them, by pressing the A
 You need to connect all the pipes so water flows through them, by pressing the A or 1 button (depending on the system) on the arrows of a row or column. The row or column will move all pipes in the direction the arrow is pointing at. You can also press the A or 1 button (depending on the system) on a pipe, to rotate the single pipe. This is a combination Rotate and Slide mode.
 
 ### Ingame help slides
-||||
-|---|---|---|
-| <img src="images/rotate.jpg" height="275"> | <img src="images/slide.jpg" height="275"> | <img src="images/roslid.jpg" height="275"> |
+<img src="images/rotate.jpg" height="275"> <img src="images/slide.jpg" height="275"> <img src="images/roslid.jpg" height="275">
 
 ## Graphics 
 Graphics (tiles), i created in [Game Boy Tile Designer](http://www.devrs.com/gb/hmgd/gbtd.html) and the titlescreen graphic is based on a modified title screen image from my waternet game i made for [gp2x](https://www.willemssoft.be/index.php?main=5&sub=6&action=productdetails&id=218) and [windows](https://www.willemssoft.be/index.php?main=46&sub=7&action=productdetails&id=220). I designed the title screen in the [Gimp Image Editor](https://www.gimp.org/) to just have the word waternet, the waterdrop and the menu box to fit it all on the Game Boy screen. Afterwards i used [Game Boy Png Converter](https://github.com/gingemonster/GameBoyPngConverter) to convert the titlescreen to an optimized tilemap and tiles. 
