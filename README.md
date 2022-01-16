@@ -1,10 +1,7 @@
 # Waternet Multiplatform Retro Game
 Waternet is a multiplatform puzzle game written for old consoles and handhelds like Game Boy (Color), Game Gear, Master System, Analogue Pocket and Mega Duck using the gbdk sdk. 
 
-## Game Play
-The aim of the game, in any game mode is always to connect all pipes so that water can flow through them from the water point source. How you can accomplish this depends on the  game mode. The game as a help section in the main menu where you can always check up on the rules of each game mode.
-
-### Controls
+## Controls
 
 | Button        | Action                                                                   |
 |---------------|--------------------------------------------------------------------------|
@@ -12,6 +9,7 @@ The aim of the game, in any game mode is always to connect all pipes so that wat
 | B / 2         | Back in menu, level selector and game                                    |
 
 ## Game Modes
+The aim of the game, in any game mode is always to connect all pipes so that water can flow through them from the water point source. How you can accomplish this depends on the  game mode. The game as a help section in the main menu where you can always check up on the rules of each game mode.
 
 ### Rotate Mode
  You need to connect all the pipes so water flows through them by pressing the A or 1 button (depending on the system) on a pipe to rotate the single pipe.
