@@ -82,12 +82,5 @@ include Makefile.targets
 # create necessary directories after Makefile is parsed but before build
 # info prevents the command from being pasted into the makefile
 ifneq ($(strip $(EXT)),)                                # Only make the directories if EXT has been set by a target
-  ifeq ($(OS),Windows_NT)
-	ifneq ($(MSYSTEM),)
- 	   $(info $(shell mkdir -p $(MKDIRS)))      	    # for linux like system in this case MSYS(2)
-	endif
-    $(info $(shell md $(subst /,\,$(MKDIRS) 2>NUL)))	# for windows like system
-  else
-    $(info $(shell mkdir -p $(MKDIRS)))      	        # for linux like system
-  endif
+    $(info $(shell mkdir -p $(MKDIRS)))
 endif

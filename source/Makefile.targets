@@ -11,13 +11,8 @@ endif
 build-target: $(BINS)
 
 clean-target:
-ifeq ($(OS),Windows_NT)
-	rmdir /s /q "$(OBJDIR)"
-	rmdir /s /q "$(BINDIR)"
-else
 	rm -rf $(OBJDIR)
 	rm -rf $(BINDIR)
-endif
 	
 gb-clean:
 	${MAKE} clean-target EXT=gb
@@ -61,4 +56,3 @@ clean-all:
 	${MAKE} clean-target EXT=duck
 	${MAKE} clean-target EXT=gg
 	${MAKE} clean-target EXT=sms
-
