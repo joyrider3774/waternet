@@ -1,18 +1,6 @@
 # Waternet Multiplatform Retro Game
 Waternet is a multiplatform puzzle game written for old consoles and handhelds like Game Boy (Color), Game Gear, Master System, Analogue Pocket and Mega Duck using the gbdk sdk. 
 
-## Photo's of the game running on real hardware
-
-### Analogue Pocket (thanks to [bbbbbr](https://github.com/bbbbbr))
-<img src="images/ap_gb_menu.jpg" height="300"> <img src="images/ap_gb_level.jpg" height="300">
-<img src="images/ap_gbc_menu.jpg" height="300"> <img src="images/ap_gbc_level.jpg" height="300">
-
-### Game Boy
-<img src="images/gb_menu.jpg" height="450"> <img src="images/gb_level.jpg" height="450">
-
-### Game Boy Color (thanks to [SelvinPL](https://github.com/SelvinPL))
-<img src="images/gbc_menu.jpg" width="425"> <img src="images/gbc_level.jpg" width="425">
-
 ## Graphics 
 Graphics (tiles), i created in [Game Boy Tile Designer](http://www.devrs.com/gb/hmgd/gbtd.html) and the titlescreen graphic is based on a modified title screen image from my waternet game i made for [gp2x](https://www.willemssoft.be/index.php?main=5&sub=6&action=productdetails&id=218) and [windows](https://www.willemssoft.be/index.php?main=46&sub=7&action=productdetails&id=220). I designed the title screen in the [Gimp Image Editor](https://www.gimp.org/) to just have the word waternet, the waterdrop and the menu box to fit it all on the Game Boy screen. Afterwards i used [Game Boy Png Converter](https://github.com/gingemonster/GameBoyPngConverter) to convert the titlescreen to an optimized tilemap and tiles. 
 
@@ -42,6 +30,18 @@ To create the cartridge graphics i used a [template](https://www.deviantart.com/
 
 ### Master System - 10.3  x 2 cm.
 <img src="images/cartridge_labels/waternet.sms.png" height="150">
+
+## Photo's of the game running on real hardware
+
+### Analogue Pocket (thanks to [bbbbbr](https://github.com/bbbbbr))
+<img src="images/ap_gb_menu.jpg" height="300"> <img src="images/ap_gb_level.jpg" height="300">
+<img src="images/ap_gbc_menu.jpg" height="300"> <img src="images/ap_gbc_level.jpg" height="300">
+
+### Game Boy
+<img src="images/gb_menu.jpg" height="450"> <img src="images/gb_level.jpg" height="450">
+
+### Game Boy Color (thanks to [SelvinPL](https://github.com/SelvinPL))
+<img src="images/gbc_menu.jpg" width="425"> <img src="images/gbc_level.jpg" width="425">
 
 ## Credits
 Waternet game concept is based on the Net and Netslide game from the [Simon Tatham's Portable Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtatham/puzzles/),
