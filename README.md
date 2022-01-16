@@ -3,10 +3,10 @@ Waternet is a multiplatform puzzle game written for old consoles and handhelds l
 
 ## Controls
 
-| Button        | Action                                                                   |
-|---------------|--------------------------------------------------------------------------|
-| A / 1 / Start | Confirm in menu and level selector, rotate or slide action while playing |
-| B / 2         | Back in menu, level selector and game                                    |
+| Button Nintendo | Button Sega | Action                                                                   |
+|-----------------|-------------|--------------------------------------------------------------------------|
+| A / Start       | 1 / Start   | Confirm in menu and level selector, rotate or slide action while playing |
+| B               | 2           | Back in menu, level selector and game                                    |
 
 ## Game Modes
 The aim of the game, in any game mode is always to connect all pipes so that water can flow through them from the water point source. How you can accomplish this depends on the  game mode. The game has a help section in the main menu where you can always check up on the rules of each game mode.
