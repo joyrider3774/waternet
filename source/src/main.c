@@ -646,6 +646,16 @@ void initLevel(uint16_t aRandomSeed)
     updateConnected();
 }
 
+void setBlockTilesAsBackground()
+{
+    set_bkg_data(0, 128, blockTiles);
+    //Assign 1 & 2 instead A & B for SEGA
+    #ifdef SEGA
+    set_bkg_data(117,1, blockTiles+(125*16));
+    set_bkg_data(119,1, blockTiles+(124*16));
+    #endif
+}
+
 void updateBackgroundLevelSelect() 
 {
     //clearbit will clear the background tiles
@@ -756,7 +766,7 @@ void updateBackgroundLevelSelect()
 
 void initLevelSelect()
 {
-    set_bkg_data(0, 128, blockTiles);
+    setBlockTilesAsBackground();
     clearBackgroundLayer(48);
     //need to clear background & it wil also draw the level
     clearbit = 1;
@@ -1020,7 +1030,7 @@ void initGame()
 {
     SelectMusic(musGame, 1);
     //set background tiles
-    set_bkg_data(0, 128, blockTiles);
+    setBlockTilesAsBackground();
     clearBackgroundLayer(48);
     //set sprite for selector / cursor
     initCursors();
@@ -1810,7 +1820,7 @@ void levelsCleared()
 
 void initHelpRotateSlide()
 {
-    set_bkg_data(0, 128, blockTiles);
+    setBlockTilesAsBackground();
     clearBackgroundLayer(48);
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpRotateSlideMapWidth, helpRotateSlideMapHeight, helpRotateSlideMap);
     SelectMusic(musTitle, 1);
@@ -1849,7 +1859,7 @@ void helpRotateSlide()
 
 void initHelpRotateSlide2()
 {
-    set_bkg_data(0, 128, blockTiles);
+    setBlockTilesAsBackground();
     clearBackgroundLayer(48);
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpRotateSlide2MapWidth, helpRotateSlide2MapHeight, helpRotateSlide2Map);
     SelectMusic(musTitle, 1);
@@ -1900,7 +1910,7 @@ void helpRotateSlide2()
 
 void initHelpRotate()
 {
-    set_bkg_data(0, 128, blockTiles);
+    setBlockTilesAsBackground();
     clearBackgroundLayer(48);
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpRotateMapWidth, helpRotateMapHeight, helpRotateMap);
     SelectMusic(musTitle, 1);
@@ -1938,7 +1948,7 @@ void helpRotate()
 
 void initHelpRotate2()
 {
-    set_bkg_data(0, 128, blockTiles);
+    setBlockTilesAsBackground();
     clearBackgroundLayer(48);
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpRotate2MapWidth, helpRotate2MapHeight, helpRotate2Map);
     SelectMusic(musTitle, 1);
@@ -1988,7 +1998,7 @@ void helpRotate2()
 
 void initHelpSlide()
 {
-    set_bkg_data(0, 128, blockTiles);
+    setBlockTilesAsBackground();
     clearBackgroundLayer(48);
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpSlideMapWidth, helpSlideMapHeight, helpSlideMap);
     SelectMusic(musTitle, 1);
@@ -2026,7 +2036,7 @@ void helpSlide()
 
 void initHelpSlide2()
 {
-    set_bkg_data(0, 128, blockTiles);
+    setBlockTilesAsBackground();
     clearBackgroundLayer(48);
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpSlide2MapWidth, helpSlide2MapHeight, helpSlide2Map);
     SelectMusic(musTitle, 1);
