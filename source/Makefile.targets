@@ -55,6 +55,7 @@ gg:
 	${MAKE} build-target PORT=z80 PLAT=gg EXT=gg
 	
 clean-all:
+	${MAKE} clean-target EXT=gbc
 	${MAKE} clean-target EXT=gb
 	${MAKE} clean-target EXT=pocket
 	${MAKE} clean-target EXT=duck
