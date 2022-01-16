@@ -16,7 +16,6 @@
 #include "../res/gamebackgroundmap.h"
 #include "../res/titlescreenmap.h"
 #include "../res/congratsscreenmap.h"
-#include "../res/othermaps.h"
 #include "../res/helprotatemap.h"
 #include "../res/helprotate2map.h"
 #include "../res/helprotateslidemap.h"
@@ -34,7 +33,7 @@ uint8_t startPos, menuPos,
         i, j, x, y, rnd, index, cc, maxcc, clearbit, redrawLevelbit, levelDone,
         prevJoyPad, titleStep, gameMode, posAdd, redrawLevelDoneBit,
         tmp, neighboursFound, selectedNeighbour, currentPoint, visitedRooms,  mainMenu,
-        option;
+        option, paused, wasMusicOn, wasSoundOn, realPause;
         
 int16_t selectionX, selectionY,i16;
 uint16_t rnd16, randomSeed, moves;
@@ -1007,7 +1006,11 @@ void updateBackgroundGame()
     //level done
     if(redrawLevelDoneBit)
     {
-        set_bkg_tiles(5 + SCREENSTARTX, lookUpTable[startPos].y + boardY + SCREENSTARTY, 10, 1, leveldone_map);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 2 + SCREENSTARTY, "[************]", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 1 + SCREENSTARTY, "| LEVEL DONE +", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1)     + SCREENSTARTY ,"|            +", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 1 + SCREENSTARTY ,"| a CONTINUE +", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 2 + SCREENSTARTY, "<############>", 61);
         redrawLevelDoneBit = 0;
     }
 
@@ -1030,6 +1033,48 @@ void initGame()
 
 }
 
+void doPause(uint8_t isRealPause)
+{
+    paused = 1;
+    wasSoundOn = sound_on;
+    wasMusicOn = music_on;
+    music_on = 0;
+    sound_on = 0;
+    realPause = isRealPause;
+    hideCursors();
+    if (realPause)
+    {
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 3 + SCREENSTARTY, "[*********]", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 2 + SCREENSTARTY, "|  PAUSE  +", 61); 
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 1 + SCREENSTARTY, "|         +", 61); 
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + SCREENSTARTY,     "|a PLAY   +", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 1 + SCREENSTARTY, "|b TO QUIT+", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 2 + SCREENSTARTY, "<#########>", 61);
+
+    }    
+    else
+    {
+        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 3 + SCREENSTARTY, "[**************]", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 2 + SCREENSTARTY, "|PLEASE CONFIRM+", 61); 
+        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 1 + SCREENSTARTY, "|              +", 61); 
+        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + SCREENSTARTY,     "|   a PLAY     +", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 1 + SCREENSTARTY, "|   b TO QUIT  +", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 2 + SCREENSTARTY, "<##############>", 61);
+    }
+    
+    
+}
+
+void doUnPause()
+{
+    paused = 0;
+    sound_on = wasSoundOn;
+    music_on = wasMusicOn;
+    clearbit = 1;
+    setCursorPos(0, boardX + selectionX, boardY + selectionY);
+    showCursors();
+}
+
 void game()
 {
     initGame();
@@ -1048,7 +1093,7 @@ void game()
         joyPad = joypad();
         if ((joyPad & J_DOWN) && (delay == 0))
         {
-            if(!levelDone)
+            if(!levelDone && !paused)
             {
                 playGameMoveSound();
                 //if not touching border on bottom
@@ -1067,7 +1112,7 @@ void game()
         } 
         if ((joyPad & J_UP) && (delay == 0))
         {
-            if (!levelDone)
+            if (!levelDone && !paused)
             {
                 //if not touching border on top
                 playGameMoveSound();
@@ -1086,7 +1131,7 @@ void game()
         }
         if ((joyPad & J_RIGHT) && (delay == 0))
         {
-            if (!levelDone)
+            if (!levelDone && !paused)
             {
                 playGameMoveSound();
                 //if not touching border on right                
@@ -1105,7 +1150,7 @@ void game()
         }
         if ((joyPad & J_LEFT) && (delay == 0))
         {
-            if(!levelDone)
+            if(!levelDone && !paused)
             {
                 playGameMoveSound();
                 //if not touching border on left
@@ -1125,157 +1170,199 @@ void game()
         }
         if ((joyPad & J_A) && (!(prevJoyPad & J_A)))
         {
-            if(!levelDone)
+            if(paused)
             {
-                if ((selectionX > -1) && (selectionX < boardWidth) &&
-                    (selectionY > -1) && (selectionY < boardHeight))
-                {   
-                    if (gameMode != gmSlide)
-                    {
-                        rotateBlock((uint8_t)selectionX + ((uint8_t)selectionY * boardWidth));
-                        moves++;
-                        redrawLevelbit = 1;
-                        playGameAction();
-                    }
-                    else
-                    {
-                         playErrorSound();
-                    }
-                }
-                else
+                doUnPause();
+                playMenuAcknowlege();
+            }
+            else
+            {
+                if(!levelDone)
                 {
-                    if ((selectionX > -1) && (selectionX < boardWidth))
-                    {
-                        if (selectionY == -1)
+                    if ((selectionX > -1) && (selectionX < boardWidth) &&
+                        (selectionY > -1) && (selectionY < boardHeight))
+                    {   
+                        if (gameMode != gmSlide)
                         {
-                            moveBlockDown((uint8_t)selectionX + ((uint8_t)(selectionY+1) * boardWidth));
+                            rotateBlock((uint8_t)selectionX + ((uint8_t)selectionY * boardWidth));
                             moves++;
                             redrawLevelbit = 1;
-                             playGameAction();
-                        }
-                        else
-                        {
-                            if (selectionY == boardHeight)
-                            {
-                                moveBlockUp((uint8_t)selectionX + ((uint8_t)(selectionY-1) * boardWidth));
-                                moves++;
-                                redrawLevelbit = 1;
-                                 playGameAction();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if ((selectionY > -1) && (selectionY < boardHeight))    
-                        {
-                            if (selectionX == -1)
-                            {
-                                moveBlockRight((uint8_t)(selectionX + 1) + ((uint8_t)selectionY * boardWidth));
-                                moves++;
-                                redrawLevelbit = 1;
-                                 playGameAction();
-                            }
-                            else
-                            {
-                                if (selectionX == boardWidth)
-                                {
-                                    moveBlockLeft( (uint8_t)(selectionX - 1) + ((uint8_t)selectionY * boardWidth));
-                                    moves++;
-                                    redrawLevelbit = 1;
-                                     playGameAction();
-                                }
-                            }
+                            playGameAction();
                         }
                         else
                         {
                             playErrorSound();
                         }
                     }
-                }
-                updateConnected();
-                levelDone = isLevelDone();
-                if(levelDone)
-                {
-                    //update level one last time so we are at final state
-                    //as it won't be updated anymore as long as level done is displayed
-                    //1 forces level to be drawn (only) one last time the other call uses levelDone                  
-                    redrawLevelbit = 1;
-                    redrawLevelDoneBit = 1;
-                    updateBackgroundGame();
-                    //need to wait until its actually drawn on screen.
-                    performantdelay(1);
-                    SelectMusic(musLevelClear, 0);
-                    //hide cursor it's only sprite we use
-                    hideCursors();
-                }
-            }
-            else
-            {
-                //goto next level
-                if (difficulty == diffRandom)
-                {
-                    //ned new seed based on time
-                    randomSeed = clock();
-                    initLevel(randomSeed);
-                    //redraw level + background 
-                    //otherwise with random if level is smaller than previous one the level is not cleared
-                    //completely
-                    clearbit = 1;  
-                    redrawLevelbit = 1;
-                    SelectMusic(musGame, 1);
-                    //show cursor again (it's actually to early but i'm not fixing that)
-                    setCursorPos(0, boardX + selectionX, boardY + selectionY);
-                    showCursors();
+                    else
+                    {
+                        if ((selectionX > -1) && (selectionX < boardWidth))
+                        {
+                            if (selectionY == -1)
+                            {
+                                moveBlockDown((uint8_t)selectionX + ((uint8_t)(selectionY+1) * boardWidth));
+                                moves++;
+                                redrawLevelbit = 1;
+                                playGameAction();
+                            }
+                            else
+                            {
+                                if (selectionY == boardHeight)
+                                {
+                                    moveBlockUp((uint8_t)selectionX + ((uint8_t)(selectionY-1) * boardWidth));
+                                    moves++;
+                                    redrawLevelbit = 1;
+                                    playGameAction();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if ((selectionY > -1) && (selectionY < boardHeight))    
+                            {
+                                if (selectionX == -1)
+                                {
+                                    moveBlockRight((uint8_t)(selectionX + 1) + ((uint8_t)selectionY * boardWidth));
+                                    moves++;
+                                    redrawLevelbit = 1;
+                                    playGameAction();
+                                }
+                                else
+                                {
+                                    if (selectionX == boardWidth)
+                                    {
+                                        moveBlockLeft( (uint8_t)(selectionX - 1) + ((uint8_t)selectionY * boardWidth));
+                                        moves++;
+                                        redrawLevelbit = 1;
+                                        playGameAction();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                playErrorSound();
+                            }
+                        }
+                    }
+                    updateConnected();
+                    levelDone = isLevelDone();
+                    if(levelDone)
+                    {
+                        //update level one last time so we are at final state
+                        //as it won't be updated anymore as long as level done is displayed
+                        //1 forces level to be drawn (only) one last time the other call uses levelDone                  
+                        redrawLevelbit = 1;
+                        redrawLevelDoneBit = 1;
+                        updateBackgroundGame();
+                        //need to wait until its actually drawn on screen.
+                        performantdelay(1);
+                        SelectMusic(musLevelClear, 0);
+                        //hide cursor it's only sprite we use
+                        hideCursors();
+                    }
                 }
                 else
-                {   
-                    //goto next level if any                     
-                    if (selectedLevel < maxLevel)
+                {
+                    //goto next level
+                    if (difficulty == diffRandom)
                     {
-                        selectedLevel++;
-                        unlockLevel(gameMode, difficulty, selectedLevel-1);
+                        //ned new seed based on time
+                        randomSeed = clock();
                         initLevel(randomSeed);
-                        //redraw levelnr + level + background
-                        clearbit = 1;
+                        //redraw level + background 
+                        //otherwise with random if level is smaller than previous one the level is not cleared
+                        //completely
+                        clearbit = 1;  
+                        redrawLevelbit = 1;
                         SelectMusic(musGame, 1);
                         //show cursor again (it's actually to early but i'm not fixing that)
                         setCursorPos(0, boardX + selectionX, boardY + selectionY);
                         showCursors();
                     }
-                    else //Goto some congrats screen
-                    {
-                        gameState = gsLevelsCleared;
-                        startfade(FADEOUT, 0);
-                        while(!fade())
+                    else
+                    {   
+                        //goto next level if any                     
+                        if (selectedLevel < maxLevel)
                         {
-                            performantdelay(1);
+                            selectedLevel++;
+                            unlockLevel(gameMode, difficulty, selectedLevel-1);
+                            initLevel(randomSeed);
+                            //redraw levelnr + level + background
+                            clearbit = 1;
+                            SelectMusic(musGame, 1);
+                            //show cursor again (it's actually to early but i'm not fixing that)
+                            setCursorPos(0, boardX + selectionX, boardY + selectionY);
+                            showCursors();
                         }
-                        startfade(FADEIN, 1); 
+                        else //Goto some congrats screen
+                        {
+                            gameState = gsLevelsCleared;
+                            startfade(FADEOUT, 0);
+                            while(!fade())
+                            {
+                                performantdelay(1);
+                            }
+                            startfade(FADEIN, 1); 
+                        }
                     }
                 }
             }
         }
-        if(joyPad & J_B)
+        //master system has no start button it's mapped to A and it conflicts
+        #ifndef MASTERSYSTEM
+        if((joyPad & J_START) && (!(prevJoyPad & J_START)))
         {
             if(!levelDone)
             {
-                hideCursors();
-                playMenuBackSound();
-                gameState = gsLevelSelect;                
-                startfade(FADEOUT, 0);
-                while(!fade())
+                if(!paused)
                 {
-                    performantdelay(1);
+                    playMenuBackSound();
+                    doPause(1);
                 }
-                startfade(FADEIN, 0);
-                //need to reset the level to initial state when going back to level selector
-                //could not find a better way unfortunatly
-                //also we do not want to reset the randomseed used for random level generating
-                //or a new level would have been created when going back we only want the level
-                //with random to change when pressing left and right in the level selector
-                //this way it stays consistent with the normal levels
-                //and the player can replay the level if he wants to
-                initLevel(randomSeed);
+                else
+                {
+                    doUnPause();
+                    playMenuAcknowlege();
+                }
+            }
+        }
+        #endif
+        if((joyPad & J_B) && (!(prevJoyPad & J_B))) 
+        {
+            if(!levelDone)
+            {
+                if(!paused)
+                {
+                    playMenuBackSound();
+                    doPause(0);
+                }
+                else
+                {
+                    //need to enable early again to play backsound
+                    //normally unpause does it but we only unpause
+                    //after fade
+                    sound_on = wasSoundOn;                    
+                    hideCursors();
+                    playMenuBackSound();
+                    gameState = gsLevelSelect;                
+                    startfade(FADEOUT, 0);
+                    while(!fade())
+                    {
+                        performantdelay(1);
+                    }
+                    startfade(FADEIN, 0);
+                    doUnPause();
+                    //unpause sets cursor visible !
+                    hideCursors();
+                    //need to reset the level to initial state when going back to level selector
+                    //could not find a better way unfortunatly
+                    //also we do not want to reset the randomseed used for random level generating
+                    //or a new level would have been created when going back we only want the level
+                    //with random to change when pressing left and right in the level selector
+                    //this way it stays consistent with the normal levels
+                    //and the player can replay the level if he wants to
+                    initLevel(randomSeed);
+                }
             }
         }
         updateSwitches();
@@ -2003,6 +2090,7 @@ void init()
     prevBoardWidth = 0;
     maxcc = 0;
     option = 0;
+    paused = 0;
     difficulty = diffNormal;
     selectedLevel = 1;
     mainMenu = mmStartGame;

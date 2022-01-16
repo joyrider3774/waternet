@@ -75,6 +75,46 @@ void printLevelSelectGame(uint8_t ax, uint8_t ay, unsigned char amsg[], uint8_t 
             }   
             else
             {
+                if (titleMessage[c] == '[')
+                {
+                    set_bkg_tile_xy(ax + c, ay, 70);
+                }  
+                else
+                if (titleMessage[c] == ']')
+                {
+                    set_bkg_tile_xy(ax + c, ay, 64);
+                }  
+                else
+                if (titleMessage[c] == '<')
+                {
+                    set_bkg_tile_xy(ax + c, ay, 73);
+                }  
+                else
+                if (titleMessage[c] == '>')
+                {
+                    set_bkg_tile_xy(ax + c, ay, 67);
+                }  
+                else
+                if (titleMessage[c] == '+')
+                {
+                    set_bkg_tile_xy(ax + c, ay, 63);
+                }  
+                else
+                if (titleMessage[c] == '*')
+                {
+                    set_bkg_tile_xy(ax + c, ay, 62);
+                }  
+                else
+                if (titleMessage[c] == '|')
+                {
+                    set_bkg_tile_xy(ax + c, ay, 69);
+                }  
+                else
+                if (titleMessage[c] == '#')
+                {
+                    set_bkg_tile_xy(ax + c, ay, 65);
+                }  
+                else
                 if (titleMessage[c] == ':')
                 {
                     set_bkg_tile_xy(ax + c, ay, 116);
