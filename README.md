@@ -11,6 +11,8 @@ The aim of the game, in any game mode is always to connect all pipes so that wat
 | A / 1 / Start | Confirm in menu and level selector, rotate or slide action while playing |
 | B / 2         | Back in menu, level selector and game                                    |
 
+## Game Modes
+
 ### Rotate Mode
  You need to connect all the pipes so water flows through them by pressing the A or 1 button (depending on the system) on a pipe to rotate the single pipe.
 
