@@ -14,10 +14,10 @@ LCC = $(GBDK_HOME)bin/lcc
 TARGETS=gb gbc pocket megaduck gg sms
 
 # Configure platform specific LCC flags here:
-LCCFLAGS_gb      = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wm-ys -Wl-yt0x1B # (-Wl-yt0x1B Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)) (-Wl-yo2 = 2 x 16k rom bank) (-Wl-ya1 = 1x 8k ram bank)
-LCCFLAGS_pocket  = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wm-ys -Wl-yt0x1B -Wm-yc # Usually the same as required for .gbc
-LCCFLAGS_duck    = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wm-ys -Wl-yt0x1B # Usually the same as required for .gb
-LCCFLAGS_gbc     = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wm-ys -Wl-yt0x1B -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
+LCCFLAGS_gb      = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wl-yt0x1B # (-Wl-yt0x1B Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)) (-Wl-yo2 = 2 x 16k rom bank) (-Wl-ya1 = 1x 8k ram bank)
+LCCFLAGS_pocket  = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wl-yt0x1B -Wm-yc # Usually the same as required for .gbc
+LCCFLAGS_duck    = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wl-yt0x1B # Usually the same as required for .gb
+LCCFLAGS_gbc     = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wl-yt0x1B -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
 LCCFLAGS_sms     = -Wl-yo4 -Wl-ya1 
 LCCFLAGS_gg      = -Wl-yo4 -Wl-ya1 #Game gear needs bigger than 32k rom or sram does not work in emulicious
 
@@ -25,8 +25,10 @@ LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Fla
 
 #LCCFLAGS += -Wl-j -Wm-yoA -Wm-ya1 -autobank -Wb-ext=.rel -Wb-v # MBC + Autobanking related flags
 LCCFLAGS += -Wl-m -Wa-l -Wl-w  # Wl-m = generate map files, -Wa-l = generate assembler listing, -Wl-w = ???
-LCCFLAGS += -debug # Uncomment to enable debug output, (this sets --debug for sdcc (lcc equiv: -Wf-debug), -y enables .cdb output for sdldgb (lcc equiv: -Wl-y), -j enables .noi output for sdldgb (lcc equiv: -Wl-j))
 # LCCFLAGS += -v   # Uncomment for lcc verbose output
+
+CFLAGS += -debug # Uncomment to enable debug output, (this sets --debug for sdcc (lcc equiv: -Wf-debug), -y enables .cdb output for sdldgb (lcc equiv: -Wl-y), -j enables .noi output for sdldgb (lcc equiv: -Wl-j))
+
 
 # You can set the name of the ROM file here
 PROJECTNAME = waternet
