@@ -13,9 +13,6 @@
 
 #define SFX_SUSTAIN 3
 
-extern uint8_t sound_on;
-extern uint8_t music_on;
-
 void initSound();
 
 void SelectMusic(uint8_t musicFile, uint8_t loop);
@@ -31,5 +28,8 @@ void playErrorSound();
 void playGameMoveSound();
 void processSoundSega();
 void stopSoundSega();
-
+void setMusicOn(uint8_t value);
+void setSoundOn(uint8_t value);
+uint8_t isMusicOn();
+uint8_t isSoundOn();
 #endif

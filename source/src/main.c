@@ -32,7 +32,7 @@ uint8_t startPos, menuPos,
         gameState, boardWidth, boardHeight, boardSize, prevBoardWidth, prevBoardHeight,
         i, j, x, y, rnd, index, cc, maxcc, clearbit, redrawLevelbit, levelDone,
         prevJoyPad, titleStep, gameMode, posAdd, redrawLevelDoneBit,
-        tmp, neighboursFound, selectedNeighbour, currentPoint, visitedRooms,  mainMenu,
+        tmp, tmp2, tmp3, tmp4, tmp5, tmp6, neighboursFound, selectedNeighbour, currentPoint, visitedRooms,  mainMenu,
         option, paused, wasMusicOn, wasSoundOn, realPause;
         
 int16_t selectionX, selectionY,i16;
@@ -57,8 +57,9 @@ void generateLookupTable(uint8_t width, uint8_t height)
     {
         for (x=0; x != width; x++)
         {
-            lookUpTable[i+x].x = x;
-            lookUpTable[i+x].y = y;
+            tmp = i+x;
+            lookUpTable[tmp].x = x;
+            lookUpTable[tmp].y = y;
         }
         i += width;
     }
@@ -192,9 +193,9 @@ void rotateBlock(uint8_t aTile)
         case 30:
         case 46:
             level[aTile] = 13;
-            break;      
+            break;
         default:
-            break;    
+            break;
     }
 }
 
@@ -220,7 +221,7 @@ void shuffleSlide(uint8_t aTile)
             }
             else
             {
-                moveBlockRight(aTile - lookUpTable[aTile].x);     
+                moveBlockRight(aTile - lookUpTable[aTile].x);
             }
         }
     }
@@ -241,7 +242,6 @@ void shuffleRotate(uint8_t aTile)
 
 void shuffleLevel()
 {
-    //return;
     j = 0;
     while(j < boardSize)
     {
@@ -281,9 +281,96 @@ void shuffleLevel()
     }
 }
 
+void handleConnectPoint(uint8_t currentPoint)
+{
+    if ((lookUpTable[currentPoint].y > 0) && (!(level[currentPoint] & 1)))
+        {
+            tmp = currentPoint - boardWidth;
+            if (((level[tmp] < 16) && (!(level[tmp] & 4)) ) || 
+            ((level[tmp] > 15) && (!((level[tmp] - 16) & 4))))
+            {
+                //adapt tile to filled tile
+                if(level[currentPoint] < 16)
+                { 
+                    level[currentPoint] += 16;
+                }
+
+                //add neighbour to cellstack of to handle tiles
+                if (level[tmp] < 16)
+                {
+                    cellStack[cc++] = tmp;
+                }
+            }       
+            
+        }
+        //if tile has passage to the east and east neigbour passage to the west 
+        if  ((lookUpTable[currentPoint].x  + 1 < boardWidth) && (!(level[currentPoint] & 2)))
+        {
+            tmp = currentPoint + 1;
+            if (((level[tmp] < 16) && (!(level[tmp] & 8))) || 
+            ((level[tmp] > 15) && (!((level[tmp] - 16) & 8))))
+            {
+                //adapt tile to filled tile
+                if(level[currentPoint] < 16)
+                { 
+                    level[currentPoint] += 16;
+                }
+
+                //add neighbour to cellstack of to handle tiles
+                if (level[tmp] < 16)
+                {
+                    cellStack[cc++] = tmp;
+                }
+
+            }
+        }      
+                
+        //if tile has passage to the south and south neigbour passage to the north 
+        if ((lookUpTable[currentPoint].y + 1 < boardHeight) && (!(level[currentPoint] & 4 )))
+        {
+            tmp = currentPoint + boardWidth;
+            if (((level[tmp] < 16) && (!(level[tmp] & 1))) || 
+            ((level[tmp] > 15) && (!((level[tmp] - 16) & 1))))
+            {
+                //adapt tile to filled tile
+                if(level[currentPoint] < 16)
+                { 
+                    level[currentPoint] += 16;
+                }
+
+                //add neighbour to cellstack of to handle tiles
+                if (level[tmp] < 16)
+                {
+                    cellStack[cc++] = tmp; 
+                }
+            } 
+        }
+
+        //if tile has passage to the west and west neigbour passage to the east 
+        if  ((lookUpTable[currentPoint].x > 0) && (!(level[currentPoint] & 8)))
+        {
+            tmp = currentPoint - 1;
+            if (((level[tmp] < 16) && (!(level[tmp] & 2))) ||
+            ((level[tmp] > 15) && (!((level[tmp] - 16) & 2))))
+            {
+                //adapt tile to filled tile
+                if(level[currentPoint] < 16)
+                { 
+                    level[currentPoint] += 16;
+                }
+
+                //add neighbour to cellstack of to handle tiles
+                if(level[tmp] < 16)
+                {
+                    cellStack[cc++] = tmp;
+                }
+            }  
+        }
+
+}
+
 void updateConnected()
 {
-    uint8_t currentPoint;
     //reset all tiles to default not filled one
     for (i= 0; i != boardSize; i++)
     {
@@ -302,103 +389,14 @@ void updateConnected()
 
     //start with start tile
     cc = 1;
-    cellStack[cc] = startPos;
-    currentPoint = cellStack[cc];
-    while(cc > 0)
+    handleConnectPoint(startPos);
+    while(--cc > 0)
     {
         //if tile is bigger then 15 we already handled this one, continue with next one
-        if (level[currentPoint] > 15)
+        if ((level[cellStack[cc]] < 16))
         {
-            if(cc > 0)
-            {
-                cc--;
-                continue;
-            }
+            handleConnectPoint(cellStack[cc]);
         }
-        
-        //if tile has passage to the north and north neigbour passage to the south 
-        if ((lookUpTable[currentPoint].y > 0) && (!(level[currentPoint] & 1)) &&
-            (((level[currentPoint - boardWidth] < 16) && (!(level[currentPoint - boardWidth] & 4)) ) || 
-            ((level[currentPoint - boardWidth] > 15) && (!((level[currentPoint - boardWidth] - 16) & 4)))))
-        {   
-            //adapt tile to filled tile
-            if(level[currentPoint] < 16)
-            { 
-                level[currentPoint] += 16;
-            }
-
-            //add neighbour to cellstack of to handle tiles
-            if (level[currentPoint - boardWidth] < 16)
-            {
-                cc++;
-                cellStack[cc] = currentPoint - boardWidth;
-            }
-        }       
-        
-        //if tile has passage to the east and east neigbour passage to the west 
-        if  ((lookUpTable[currentPoint].x  + 1 < boardWidth) && (!(level[currentPoint] & 2)) &&
-            (((level[currentPoint + 1] < 16) && (!(level[currentPoint + 1] & 8))) || 
-            ((level[currentPoint + 1] > 15) && (!((level[currentPoint + 1] - 16) & 8)))))
-        {
-            //adapt tile to filled tile
-            if(level[currentPoint] < 16)
-            { 
-                level[currentPoint] += 16;
-            }
-
-            //add neighbour to cellstack of to handle tiles
-            if (level[currentPoint + 1] < 16)
-            {
-                cc++;
-                cellStack[cc] = currentPoint + 1;
-            }
-
-        }       
-        
-        //if tile has passage to the south and south neigbour passage to the north 
-        if ((lookUpTable[currentPoint].y + 1 < boardHeight) && (!(level[currentPoint] & 4 )) && 
-           (((level[currentPoint + boardWidth] < 16) && (!(level[currentPoint + boardWidth] & 1))) || 
-           ((level[currentPoint + boardWidth] > 15) && (!((level[currentPoint + boardWidth] - 16) & 1)))))
-        {
-            //adapt tile to filled tile
-            if(level[currentPoint] < 16)
-            { 
-                level[currentPoint] += 16;
-            }
-
-            //add neighbour to cellstack of to handle tiles
-            if (level[currentPoint + boardWidth] < 16)
-            {
-                cc++;
-                cellStack[cc] = currentPoint + boardWidth; 
-            }
-        }       
-
-        //if tile has passage to the west and west neigbour passage to the east 
-        if  ((lookUpTable[currentPoint].x > 0) && (!(level[currentPoint] & 8)) &&
-            (((level[currentPoint - 1] < 16) && (!(level[currentPoint - 1] & 2))) ||
-            ((level[currentPoint - 1] > 15) && (!((level[currentPoint - 1] - 16) & 2)))))
-        {
-            //adapt tile to filled tile
-            if(level[currentPoint] < 16)
-            { 
-                level[currentPoint] += 16;
-            }
-            
-            //add neighbour to cellstack of to handle tiles
-            if(level[currentPoint - 1] < 16)
-            {
-                cc++;
-                cellStack[cc] = currentPoint - 1;
-            }
-        }  
-
-        //take tile from the cellstack
-        currentPoint = cellStack[cc];
-        if (cc > 0)
-        {
-            cc--;
-        }  
     }
 
     //add start pos special tile
@@ -418,12 +416,11 @@ void updateConnected()
 
 void generateLevel()
 {
-    
     cc = 0;
     //generate a lookup table so we don't have to use modulus or divide constantly
     generateLookupTable(boardWidth, boardHeight);
     
-    //intial all walls value in every room we will remove bits of this value to remove walls  
+    //intial all walls value in every room we will remove bits of this value to remove walls
     memset(level, 0xfu, boardSize);
   
     currentPoint = 0;
@@ -431,32 +428,32 @@ void generateLevel()
     while (visitedRooms != boardSize)
     {
         neighboursFound = 0;
+        tmp = currentPoint+1; 
         //tile has neighbour to the right which we did not handle yet
-        if ((level[currentPoint+1] == 0xfu) && (lookUpTable[currentPoint].x + 1 < boardWidth))
+        if ((level[tmp] == 0xfu) && (lookUpTable[currentPoint].x + 1 < boardWidth))
         {
-            neighbours[neighboursFound] = currentPoint + 1;
-            neighboursFound++;
+            neighbours[neighboursFound++] = tmp;
         }
     
+        tmp = currentPoint-1; 
         //tile has neighbour to the left which we did not handle yet
-        if ((level[currentPoint-1] == 0xfu) && (lookUpTable[currentPoint].x > 0))
+        if ((level[tmp] == 0xfu) && (lookUpTable[currentPoint].x > 0))
         {
-            neighbours[neighboursFound] = currentPoint -1;
-            neighboursFound++;
+            neighbours[neighboursFound++] = tmp;
         }
 
+        tmp = currentPoint - boardWidth; 
         //tile has neighbour the north which we did not handle yet
-        if ((level[currentPoint - boardWidth] == 0xfu) && (lookUpTable[currentPoint].y > 0))
+        if ((level[tmp] == 0xfu) && (lookUpTable[currentPoint].y > 0))
         {
-            neighbours[neighboursFound] = currentPoint - boardWidth;
-            neighboursFound++;
+            neighbours[neighboursFound++] = tmp;
         }
 
+        tmp = currentPoint + boardWidth; 
         //tile has neighbour the south which we did not handle yet
-        if ((level[currentPoint + boardWidth] == 0xfu) && (lookUpTable[currentPoint].y + 1 < boardHeight))
+        if ((level[tmp] == 0xfu) && (lookUpTable[currentPoint].y + 1 < boardHeight))
         {
-            neighbours[neighboursFound] = currentPoint + boardWidth;
-            neighboursFound++;
+            neighbours[neighboursFound++] = tmp;
         }
 
         //if we had any unhandled neighbours
@@ -496,8 +493,10 @@ void generateLevel()
                 }
             }
             selectedNeighbour = neighbours[rnd];
+            tmp = lookUpTable[selectedNeighbour].x;
+            tmp3 = lookUpTable[currentPoint].x;
             //tile has neighbour to the east
-            if( lookUpTable[selectedNeighbour].x > lookUpTable[currentPoint].x)
+            if(tmp > tmp3)
             {
                 //remove west wall neighbour
                 level[selectedNeighbour] &= ~(8);
@@ -506,7 +505,7 @@ void generateLevel()
             }
             else // tile has neighbour to the west
             {
-                if(lookUpTable[selectedNeighbour].x < lookUpTable[currentPoint].x)
+                if(tmp < tmp3)
                 {
                     //remove east wall neighbour
                     level[selectedNeighbour] &= ~(2);
@@ -515,7 +514,9 @@ void generateLevel()
                 }
                 else // tile has neighbour to the north
                 {
-                    if(lookUpTable[selectedNeighbour].y < lookUpTable[currentPoint].y)
+                    tmp2 = lookUpTable[selectedNeighbour].y;
+                    tmp4 = lookUpTable[currentPoint].y;
+                    if(tmp2 < tmp4)
                     {
                         //remove south wall neighbour
                         level[selectedNeighbour] &= ~(4);
@@ -524,7 +525,7 @@ void generateLevel()
                     }
                     else // tile has neighbour to the south
                     {
-                        if(lookUpTable[selectedNeighbour].y > lookUpTable[currentPoint].y)
+                        if(tmp2 > tmp4)
                         {
                             //remove north wall neighbour
                             level[selectedNeighbour] &= ~(1);
@@ -538,17 +539,15 @@ void generateLevel()
             //add tile to the cellstack
             if(neighboursFound > 1)
             {
-                cellStack[cc] = currentPoint;
-                cc++;
+                cellStack[cc++] = currentPoint;
             } 
             //set tile to the neighbour   
             currentPoint = selectedNeighbour;
-            visitedRooms++;           
+            visitedRooms++;
         }
         else //no neighbours take a tile from the list
         {
-            cc--;
-            currentPoint = cellStack[cc];
+            currentPoint = cellStack[--cc];
         }
     }
 }
@@ -694,28 +693,28 @@ void updateBackgroundLevelSelect()
         }
 
         //LEVEL:
-        printLevelSelectGame(0 + SCREENSTARTX, 16 + SCREENSTARTY, "LEVEL:", 61);
+        printLevelSelectGame(0 + SCREENSTARTX, 16 + SCREENSTARTY, "LEVEL:", 6, 61);
         
         //[LEVEL NR] 2 chars
         printNumber(6 + SCREENSTARTX, 16 + SCREENSTARTY, selectedLevel, 2, 61);
         
         //B:BACK
-        printLevelSelectGame(12 + SCREENSTARTX, 16 + SCREENSTARTY, "b:BACK", 61);
+        printLevelSelectGame(12 + SCREENSTARTX, 16 + SCREENSTARTY, "b:BACK", 6, 61);
         
         //A:PLAY
-        printLevelSelectGame(12 + SCREENSTARTX, 17 + SCREENSTARTY, "a:PLAY", 61);
+        printLevelSelectGame(12 + SCREENSTARTX, 17 + SCREENSTARTY, "a:PLAY", 6, 61);
         
         //Locked & Unlocked keywoard
         uint8_t tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);
         if(!tmpUnlocked)
         {
-            printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "LOCKED  ", 79);
+            printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "LOCKED  ", 8, 79);
         }
         else
         {
             if(tmpUnlocked)
             {
-                printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "UNLOCKED", 79);
+                printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "UNLOCKED", 8, 79);
             }
         }
         
@@ -781,8 +780,8 @@ void levelSelect()
     tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);
     initLevelSelect();
     while (gameState == gsLevelSelect)
-    {        
-        updateBackgroundLevelSelect();   
+    {
+        updateBackgroundLevelSelect();
 
         //if fading wait till fade is done
         while (!fade())
@@ -846,16 +845,16 @@ void levelSelect()
                     redrawLevelbit = 1;
                 }
             } 
-            tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);           
+            tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);
             if(tmpUnlocked == 0)
             {
-                printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "LOCKED  ", 79);
+                printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "LOCKED  ", 8, 79);
             }
             else
             {
                 if(tmpUnlocked == 1)
                 {
-                    printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "UNLOCKED", 79);
+                    printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "UNLOCKED", 8, 79);
                 }
             }
             printNumber(6 + SCREENSTARTX, 16 + SCREENSTARTY, selectedLevel, 2, 61);
@@ -884,13 +883,13 @@ void levelSelect()
             tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);
             if(tmpUnlocked == 0)
             {
-                printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "LOCKED  ", 79);
+                printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "LOCKED  ", 8, 79);
             }
             else
             {
                 if(tmpUnlocked == 1)
                 {
-                    printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "UNLOCKED", 79);
+                    printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "UNLOCKED", 8, 79);
                 }
             }
             printNumber(6 + SCREENSTARTX, 16 + SCREENSTARTY, selectedLevel, 2, 61);
@@ -938,33 +937,33 @@ void updateBackgroundGame()
         }
 
          //LEVEL:
-        printLevelSelectGame(0 + SCREENSTARTX, 16 + SCREENSTARTY, "LEVEL:", 61);
+        printLevelSelectGame(0 + SCREENSTARTX, 16 + SCREENSTARTY, "LEVEL:", 6, 61);
         
         //[LEVEL NR] 2 chars
         printNumber(6 + SCREENSTARTX, 16 + SCREENSTARTY, selectedLevel, 2, 61);
         
         //B:BACK
-        printLevelSelectGame(12 + SCREENSTARTX, 16 + SCREENSTARTY, "b:BACK", 61);
+        printLevelSelectGame(12 + SCREENSTARTX, 16 + SCREENSTARTY, "b:BACK", 6, 61);
         
         //MOVES:
-        printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "MOVES:", 61);
+        printLevelSelectGame(0 + SCREENSTARTX, 17 + SCREENSTARTY, "MOVES:", 6, 61);
 
         //A:XXXXXX (XXXXXX="ROTATE" or XXXXXX="SLIDE " or XXXXXX="ROSLID")
         if(gameMode == gmRotate)
         {
-            printLevelSelectGame(12 + SCREENSTARTX, 17 + SCREENSTARTY, "a:ROTATE", 61);
+            printLevelSelectGame(12 + SCREENSTARTX, 17 + SCREENSTARTY, "a:ROTATE", 8, 61);
         }
         else
         {
             if(gameMode == gmSlide)
             {
-                printLevelSelectGame(12 + SCREENSTARTX, 17 + SCREENSTARTY, "a:SLIDE ", 61);
+                printLevelSelectGame(12 + SCREENSTARTX, 17 + SCREENSTARTY, "a:SLIDE ", 8, 61);
             }
             else
             {
                 if(gameMode == gmRotateSlide)
                 {
-                    printLevelSelectGame(12 + SCREENSTARTX, 17 + SCREENSTARTY, "a:ROSLID", 61);
+                    printLevelSelectGame(12 + SCREENSTARTX, 17 + SCREENSTARTY, "a:ROSLID", 8, 61);
                 }
             }
         }
@@ -1016,11 +1015,11 @@ void updateBackgroundGame()
     //level done
     if(redrawLevelDoneBit)
     {
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 2 + SCREENSTARTY, "[************]", 61);
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 1 + SCREENSTARTY, "| LEVEL DONE +", 61);
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1)     + SCREENSTARTY ,"|            +", 61);
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 1 + SCREENSTARTY ,"| a CONTINUE +", 61);
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 2 + SCREENSTARTY, "<############>", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 2 + SCREENSTARTY, "[************]", 14, 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 1 + SCREENSTARTY, "| LEVEL DONE +", 14, 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1)     + SCREENSTARTY ,"|            +", 14, 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 1 + SCREENSTARTY ,"| a CONTINUE +", 14, 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 2 + SCREENSTARTY, "<############>", 14, 61);
         redrawLevelDoneBit = 0;
     }
 
@@ -1046,30 +1045,30 @@ void initGame()
 void doPause(uint8_t isRealPause)
 {
     paused = 1;
-    wasSoundOn = sound_on;
-    wasMusicOn = music_on;
-    music_on = 0;
-    sound_on = 0;
+    wasSoundOn = isSoundOn();
+    wasMusicOn = isMusicOn();
+    setMusicOn(0);
+    setSoundOn(0);
     realPause = isRealPause;
     hideCursors();
     if (realPause)
     {
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 3 + SCREENSTARTY, "[*********]", 61);
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 2 + SCREENSTARTY, "|  PAUSE  +", 61); 
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 1 + SCREENSTARTY, "|         +", 61); 
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + SCREENSTARTY,     "|a PLAY   +", 61);
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 1 + SCREENSTARTY, "|b TO QUIT+", 61);
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 2 + SCREENSTARTY, "<#########>", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 3 + SCREENSTARTY, "[*********]", 11, 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 2 + SCREENSTARTY, "|  PAUSE  +", 11, 61); 
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 1 + SCREENSTARTY, "|         +", 11, 61); 
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + SCREENSTARTY,     "|a PLAY   +", 11, 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 1 + SCREENSTARTY, "|b TO QUIT+", 11, 61);
+        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 2 + SCREENSTARTY, "<#########>", 11, 61);
 
     }    
     else
     {
-        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 3 + SCREENSTARTY, "[**************]", 61);
-        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 2 + SCREENSTARTY, "|PLEASE CONFIRM+", 61); 
-        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 1 + SCREENSTARTY, "|              +", 61); 
-        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + SCREENSTARTY,     "|   a PLAY     +", 61);
-        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 1 + SCREENSTARTY, "|   b TO QUIT  +", 61);
-        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 2 + SCREENSTARTY, "<##############>", 61);
+        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 3 + SCREENSTARTY, "[**************]", 16, 61);
+        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 2 + SCREENSTARTY, "|PLEASE CONFIRM+", 16, 61); 
+        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 1 + SCREENSTARTY, "|              +", 16, 61); 
+        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + SCREENSTARTY,     "|   a PLAY     +", 16, 61);
+        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 1 + SCREENSTARTY, "|   b TO QUIT  +", 16, 61);
+        printLevelSelectGame(((maxBoardBgWidth - 15) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 2 + SCREENSTARTY, "<##############>", 16, 61);
     }
     
     
@@ -1078,8 +1077,8 @@ void doPause(uint8_t isRealPause)
 void doUnPause()
 {
     paused = 0;
-    sound_on = wasSoundOn;
-    music_on = wasMusicOn;
+    setMusicOn(wasMusicOn);
+    setSoundOn(wasSoundOn);
     clearbit = 1;
     setCursorPos(0, boardX + selectionX, boardY + selectionY);
     showCursors();
@@ -1144,7 +1143,7 @@ void game()
             if (!levelDone && !paused)
             {
                 playGameMoveSound();
-                //if not touching border on right                
+                //if not touching border on right
                 if(selectionX + 1 < boardWidth + posAdd)
                 {
                     selectionX += 1;
@@ -1260,7 +1259,7 @@ void game()
                     {
                         //update level one last time so we are at final state
                         //as it won't be updated anymore as long as level done is displayed
-                        //1 forces level to be drawn (only) one last time the other call uses levelDone                  
+                        //1 forces level to be drawn (only) one last time the other call uses levelDone
                         redrawLevelbit = 1;
                         redrawLevelDoneBit = 1;
                         updateBackgroundGame();
@@ -1291,7 +1290,7 @@ void game()
                     }
                     else
                     {   
-                        //goto next level if any                     
+                        //goto next level if any
                         if (selectedLevel < maxLevel)
                         {
                             selectedLevel++;
@@ -1351,10 +1350,10 @@ void game()
                     //need to enable early again to play backsound
                     //normally unpause does it but we only unpause
                     //after fade
-                    sound_on = wasSoundOn;                    
+                    setSoundOn(wasSoundOn);
                     hideCursors();
                     playMenuBackSound();
-                    gameState = gsLevelSelect;                
+                    gameState = gsLevelSelect;
                     startfade(FADEOUT, 0);
                     while(!fade())
                     {
@@ -1393,21 +1392,21 @@ void updateBackgroundTitleScreen()
         
         if (titleStep == tsMainMenu)
         {
-            printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY, "MAIN MENU", 0);
-            printTitle(7 + SCREENSTARTX, 10 + SCREENSTARTY, "START", 0);
-            printTitle(7 + SCREENSTARTX, 11 + SCREENSTARTY, "HELP", 0);
-            printTitle(7 + SCREENSTARTX, 12 + SCREENSTARTY, "OPTIONS", 0);
+            printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY, "MAIN MENU", 9, 0);
+            printTitle(7 + SCREENSTARTX, 10 + SCREENSTARTY, "START", 5, 0);
+            printTitle(7 + SCREENSTARTX, 11 + SCREENSTARTY, "HELP",4, 0);
+            printTitle(7 + SCREENSTARTX, 12 + SCREENSTARTY, "OPTIONS", 7, 0);
         }
         else
         {
             if (titleStep == tsDifficulty)
             {
-                printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY, "VERY EASY", 0);
-                printTitle(6 + SCREENSTARTX, 9 + SCREENSTARTY, "EASY", 0);
-                printTitle(6 + SCREENSTARTX, 10 + SCREENSTARTY, "NORMAL", 0);
-                printTitle(6 + SCREENSTARTX, 11 + SCREENSTARTY, "HARD", 0);
-                printTitle(6 + SCREENSTARTX, 12 + SCREENSTARTY, "VERY HARD", 0);
-                printTitle(6 + SCREENSTARTX, 13 + SCREENSTARTY, "RANDOM", 0);
+                printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY, "VERY EASY", 9, 0);
+                printTitle(6 + SCREENSTARTX, 9 + SCREENSTARTY, "EASY", 4, 0);
+                printTitle(6 + SCREENSTARTX, 10 + SCREENSTARTY, "NORMAL", 6, 0);
+                printTitle(6 + SCREENSTARTX, 11 + SCREENSTARTY, "HARD", 4, 0);
+                printTitle(6 + SCREENSTARTX, 12 + SCREENSTARTY, "VERY HARD", 9, 0);
+                printTitle(6 + SCREENSTARTX, 13 + SCREENSTARTY, "RANDOM", 6, 0);
             }
             else
             {
@@ -1415,22 +1414,22 @@ void updateBackgroundTitleScreen()
                 {
                     if (mainMenu == mmStartGame)
                     {
-                        printTitle(4 + SCREENSTARTX, 8 + SCREENSTARTY, "SELECT  MODE", 0);
+                        printTitle(4 + SCREENSTARTX, 8 + SCREENSTARTY, "SELECT  MODE", 12, 0);
                     }
                     else
                     {
-                        printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY, "MODE HELP", 0);
+                        printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY, "MODE HELP", 9, 0);
                     }
-                    printTitle(7 + SCREENSTARTX, 10 + SCREENSTARTY, "ROTATE", 0);
-                    printTitle(7 + SCREENSTARTX, 11 + SCREENSTARTY, "SLIDE", 0);
-                    printTitle(7 + SCREENSTARTX, 12 + SCREENSTARTY, "ROSLID", 0);
+                    printTitle(7 + SCREENSTARTX, 10 + SCREENSTARTY, "ROTATE", 7, 0);
+                    printTitle(7 + SCREENSTARTX, 11 + SCREENSTARTY, "SLIDE", 5, 0);
+                    printTitle(7 + SCREENSTARTX, 12 + SCREENSTARTY, "ROSLID", 6, 0);
 
                 }
                 else
                 {
                     if (titleStep == tsOptions)
                     {
-                        printTitle(7 + SCREENSTARTX, 8 + SCREENSTARTY, "OPTIONS", 0);
+                        printTitle(7 + SCREENSTARTX, 8 + SCREENSTARTY, "OPTIONS", 7, 0);
                     }
                 }
             }
@@ -1441,22 +1440,22 @@ void updateBackgroundTitleScreen()
     {
         if(titleStep == tsOptions)
         {
-            if(music_on)
+            if(isMusicOn())
             {
-                printTitle(6 + SCREENSTARTX, 10 + SCREENSTARTY, "MUSIC ON ", 0);
+                printTitle(6 + SCREENSTARTX, 10 + SCREENSTARTY, "MUSIC ON ", 9, 0);
             }
             else
             {
-                printTitle(6 + SCREENSTARTX, 10 + SCREENSTARTY, "MUSIC OFF", 0);
+                printTitle(6 + SCREENSTARTX, 10 + SCREENSTARTY, "MUSIC OFF", 9, 0);
             }
 
-            if(sound_on)
+            if(isSoundOn())
             {
-                printTitle(6 + SCREENSTARTX, 11 + SCREENSTARTY, "SOUND ON ", 0);
+                printTitle(6 + SCREENSTARTX, 11 + SCREENSTARTY, "SOUND ON ",9, 0);
             }
             else
             {
-                printTitle(6 + SCREENSTARTX, 11 + SCREENSTARTY, "SOUND OFF", 0);
+                printTitle(6 + SCREENSTARTX, 11 + SCREENSTARTY, "SOUND OFF",9, 0);
             }
         }
         //set menu tile
@@ -1467,7 +1466,7 @@ void updateBackgroundTitleScreen()
             {
                 if (y != mainMenu)
                 {
-                    printTitle(6 + SCREENSTARTX, 10 + y + SCREENSTARTY, " ", 0);
+                    printTitle(6 + SCREENSTARTX, 10 + y + SCREENSTARTY, " ", 1, 0);
                 }
             }
 
@@ -1483,7 +1482,7 @@ void updateBackgroundTitleScreen()
                 {
                     if (y != gameMode)
                     {
-                        printTitle(6 + SCREENSTARTX, 10 + y + SCREENSTARTY, " ", 0);
+                        printTitle(6 + SCREENSTARTX, 10 + y + SCREENSTARTY, " ", 1, 0);
                     }
                 }
 
@@ -1498,7 +1497,7 @@ void updateBackgroundTitleScreen()
                     {
                         if (y != difficulty)
                         {
-                            printTitle(5 + SCREENSTARTX, 8 + y + SCREENSTARTY, " ", 0);
+                            printTitle(5 + SCREENSTARTX, 8 + y + SCREENSTARTY, " ", 1, 0);
                         }
                     }
 
@@ -1513,7 +1512,7 @@ void updateBackgroundTitleScreen()
                         {
                             if (y != option)
                             {
-                                printTitle(5 + SCREENSTARTX, 10 + y + SCREENSTARTY, " ", 0);
+                                printTitle(5 + SCREENSTARTX, 10 + y + SCREENSTARTY, " ", 1, 0);
                             }
                         }
 
@@ -1683,13 +1682,13 @@ void titleScreen()
                     switch(option)
                     {
                         case opMusic:
-                            music_on = !music_on;
-                            setMusicOn(music_on);
+                            setMusicOn(!isMusicOn());
+                            setMusicOnSaveState(isMusicOn());
                             redrawLevelbit = 1;
                             break;
                         case opSound:
-                            sound_on = !sound_on;
-                            setSoundOn(sound_on);
+                            setSoundOn(!isSoundOn());;
+                            setSoundOnSaveState(isSoundOn());
                             redrawLevelbit = 1;
                             break;
                     }
@@ -1765,23 +1764,23 @@ void initLevelsCleared()
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, congratsMapWidth, congratsMapHeight, congratsMap);
     if(difficulty == diffVeryEasy)
     {
-        printCongratsScreen(1 + SCREENSTARTX, 7 + SCREENSTARTY, "VERY EASY  LEVELS", 0);
+        printCongratsScreen(1 + SCREENSTARTX, 7 + SCREENSTARTY, "VERY EASY  LEVELS", 17, 0);
     }
     if(difficulty == diffEasy)
     {
-        printCongratsScreen(3 + SCREENSTARTX, 7 + SCREENSTARTY, "EASY LEVELS", 0);
+        printCongratsScreen(4 + SCREENSTARTX, 7 + SCREENSTARTY, "EASY LEVELS",11, 0);
     }
     if(difficulty == diffNormal)
     {
-        printCongratsScreen(3 + SCREENSTARTX, 7 + SCREENSTARTY, "NORMAL LEVELS", 0);
+        printCongratsScreen(3 + SCREENSTARTX, 7 + SCREENSTARTY, "NORMAL LEVELS",13, 0);
     }
     if(difficulty == diffHard)
     {
-        printCongratsScreen(3 + SCREENSTARTX, 7 + SCREENSTARTY, "HARD LEVELS", 0);
+        printCongratsScreen(4 + SCREENSTARTX, 7 + SCREENSTARTY, "HARD LEVELS",11, 0);
     }
     if(difficulty == diffVeryHard)
     {
-        printCongratsScreen(1 + SCREENSTARTX, 7 + SCREENSTARTY, "VERY HARD  LEVELS", 0);
+        printCongratsScreen(1 + SCREENSTARTX, 7 + SCREENSTARTY, "VERY HARD  LEVELS",17, 0);
     }
     SelectMusic(musAllLevelsClear, 1);
 }
@@ -1988,8 +1987,8 @@ void helpRotate2()
             }
             startfade(FADEIN, 1);
         }
-        updateSwitches(); 
-        performantdelay(1);    
+        updateSwitches();
+        performantdelay(1);
     }
 
     hideCursors();
@@ -2109,8 +2108,8 @@ void init()
     gameMode = gmRotate;
     joyPad = joypad();
     prevJoyPad = joyPad;
-    music_on = isMusicOn();
-    sound_on = isSoundOn();
+    setMusicOn(isMusicOnSaveState());
+    setSoundOn(isSoundOnSaveState());
     startfade(FADEIN, 1);
     initSound();
     initMusic();
@@ -2143,7 +2142,7 @@ void main()
                 //level playing to level selector
                 //when calling init level there
                 randomSeed = clock();
-                initLevel(randomSeed);                
+                initLevel(randomSeed);
                 break;
             case gsLevelSelect:
                 levelSelect();
@@ -2174,6 +2173,4 @@ void main()
                 break;
         }        
     }
-
-    
 }

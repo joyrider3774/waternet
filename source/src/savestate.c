@@ -60,7 +60,7 @@ void initSaveState()
     #endif
 }
 
-void setMusicOn(uint8_t value)
+void setMusicOnSaveState(uint8_t value)
 {
     #ifndef MEGADUCK
     ENABLE_RAM;
@@ -69,7 +69,7 @@ void setMusicOn(uint8_t value)
     #endif
 }
 
-uint8_t isMusicOn()
+uint8_t isMusicOnSaveState()
 {
     uint8_t tmp;
     tmp = 1;
@@ -82,7 +82,7 @@ uint8_t isMusicOn()
     return tmp;
 }
 
-void setSoundOn(uint8_t value)
+void setSoundOnSaveState(uint8_t value)
 {
     #ifndef MEGADUCK
     ENABLE_RAM;
@@ -91,7 +91,7 @@ void setSoundOn(uint8_t value)
     #endif
 }
 
-uint8_t isSoundOn()
+uint8_t isSoundOnSaveState()
 {
     uint8_t tmp;
     tmp = 1;

@@ -11,7 +11,7 @@
 
 //MUSIC PLAYING CONCEPT based on
 //      Sheep it up! - A tiny GB/GBC game for the bitbitjam4 game jam
-//		by Dr. Ludos (http://www.ludoscience.com)
+//      by Dr. Ludos (http://www.ludoscience.com)
 
 uint8_t music_note, music_tempo, music_length, music_loop, prev_music, sustain_note, sfx_sustain, music_on, sound_on;
 uint8_t musicArray[255];
@@ -296,6 +296,39 @@ const uint8_t music_intro[98] ={
     P,   PAUSE * 4
 };
 
+void setSfxSustain(uint8_t value)
+{
+    CRITICAL {
+        sfx_sustain = value;
+    }
+}
+
+void setMusicOn(uint8_t value)
+{
+    CRITICAL {
+        music_on = value;
+    }
+}
+
+void setSoundOn(uint8_t value)
+{
+    sound_on = value;
+}
+
+uint8_t isMusicOn()
+{
+    uint8_t tmp;
+    tmp = 1;
+    CRITICAL {
+        tmp = music_on;
+    }
+    return tmp;
+}
+
+uint8_t isSoundOn()
+{
+    return sound_on;
+}
 
 void initSound()
 {
@@ -355,7 +388,7 @@ void playNote()
         #else 
         PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_MAX;
         PSG = PSG_LATCH | PSG_CH1 |  (music_notes_gg[ musicArray[music_note] ]) & 0xf;
-	    PSG = ((music_notes_gg[ musicArray[music_note] ]) >> 4) & 0x3f;
+        PSG = ((music_notes_gg[ musicArray[music_note] ]) >> 4) & 0x3f;
         sustain_note = 10;
         #endif
         //Set the new delay to wait
@@ -401,7 +434,7 @@ void musicTimer()
             #ifdef SEGA
             PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_MAX;
             PSG = PSG_LATCH | PSG_CH1 |  0;
-	        PSG = 0;
+            PSG = 0;
             #endif    
         }
         else
@@ -449,12 +482,12 @@ void stopSoundSega()
     //music 0 frequency
     PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_MAX;
     PSG = PSG_LATCH | PSG_CH1 |  0;
-	PSG = 0; 
+    PSG = 0; 
 
     //sound 0 frequency
     PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
     PSG = PSG_LATCH | PSG_CH0 |  0;
-	PSG = 0;  
+    PSG = 0;  
 
     //Noise
     PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | PSG_VOLUME_OFF;
@@ -470,7 +503,7 @@ void processSoundSega()
         //tone
         PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
         PSG = PSG_LATCH | PSG_CH0 |  0;
-	    PSG = 0;
+        PSG = 0;
         //noise (error sound)
         PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | PSG_VOLUME_OFF;
     }
@@ -497,8 +530,8 @@ void playGameMoveSound()
     //tone
     PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
     PSG = PSG_LATCH | PSG_CH0 | 0x6;
-	PSG = 0x6;
-    sfx_sustain = SFX_SUSTAIN;
+    PSG = 0x6;
+    setSfxSustain(SFX_SUSTAIN);
     #endif
 }
 
@@ -518,7 +551,7 @@ void playErrorSound()
     //noise channel
     PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | PSG_VOLUME_MAX;
     PSG = PSG_LATCH | PSG_CH3 | 0x2;
-    sfx_sustain = SFX_SUSTAIN*3;
+    setSfxSustain(SFX_SUSTAIN*3);
     #endif
 }
 
@@ -539,7 +572,7 @@ void playMenuSelectSound()
     PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
     PSG = PSG_LATCH | PSG_CH0 | 0x3;
 	PSG = 0x3;
-    sfx_sustain = SFX_SUSTAIN;
+    setSfxSustain(SFX_SUSTAIN);
     #endif
 }
 
@@ -559,8 +592,8 @@ void playMenuBackSound()
     //tone
     PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
     PSG = PSG_LATCH | PSG_CH0 | 0xF;
-	PSG = 0xf;
-    sfx_sustain = SFX_SUSTAIN;
+    PSG = 0xf;
+    setSfxSustain(SFX_SUSTAIN);
     #endif
 }
 
@@ -580,8 +613,8 @@ void playMenuAcknowlege()
     //tone
     PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
     PSG = PSG_LATCH | PSG_CH0 | 0x7;
-	PSG = 0x7;
-    sfx_sustain = SFX_SUSTAIN;
+    PSG = 0x7;
+    setSfxSustain(SFX_SUSTAIN);
     #endif
 }
 
@@ -601,7 +634,7 @@ void playGameAction()
     //tone
     PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
     PSG = PSG_LATCH | PSG_CH0 | 0x9;
-	PSG = 0x9;
-    sfx_sustain = SFX_SUSTAIN;
+    PSG = 0x9;
+    setSfxSustain(SFX_SUSTAIN);
     #endif
 }
