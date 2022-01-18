@@ -24,7 +24,7 @@ LCCFLAGS_gg      = -Wl-yo4 -Wl-ya1 #Game gear needs bigger than 32k rom or sram 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
 #LCCFLAGS += -Wl-j -Wm-yoA -Wm-ya1 -autobank -Wb-ext=.rel -Wb-v # MBC + Autobanking related flags
-LCCFLAGS += -Wl-m -Wa-l -Wl-w  # Wl-m = generate map files, -Wa-l = generate assembler listing, -Wl-w = ???
+LCCFLAGS += -Wl-m -Wa-l # Wl-m = generate map files, -Wa-l = generate assembler listing
 # LCCFLAGS += -v   # Uncomment for lcc verbose output
 
 CFLAGS += -debug # Uncomment to enable debug output, (this sets --debug for sdcc (lcc equiv: -Wf-debug), -y enables .cdb output for sdldgb (lcc equiv: -Wl-y), -j enables .noi output for sdldgb (lcc equiv: -Wl-j))
