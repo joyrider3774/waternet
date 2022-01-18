@@ -35,8 +35,8 @@ uint8_t startPos, menuPos,
         tmp, tmp2, tmp3, tmp4, tmp5, tmp6, neighboursFound, selectedNeighbour, currentPoint, visitedRooms,  mainMenu,
         option, paused, wasMusicOn, wasSoundOn, realPause, lookUpX, lookUpY;
         
-int16_t selectionX, selectionY,i16;
-uint16_t rnd16, randomSeed, moves;
+int16_t selectionX, selectionY, i16;
+uint16_t randomSeed, moves;
 uint8_t neighbours[4];
 uint8_t cellStack[maxBoardSize+1];
 point lookUpTable[maxBoardSize];
@@ -2117,12 +2117,12 @@ void init()
     gameMode = gmRotate;
     joyPad = joypad();
     prevJoyPad = joyPad;
+    initSaveState();
     setMusicOn(isMusicOnSaveState());
     setSoundOn(isSoundOnSaveState());
     startfade(FADEIN, 1);
     initSound();
     initMusic();
-    initSaveState();
  }
 
 //entrypoint
