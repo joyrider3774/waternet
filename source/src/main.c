@@ -33,7 +33,7 @@ uint8_t startPos, menuPos,
         i, j, x, y, rnd, index, cc, maxcc, clearbit, redrawLevelbit, levelDone,
         prevJoyPad, titleStep, gameMode, posAdd, redrawLevelDoneBit,
         tmp, tmp2, tmp3, tmp4, tmp5, tmp6, neighboursFound, selectedNeighbour, currentPoint, visitedRooms,  mainMenu,
-        option, paused, wasMusicOn, wasSoundOn, realPause;
+        option, paused, wasMusicOn, wasSoundOn, realPause, lookUpX, lookUpY;
         
 int16_t selectionX, selectionY,i16;
 uint16_t rnd16, randomSeed, moves;
@@ -429,29 +429,31 @@ void generateLevel()
     {
         neighboursFound = 0;
         tmp = currentPoint+1; 
+        lookUpX = lookUpTable[currentPoint].x;
+        lookUpY = lookUpTable[currentPoint].y;
         //tile has neighbour to the right which we did not handle yet
-        if ((level[tmp] == 0xfu) && (lookUpTable[currentPoint].x + 1 < boardWidth))
+        if ((level[tmp] == 0xfu) && ( lookUpX + 1 < boardWidth))
         {
             neighbours[neighboursFound++] = tmp;
         }
     
         tmp = currentPoint-1; 
         //tile has neighbour to the left which we did not handle yet
-        if ((level[tmp] == 0xfu) && (lookUpTable[currentPoint].x > 0))
+        if ((level[tmp] == 0xfu) && (lookUpX > 0))
         {
             neighbours[neighboursFound++] = tmp;
         }
 
         tmp = currentPoint - boardWidth; 
         //tile has neighbour the north which we did not handle yet
-        if ((level[tmp] == 0xfu) && (lookUpTable[currentPoint].y > 0))
+        if ((level[tmp] == 0xfu) && (lookUpY > 0))
         {
             neighbours[neighboursFound++] = tmp;
         }
 
         tmp = currentPoint + boardWidth; 
         //tile has neighbour the south which we did not handle yet
-        if ((level[tmp] == 0xfu) && (lookUpTable[currentPoint].y + 1 < boardHeight))
+        if ((level[tmp] == 0xfu) && (lookUpY + 1 < boardHeight))
         {
             neighbours[neighboursFound++] = tmp;
         }
@@ -494,9 +496,8 @@ void generateLevel()
             }
             selectedNeighbour = neighbours[rnd];
             tmp = lookUpTable[selectedNeighbour].x;
-            tmp3 = lookUpTable[currentPoint].x;
             //tile has neighbour to the east
-            if(tmp > tmp3)
+            if(tmp > lookUpX)
             {
                 //remove west wall neighbour
                 level[selectedNeighbour] &= ~(8);
@@ -505,7 +506,7 @@ void generateLevel()
             }
             else // tile has neighbour to the west
             {
-                if(tmp < tmp3)
+                if(tmp < lookUpX)
                 {
                     //remove east wall neighbour
                     level[selectedNeighbour] &= ~(2);
@@ -515,8 +516,7 @@ void generateLevel()
                 else // tile has neighbour to the north
                 {
                     tmp2 = lookUpTable[selectedNeighbour].y;
-                    tmp4 = lookUpTable[currentPoint].y;
-                    if(tmp2 < tmp4)
+                    if(tmp2 < lookUpY)
                     {
                         //remove south wall neighbour
                         level[selectedNeighbour] &= ~(4);
@@ -525,7 +525,7 @@ void generateLevel()
                     }
                     else // tile has neighbour to the south
                     {
-                        if(tmp2 > tmp4)
+                        if(tmp2 > lookUpY)
                         {
                             //remove north wall neighbour
                             level[selectedNeighbour] &= ~(1);
