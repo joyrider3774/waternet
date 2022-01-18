@@ -283,89 +283,97 @@ void shuffleLevel()
 
 void handleConnectPoint(uint8_t currentPoint)
 {
-    if ((lookUpTable[currentPoint].y > 0) && (!(level[currentPoint] & 1)))
+    lookUpX = lookUpTable[currentPoint].x;
+    lookUpY = lookUpTable[currentPoint].y;
+    
+    if ((lookUpY> 0) && (!(level[currentPoint] & 1)))
+    {
+        tmp = currentPoint - boardWidth;
+        tmp2 = level[tmp];
+        if (((tmp2 < 16) && (!(tmp2 & 4)) ) || 
+        ((tmp2 > 15) && (!((tmp2 - 16) & 4))))
         {
-            tmp = currentPoint - boardWidth;
-            if (((level[tmp] < 16) && (!(level[tmp] & 4)) ) || 
-            ((level[tmp] > 15) && (!((level[tmp] - 16) & 4))))
-            {
-                //adapt tile to filled tile
-                if(level[currentPoint] < 16)
-                { 
-                    level[currentPoint] += 16;
-                }
-
-                //add neighbour to cellstack of to handle tiles
-                if (level[tmp] < 16)
-                {
-                    cellStack[cc++] = tmp;
-                }
-            }       
-            
-        }
-        //if tile has passage to the east and east neigbour passage to the west 
-        if  ((lookUpTable[currentPoint].x  + 1 < boardWidth) && (!(level[currentPoint] & 2)))
-        {
-            tmp = currentPoint + 1;
-            if (((level[tmp] < 16) && (!(level[tmp] & 8))) || 
-            ((level[tmp] > 15) && (!((level[tmp] - 16) & 8))))
-            {
-                //adapt tile to filled tile
-                if(level[currentPoint] < 16)
-                { 
-                    level[currentPoint] += 16;
-                }
-
-                //add neighbour to cellstack of to handle tiles
-                if (level[tmp] < 16)
-                {
-                    cellStack[cc++] = tmp;
-                }
-
+            //adapt tile to filled tile
+            if(level[currentPoint] < 16)
+            { 
+                level[currentPoint] += 16;
             }
-        }      
-                
-        //if tile has passage to the south and south neigbour passage to the north 
-        if ((lookUpTable[currentPoint].y + 1 < boardHeight) && (!(level[currentPoint] & 4 )))
-        {
-            tmp = currentPoint + boardWidth;
-            if (((level[tmp] < 16) && (!(level[tmp] & 1))) || 
-            ((level[tmp] > 15) && (!((level[tmp] - 16) & 1))))
+
+            //add neighbour to cellstack of to handle tiles
+            if (tmp2 < 16)
             {
-                //adapt tile to filled tile
-                if(level[currentPoint] < 16)
-                { 
-                    level[currentPoint] += 16;
-                }
-
-                //add neighbour to cellstack of to handle tiles
-                if (level[tmp] < 16)
-                {
-                    cellStack[cc++] = tmp; 
-                }
-            } 
+                cellStack[cc++] = tmp;
+            }
         }
+        
+    }
 
-        //if tile has passage to the west and west neigbour passage to the east 
-        if  ((lookUpTable[currentPoint].x > 0) && (!(level[currentPoint] & 8)))
+    //if tile has passage to the east and east neigbour passage to the west 
+    if  ((lookUpX  + 1 < boardWidth) && (!(level[currentPoint] & 2)))
+    {
+        tmp = currentPoint + 1;
+        tmp2 = level[tmp];
+        if (((tmp2 < 16) && (!(tmp2 & 8))) || 
+        ((tmp2 > 15) && (!((tmp2 - 16) & 8))))
         {
-            tmp = currentPoint - 1;
-            if (((level[tmp] < 16) && (!(level[tmp] & 2))) ||
-            ((level[tmp] > 15) && (!((level[tmp] - 16) & 2))))
-            {
-                //adapt tile to filled tile
-                if(level[currentPoint] < 16)
-                { 
-                    level[currentPoint] += 16;
-                }
+            //adapt tile to filled tile
+            if(level[currentPoint] < 16)
+            { 
+                level[currentPoint] += 16;
+            }
 
-                //add neighbour to cellstack of to handle tiles
-                if(level[tmp] < 16)
-                {
-                    cellStack[cc++] = tmp;
-                }
-            }  
+            //add neighbour to cellstack of to handle tiles
+            if (tmp2 < 16)
+            {
+                cellStack[cc++] = tmp;
+            }
+
         }
+    }
+
+    //if tile has passage to the south and south neigbour passage to the north 
+    if ((lookUpY + 1 < boardHeight) && (!(level[currentPoint] & 4 )))
+    {
+        tmp = currentPoint + boardWidth;
+        tmp2 = level[tmp];
+        if (((tmp2 < 16) && (!(tmp2 & 1))) || 
+        ((tmp2 > 15) && (!((tmp2 - 16) & 1))))
+        {
+            //adapt tile to filled tile
+            if(level[currentPoint] < 16)
+            { 
+                level[currentPoint] += 16;
+            }
+
+            //add neighbour to cellstack of to handle tiles
+            if (tmp2 < 16)
+            {
+                cellStack[cc++] = tmp; 
+            }
+        } 
+    }
+
+    //if tile has passage to the west and west neigbour passage to the east 
+    if  ((lookUpX > 0) && (!(level[currentPoint] & 8)))
+    {
+        tmp = currentPoint - 1;
+        tmp2 = level[tmp];
+        if (((tmp2 < 16) && (!(tmp2 & 2))) ||
+        ((tmp2 > 15) && (!((tmp2 - 16) & 2))))
+        {
+            //adapt tile to filled tile
+            if(level[currentPoint] < 16)
+            { 
+                level[currentPoint] += 16;
+            }
+
+            //add neighbour to cellstack of to handle tiles
+            if(tmp2 < 16)
+            {
+                cellStack[cc++] = tmp;
+            }
+        }  
+    }
 
 }
 
@@ -428,9 +436,10 @@ void generateLevel()
     while (visitedRooms != boardSize)
     {
         neighboursFound = 0;
-        tmp = currentPoint+1; 
         lookUpX = lookUpTable[currentPoint].x;
         lookUpY = lookUpTable[currentPoint].y;
+
+        tmp = currentPoint+1; 
         //tile has neighbour to the right which we did not handle yet
         if ((level[tmp] == 0xfu) && ( lookUpX + 1 < boardWidth))
         {
