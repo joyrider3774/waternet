@@ -47,9 +47,6 @@ jobs:
       # ==== dependencies ====
       - name: Install Make
         run: sudo apt-get install -y make
-
-      - name: Install p7zip
-        run: sudo apt-get install -y make
         
        # ==== Build Steps ====
       - name: Check out Sources
@@ -68,7 +65,7 @@ jobs:
           export GBDK_HOME="$PWD/gdbk_build/gbdk/"
           echo $GBDK_HOME
           cd source
-          make ${{ matrix.rom }}
+          make ${{ matrix.rom }}-release
           cd ..
           
       - name: Prepare artifacts

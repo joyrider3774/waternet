@@ -6,6 +6,9 @@ CFLAGS += -m$(PORT):$(PLAT)
 endif
 endif
 
+ifeq ($(strip $(RELEASE)),1)
+CFLAGS += $(CFLAGS_RELEASE)
+endif
 
 # Called by the individual targets below to build a ROM
 build-target: $(BINS)
@@ -18,41 +21,46 @@ gb-clean:
 	${MAKE} clean-target EXT=gb
 gb:
 	${MAKE} build-target PORT=gbz80 PLAT=gb EXT=gb
+gb-release:
+	${MAKE} build-target PORT=gbz80 PLAT=gb EXT=gb RELEASE=1
 
 
 gbc-clean:
 	${MAKE} clean-target EXT=gbc
 gbc:
 	${MAKE} build-target PORT=gbz80 PLAT=gb EXT=gbc
+gbc-release:
+	${MAKE} build-target PORT=gbz80 PLAT=gb EXT=gbc RELEASE=1
 
 
 pocket-clean:
 	${MAKE} clean-target EXT=pocket
 pocket:
 	${MAKE} build-target PORT=gbz80 PLAT=ap EXT=pocket
+pocket-release:
+	${MAKE} build-target PORT=gbz80 PLAT=ap EXT=pocket RELEASE=1
 
 
 megaduck-clean:
 	${MAKE} clean-target EXT=duck
 megaduck:
 	${MAKE} build-target PORT=gbz80 PLAT=duck EXT=duck
+megaduck-release:
+	${MAKE} build-target PORT=gbz80 PLAT=duck EXT=duck RELEASE=1
 
 
 sms-clean:
 	${MAKE} clean-target EXT=sms
 sms:
 	${MAKE} build-target PORT=z80 PLAT=sms EXT=sms
+sms-release:
+	${MAKE} build-target PORT=z80 PLAT=sms EXT=sms RELEASE=1
 
 
 gg-clean:
 	${MAKE} clean-target EXT=gg
 gg:
 	${MAKE} build-target PORT=z80 PLAT=gg EXT=gg
-	
-clean-all:
-	${MAKE} clean-target EXT=gbc
-	${MAKE} clean-target EXT=gb
-	${MAKE} clean-target EXT=pocket
-	${MAKE} clean-target EXT=duck
-	${MAKE} clean-target EXT=gg
-	${MAKE} clean-target EXT=sms
+gg-release:
+	${MAKE} build-target PORT=z80 PLAT=gg EXT=gg RELEASE=1
+

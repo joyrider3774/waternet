@@ -29,6 +29,7 @@ LCCFLAGS += -Wl-m -Wa-l # Wl-m = generate map files, -Wa-l = generate assembler 
 
 CFLAGS += -debug # Uncomment to enable debug output, (this sets --debug for sdcc (lcc equiv: -Wf-debug), -y enables .cdb output for sdldgb (lcc equiv: -Wl-y), -j enables .noi output for sdldgb (lcc equiv: -Wl-j))
 
+CFLAGS_RELEASE = -Wf"--max-allocs-per-node 1000000" # will be added to CFLAGS with make ##-release targets like for example `make gb-release` or `make release` for all platforms
 
 # You can set the name of the ROM file here
 PROJECTNAME = waternet
@@ -73,6 +74,11 @@ clean:
 	@echo Cleaning
 	@for target in $(TARGETS); do \
 		$(MAKE) $$target-clean; \
+	done
+
+release:
+	@for target in $(TARGETS); do \
+		$(MAKE) $$target-release; \
 	done
 
 # Include available build targets
