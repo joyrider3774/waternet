@@ -467,97 +467,89 @@ void generateLevel()
             neighbours[neighboursFound++] = tmp;
         }
 
-        //if we had any unhandled neighbours
-        if (neighboursFound != 0)
+        switch (neighboursFound)
         {
-            //take a random neighbour
-            if (neighboursFound == 1)
-            {
+            case 0:
+                currentPoint = cellStack[--cc];
+                continue;
+                break;
+            case 1:
                 rnd = 0;
-            }
-            else
-            {
-                rnd = (uint8_t)rand();
-                if ((neighboursFound == 2) || (neighboursFound == 4))
+                break;
+            case 4:
+            case 2:
+                rnd = rand() & (neighboursFound -1);
+                break;
+            case 3:
+                rnd = rand() >> 4;
+                if (rnd == 0)
                 {
-                    rnd &= neighboursFound -1;
+                    rnd = 2;
                 }
-                else //only for 3 neighbours
+                else
                 {
-                    rnd = rnd >> 4;
-                    if (rnd == 0)
+                    rnd = rnd >> 2;
+                    if(rnd == 0)
                     {
-                        rnd = 2;
+                        rnd = 1;
                     }
                     else
                     {
-                       rnd = rnd >> 2;
-                       if(rnd == 0)
-                       {
-                           rnd = 1;
-                       }
-                       else
-                       {
-                           rnd = 0;
-                       }
+                        rnd = 0;
                     }
                 }
-            }
-            selectedNeighbour = neighbours[rnd];
-            tmp = lookUpTable[selectedNeighbour].x;
-            //tile has neighbour to the east
-            if(tmp > lookUpX)
-            {
-                //remove west wall neighbour
-                level[selectedNeighbour] &= ~(8);
-                //remove east wall tile
-                level[currentPoint] &= ~(2);
-            }
-            else // tile has neighbour to the west
-            {
-                if(tmp < lookUpX)
-                {
-                    //remove east wall neighbour
-                    level[selectedNeighbour] &= ~(2);
-                    //remove west wall tile
-                    level[currentPoint] &= ~(8);
-                }
-                else // tile has neighbour to the north
-                {
-                    tmp2 = lookUpTable[selectedNeighbour].y;
-                    if(tmp2 < lookUpY)
-                    {
-                        //remove south wall neighbour
-                        level[selectedNeighbour] &= ~(4);
-                        //remove north wall tile
-                        level[currentPoint] &= ~(1);
-                    }
-                    else // tile has neighbour to the south
-                    {
-                        if(tmp2 > lookUpY)
-                        {
-                            //remove north wall neighbour
-                            level[selectedNeighbour] &= ~(1);
-                            //remove south wall tile
-                            level[currentPoint] &= ~(4);
-                        }
-                    }
-                }
-            }
-            
-            //add tile to the cellstack
-            if(neighboursFound > 1)
-            {
-                cellStack[cc++] = currentPoint;
-            } 
-            //set tile to the neighbour   
-            currentPoint = selectedNeighbour;
-            visitedRooms++;
+                break;
         }
-        else //no neighbours take a tile from the list
+        selectedNeighbour = neighbours[rnd];
+        tmp = lookUpTable[selectedNeighbour].x;
+        //tile has neighbour to the east
+        if(tmp > lookUpX)
         {
-            currentPoint = cellStack[--cc];
+            //remove west wall neighbour
+            level[selectedNeighbour] &= ~(8);
+            //remove east wall tile
+            level[currentPoint] &= ~(2);
         }
+        else // tile has neighbour to the west
+        {
+            if(tmp < lookUpX)
+            {
+                //remove east wall neighbour
+                level[selectedNeighbour] &= ~(2);
+                //remove west wall tile
+                level[currentPoint] &= ~(8);
+            }
+            else // tile has neighbour to the north
+            {
+                tmp2 = lookUpTable[selectedNeighbour].y;
+                if(tmp2 < lookUpY)
+                {
+                    //remove south wall neighbour
+                    level[selectedNeighbour] &= ~(4);
+                    //remove north wall tile
+                    level[currentPoint] &= ~(1);
+                }
+                else // tile has neighbour to the south
+                {
+                    if(tmp2 > lookUpY)
+                    {
+                        //remove north wall neighbour
+                        level[selectedNeighbour] &= ~(1);
+                        //remove south wall tile
+                        level[currentPoint] &= ~(4);
+                    }
+                }
+            }
+        }
+        
+        //add tile to the cellstack
+        if(neighboursFound > 1)
+        {
+            cellStack[cc++] = currentPoint;
+        } 
+        //set tile to the neighbour   
+        currentPoint = selectedNeighbour;
+        visitedRooms++;
     }
 }
 
