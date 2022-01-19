@@ -776,8 +776,7 @@ void initLevelSelect()
 
 void levelSelect()
 {
-    uint8_t delay, tmpUnlocked;
-    delay = 1;
+    uint8_t tmpUnlocked;
     tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);
     initLevelSelect();
     while (gameState == gsLevelSelect)
@@ -823,7 +822,7 @@ void levelSelect()
                 playErrorSound();
             }
         }
-        if ((joyPad & J_LEFT) && (delay == 0))
+        if ((joyPad & J_LEFT) && (!(prevJoyPad & J_LEFT)))
         {
             if (difficulty == diffRandom)
             {
@@ -859,9 +858,8 @@ void levelSelect()
                 }
             }
             printNumber(6 + SCREENSTARTX, 16 + SCREENSTARTY, selectedLevel, 2, 61);
-            delay = 6;
         }
-        if ((joyPad & J_RIGHT) && (delay == 0))
+        if ((joyPad & J_RIGHT) && (!(prevJoyPad & J_RIGHT)))
         {
             if (difficulty == diffRandom)
             {
@@ -894,14 +892,9 @@ void levelSelect()
                 }
             }
             printNumber(6 + SCREENSTARTX, 16 + SCREENSTARTY, selectedLevel, 2, 61);
-            delay = 6;
         }
         updateSwitches();
         performantdelay(1);
-        if (delay != 0)
-        {
-            delay--;
-        }
     }
 }
 
