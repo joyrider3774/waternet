@@ -18,8 +18,8 @@ LCCFLAGS_gb      = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wl-yt0x1B # (-Wl-yt0x1B Set
 LCCFLAGS_pocket  = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wl-yt0x1B -Wm-yc # Usually the same as required for .gbc
 LCCFLAGS_duck    = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wl-yt0x1B # Usually the same as required for .gb
 LCCFLAGS_gbc     = -Wm-yn"WATERNET" -Wl-yo2 -Wl-ya1 -Wl-yt0x1B -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
-LCCFLAGS_sms     = -Wl-yo4 -Wl-ya1 
-LCCFLAGS_gg      = -Wl-yo4 -Wl-ya1 #Game gear needs bigger than 32k rom or sram does not work in emulicious
+LCCFLAGS_sms     = -Wl-yo4 -Wl-ya1 -Wm-xj4 -Wm-xv0 #-Wl-yo4 Master System needs bigger than 32k rom or sram does not work in emulicious, -Wl-ya1 ram bank (not sure it's used with sega), -Wm-xj4 Sms Export region, -Wm-xo0xe, -Wm-xv0 version 0 (or 1st version)
+LCCFLAGS_gg      = -Wl-yo4 -Wl-ya1 -Wm-xj7 -Wm-xv0 #-Wl-yo4 Game gear needs bigger than 32k rom or sram does not work in emulicious, -Wl-ya1 ram bank (not sure it's used with sega), -Wm-xj7 GG international region, -Wm-xo0xe, -Wm-xv0 version 0 (or 1st version)
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
@@ -27,7 +27,7 @@ LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Fla
 LCCFLAGS += -Wl-m -Wa-l # Wl-m = generate map files, -Wa-l = generate assembler listing
 # LCCFLAGS += -v   # Uncomment for lcc verbose output
 
-CFLAGS += -debug # Uncomment to enable debug output, (this sets --debug for sdcc (lcc equiv: -Wf-debug), -y enables .cdb output for sdldgb (lcc equiv: -Wl-y), -j enables .noi output for sdldgb (lcc equiv: -Wl-j))
+CFLAGS +=  -debug # Uncomment to enable debug output, (this sets --debug for sdcc (lcc equiv: -Wf-debug), -y enables .cdb output for sdldgb (lcc equiv: -Wl-y), -j enables .noi output for sdldgb (lcc equiv: -Wl-j))
 
 CFLAGS_RELEASE = -Wf"--max-allocs-per-node 1000000" # will be added to CFLAGS with make ##-release targets like for example `make gb-release` or `make release` for all platforms
 
@@ -88,5 +88,5 @@ include Makefile.targets
 # create necessary directories after Makefile is parsed but before build
 # info prevents the command from being pasted into the makefile
 ifneq ($(strip $(EXT)),)                                # Only make the directories if EXT has been set by a target
-    $(info $(shell mkdir -p $(MKDIRS)))
+	$(info $(shell mkdir -p $(MKDIRS)))
 endif
