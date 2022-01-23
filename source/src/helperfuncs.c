@@ -16,12 +16,12 @@ void updateSwitches()
 
 void pushBank()
 {
-    bankStack[cc++] = _current_bank;
+    bankStack[bankStackcc++] = _current_bank;
 }
 
 void popBank()
 {
-    SWITCH_ROM(bankStack[--cc]);
+    SWITCH_ROM(bankStack[--bankStackcc]);
 }
 
 void setBlockTilesAsBackground()
