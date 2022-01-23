@@ -20,6 +20,10 @@
 #ifndef __titlescreenmap_h_INCLUDE
 #define __titlescreenmap_h_INCLUDE
 
+#include <gbdk/platform.h>
+
+BANKREF_EXTERN(titlescreenmap)
+
 #define titlescreenMapWidth 20
 #define titlescreenMapHeight 18
 #define titlescreenMapBank 0

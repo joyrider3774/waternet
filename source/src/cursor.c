@@ -1,7 +1,8 @@
 #include <stdint.h>
 #include <gbdk/platform.h>
 #include "cursor.h"
-#include "main.h"
+#include "commonvars.h"
+#include "helperfuncs.h"
 #include "../res/selectortiles.h"
 
 uint8_t cursorFrameCount, cursorFrame;
@@ -108,8 +109,12 @@ void setCursorPos(uint8_t cursorNr, uint8_t xPos, uint8_t yPos)
 void initCursors()
 {
     set_sprite_palette(0, 1, sprPalette);
-    set_sprite_data(0, 41, selectorTiles);
     
+    pushBank();
+    SWITCH_ROM(BANK(selectortiles));
+    set_sprite_data(0, 41, selectorTiles);
+    popBank();
+
     //cursor 0
     set_sprite_tile(0, 8);
     set_sprite_tile(1, 9);

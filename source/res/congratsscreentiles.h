@@ -25,6 +25,10 @@
 #ifndef __congratsscreentiles_h_INCLUDE
 #define __congratsscreentiles_h_INCLUDE
 
+#include <gbdk/platform.h>
+
+BANKREF_EXTERN(congratsscreentiles)
+
 /* Bank of tiles. */
 #define congratsScreenTilesBank 0
 /* Start of tile array. */

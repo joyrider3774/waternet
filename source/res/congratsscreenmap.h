@@ -20,6 +20,10 @@
 #ifndef __congratsscreenmap_h_INCLUDE
 #define __congratsscreenmap_h_INCLUDE
 
+#include <gbdk/platform.h>
+
+BANKREF_EXTERN(congratsscreenmap)
+
 #define congratsMapWidth 20
 #define congratsMapHeight 18
 #define congratsMapBank 0

@@ -20,6 +20,10 @@
 #ifndef __gamebackgroundmap_h_INCLUDE
 #define __gamebackgroundmap_h_INCLUDE
 
+#include <gbdk/platform.h>
+
+BANKREF_EXTERN(gamebackgroundmap)
+
 #define gameBackgroundMapWidth 20
 #define gameBackgroundMapHeight 18
 #define gameBackgroundMapBank 0

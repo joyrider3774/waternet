@@ -20,6 +20,10 @@
 #ifndef __helprotate2map_h_INCLUDE
 #define __helprotate2map_h_INCLUDE
 
+#include <gbdk/platform.h>
+
+BANKREF_EXTERN(helprotate2map)
+
 #define helpRotate2MapWidth 20
 #define helpRotate2MapHeight 18
 #define helpRotate2MapBank 0

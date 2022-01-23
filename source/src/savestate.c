@@ -1,6 +1,6 @@
 #include <gbdk/platform.h>
 #include <string.h>
-#include "main.h"
+#include "commonvars.h"
 
 
 #if defined(NINTENDO)

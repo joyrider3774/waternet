@@ -20,6 +20,10 @@
 #ifndef __helpslidemap_h_INCLUDE
 #define __helpslidemap_h_INCLUDE
 
+#include <gbdk/platform.h>
+
+BANKREF_EXTERN(helpslidemap)
+
 #define helpSlideMapWidth 20
 #define helpSlideMapHeight 18
 #define helpSlideMapBank 0
