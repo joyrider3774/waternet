@@ -180,7 +180,7 @@ void initTitleScreen() NONBANKED
     SelectMusic(musTitle, 1);
 }
 
-void titleScreen()
+void titleScreen() BANKED
 {
     initTitleScreen();
     

@@ -5,12 +5,11 @@
 #include "helperfuncs.h"
 #include "commonvars.h"
 
-int16_t bankStack[20];
-uint8_t bankStackcc;
+int16_t prevBank;
 
 void initBankStack()
 {
-    bankStackcc = 0;
+    prevBank = 0;
 }
 
 void updateSwitches() 
@@ -21,14 +20,12 @@ void updateSwitches()
 
 void pushBank()
 {
-    bankStack[bankStackcc] = _current_bank;
-    bankStackcc++;
+    prevBank = _current_bank;
 }
 
 void popBank()
 {
-    bankStackcc--;
-    SWITCH_ROM(bankStack[bankStackcc]);
+    SWITCH_ROM(prevBank);
 }
 
 void setBlockTilesAsBackground()

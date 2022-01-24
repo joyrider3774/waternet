@@ -38,11 +38,9 @@ void init()
     
     setBlackPalette();
     DISPLAY_ON;
+    
     #ifdef GAMEBOY
-        pushBank();
-        SWITCH_ROM(1);
         set_sgb_border(gb_border_tiles, sizeof(gb_border_tiles), gb_border_map, sizeof(gb_border_map), gb_border_palettes, sizeof(gb_border_palettes));
-        popBank();
     #endif
 
     prevBoardHeight = 0;
@@ -76,10 +74,7 @@ void main()
         switch (gameState)
         {
             case gsTitle:
-                pushBank();
-                SWITCH_ROM(BANK(TITLESCREEN));
                 titleScreen();
-                popBank();
                 if (gameMode == gmRotate)
                 {
                     posAdd = 0;
@@ -98,58 +93,31 @@ void main()
                 initLevel(randomSeed);
                 break;
             case gsLevelSelect:
-                pushBank();
-                SWITCH_ROM(BANK(LEVELSELECT));
                 levelSelect();
-                popBank();
                 break;
             case gsGame:
-                pushBank();
-                SWITCH_ROM(BANK(GAME));
                 game();
-                popBank();
                 break;
             case gsLevelsCleared:
-                pushBank();
-                SWITCH_ROM(BANK(LEVELSCLEARED));
                 levelsCleared();
-                popBank();
                 break;
             case gsHelpSlide:
-                pushBank();
-                SWITCH_ROM(BANK(HELPSCREENS));
                 helpSlide();
-                popBank();
                 break;
             case gsHelpSlide2:
-                pushBank();
-                SWITCH_ROM(BANK(HELPSCREENS));
                 helpSlide2();
-                popBank();
                 break;
             case gsHelpRotateSlide:
-                pushBank();
-                SWITCH_ROM(BANK(HELPSCREENS));
                 helpRotateSlide();
-                popBank();
                 break;
             case gsHelpRotateSlide2:
-                pushBank();
-                SWITCH_ROM(BANK(HELPSCREENS));
                 helpRotateSlide2();
-                popBank();
                 break;
             case gsHelpRotate:
-                pushBank();
-                SWITCH_ROM(BANK(HELPSCREENS));
                 helpRotate();
-                popBank();
                 break;
             case gsHelpRotate2:
-                pushBank();
-                SWITCH_ROM(BANK(HELPSCREENS));
                 helpRotate2();
-                popBank();
                 break;
         }        
     }

@@ -138,7 +138,7 @@ void initLevelSelect() NONBANKED
     SelectMusic(musTitle, 1);
 }
 
-void levelSelect()
+void levelSelect() BANKED
 {
     uint8_t tmpUnlocked;
     tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);

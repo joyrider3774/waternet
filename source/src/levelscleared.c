@@ -47,7 +47,7 @@ void initLevelsCleared() NONBANKED
     SelectMusic(musAllLevelsClear, 1);
 }
 
-void levelsCleared()
+void levelsCleared() BANKED
 {
     initLevelsCleared();
     

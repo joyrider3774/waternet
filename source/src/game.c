@@ -158,7 +158,7 @@ void initGame() NONBANKED
 
 }
 
-void doPause(uint8_t isRealPause)
+void doPause(uint8_t isRealPause) BANKED
 {
     paused = 1;
     wasSoundOn = isSoundOn();
@@ -190,7 +190,7 @@ void doPause(uint8_t isRealPause)
     
 }
 
-void doUnPause()
+void doUnPause() BANKED
 {
     paused = 0;
     setMusicOn(wasMusicOn);
@@ -200,7 +200,7 @@ void doUnPause()
     showCursors();
 }
 
-void game()
+void game() BANKED
 {
     initGame();
     uint8_t delay;

@@ -29,7 +29,7 @@ void initHelpRotateSlide() NONBANKED
 
 }
 
-void helpRotateSlide()
+void helpRotateSlide() BANKED
 {
     initHelpRotateSlide();
    
@@ -81,7 +81,7 @@ void initHelpRotateSlide2() NONBANKED
     showCursors();
 }
 
-void helpRotateSlide2()
+void helpRotateSlide2() BANKED
 {
     initHelpRotateSlide2();
    
@@ -125,7 +125,7 @@ void initHelpRotate() NONBANKED
     SelectMusic(musTitle, 1);
 }
 
-void helpRotate()
+void helpRotate() BANKED
 {
     initHelpRotate();
    
@@ -172,7 +172,7 @@ void initHelpRotate2() NONBANKED
     showCursors();
 }
 
-void helpRotate2()
+void helpRotate2() BANKED
 {
     initHelpRotate2();
    
@@ -219,7 +219,7 @@ void initHelpSlide() NONBANKED
     SelectMusic(musTitle, 1);
 }
 
-void helpSlide()
+void helpSlide() BANKED
 {
     initHelpSlide();
    
@@ -268,7 +268,7 @@ void initHelpSlide2() NONBANKED
     showCursors();
 }
 
-void helpSlide2()
+void helpSlide2() BANKED
 {
     initHelpSlide2();
    
