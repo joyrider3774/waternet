@@ -28,6 +28,7 @@
 //intialisation of game & global variables
 void init() 
 {
+    initBankStack();
     #ifdef NINTENDO
     if(_cpu == CGB_TYPE)
     {

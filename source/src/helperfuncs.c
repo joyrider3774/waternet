@@ -6,7 +6,12 @@
 #include "commonvars.h"
 
 uint8_t bankStack[20];
-uint8_t bankStackcc = 0;
+uint8_t bankStackcc;
+
+void initBankStack()
+{
+    bankStackcc = 0;
+}
 
 void updateSwitches() 
 {
@@ -16,12 +21,14 @@ void updateSwitches()
 
 void pushBank()
 {
-    bankStack[bankStackcc++] = _current_bank;
+    bankStack[bankStackcc] = _current_bank;
+    bankStackcc++;
 }
 
 void popBank()
 {
-    SWITCH_ROM(bankStack[--bankStackcc]);
+    bankStackcc--;
+    SWITCH_ROM(bankStack[bankStackcc]);
 }
 
 void setBlockTilesAsBackground()
