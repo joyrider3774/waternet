@@ -7,10 +7,6 @@
 
 uint8_t cursorFrameCount, cursorFrame;
 
-const uint16_t sprPalette[4] = {
-	RGB_LIGHTGRAY, RGB_WHITE, RGB_WHITE, RGB_BLACK
-};
-
 void updateCursorFrame()
 {
     uint8_t tmpFrame;
@@ -108,8 +104,6 @@ void setCursorPos(uint8_t cursorNr, uint8_t xPos, uint8_t yPos)
 
 void initCursors()
 {
-    set_sprite_palette(0, 1, sprPalette);
-    
     pushBank();
     SWITCH_ROM(BANK(selectortiles));
     set_sprite_data(0, 41, selectorTiles);

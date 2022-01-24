@@ -6,6 +6,11 @@
 uint8_t fadein, fadeCounter,fadeStep, startFade, fadeSteps;
 palette_color_t  toPallette[4];
 
+
+uint16_t sprPalette[4] = {
+    RGB_LIGHTGRAY, RGB_WHITE, RGB_WHITE, RGB_BLACK
+};
+
 const palette_color_t blackPallette[4] = {
 	0, 0, 0, 0
 };
@@ -30,6 +35,7 @@ void setBlackPalette()
     {
     #endif
         set_bkg_palette(0, 1, blackPallette);
+        set_sprite_palette(0, 1, blackPallette);
     #ifdef NINTENDO
     }
     else
@@ -50,16 +56,20 @@ void startfade(uint8_t afadein, uint8_t ForTitle)
         //6 steps on color gameboy to go from default pallete to black and vice versa (goes from 0 to fadesteps)
         #ifdef NINTENDO
         fadeSteps = 5;
+         //skips per fadestep to prolong fade effect
+        startFade = 7;
         #endif
         #ifdef GAMEGEAR
         fadeSteps = 4;
+         //skips per fadestep to prolong fade effect
+        startFade = 8;
         #endif
         #ifdef MASTERSYSTEM
         fadeSteps = 2;
+         //skips per fadestep to prolong fade effect
+        startFade = 10;
         #endif
 
-        //skips per fadestep to prolong fade effect
-        startFade = 7;
         //counts from 1 to startfade above then increases fadestep 
         fadeCounter = 0;
         //fade step we are at (will go until fadestep > fadesteps)
@@ -111,6 +121,10 @@ void fadeInCGB()
         palette[c] = fadeBlack(fadeSteps - fadeStep, toPallette[c]);
     }
     set_bkg_palette(0, 1, palette);
+    //first color of sprite pallete (2nd pallete) on sms is used for
+    //border colors by default, but cursor only uses last color (black)
+    sprPalette[0] = palette[0];
+    set_sprite_palette(0, 1, sprPalette);
 }
 
 //fade to black from color
@@ -123,6 +137,10 @@ void fadeOutCGB()
         palette[c] = fadeBlack(fadeStep, toPallette[c]);
     }
     set_bkg_palette(0, 1, palette);
+    //first color of sprite pallete (2nd pallete) on sms is used for
+    //border colors by default, but cursor only uses last color (black)
+    sprPalette[0] = palette[0];
+    set_sprite_palette(0, 1, sprPalette);
 }
 
 //fade function for color gameboy need to set fadecounter first using above function
