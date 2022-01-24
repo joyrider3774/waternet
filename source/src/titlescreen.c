@@ -168,11 +168,14 @@ void initTitleScreen() NONBANKED
     SWITCH_ROM(BANK(titletiles));
     set_bkg_data(0, 126, titleTiles);
     popBank();
+    
     clearBackgroundLayer(0);
+    
     pushBank();
     SWITCH_ROM(BANK(titlescreenmap));
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, titlescreenMapWidth, titlescreenMapHeight, titlescreenMap);
     popBank();
+    
     clearbit = 1;
     SelectMusic(musTitle, 1);
 }

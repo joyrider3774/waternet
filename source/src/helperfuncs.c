@@ -5,7 +5,7 @@
 #include "helperfuncs.h"
 #include "commonvars.h"
 
-uint8_t bankStack[20];
+int16_t bankStack[20];
 uint8_t bankStackcc;
 
 void initBankStack()
