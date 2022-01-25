@@ -19,7 +19,7 @@
 
 void set_sgb_border(unsigned char * tiledata, size_t tiledata_size,
                     unsigned char * tilemap, size_t tilemap_size,
-                    unsigned char * palette, size_t palette_size) BANKED {
+                    unsigned char * palette, size_t palette_size) {
     if (sgb_check()) {
         unsigned char map_buf[20];
         memset(map_buf, 0, sizeof(map_buf));

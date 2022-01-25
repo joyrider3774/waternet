@@ -40,6 +40,8 @@ void init()
     DISPLAY_ON;
     
     #ifdef GAMEBOY
+        //graphics data is in bank 1
+        SWITCH_ROM(1);
         set_sgb_border(gb_border_tiles, sizeof(gb_border_tiles), gb_border_map, sizeof(gb_border_map), gb_border_palettes, sizeof(gb_border_palettes));
     #endif
 
