@@ -14,10 +14,10 @@ LCC = $(GBDK_HOME)bin/lcc
 TARGETS=gb gbc pocket megaduck gg sms
 
 # Configure platform specific LCC flags here:
-LCCFLAGS_gb      = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x03 -Wm-ys # (-Wl-yt0x1B Set an MBC for banking (0x03:ROM+MBC1+RAM+BATT)) (-Wl-ya1 = 1x 8k ram bank)
-LCCFLAGS_pocket  = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x03 -Wm-yc # Usually the same as required for .gbc
-LCCFLAGS_duck    = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x03 # Usually the same as required for .gb
-LCCFLAGS_gbc     = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x03 -Wm-ys -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
+LCCFLAGS_gb      = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B -Wm-ys # (-Wl-yt0x1B Set an MBC for banking (ROM+MBC5+RAM+BATT)) (-Wl-ya1 = 1x 8k ram bank)
+LCCFLAGS_pocket  = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B -Wm-yc # Usually the same as required for .gbc
+LCCFLAGS_duck    = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B # Usually the same as required for .gb
+LCCFLAGS_gbc     = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B -Wm-ys -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
 LCCFLAGS_sms     = -Wl-ya1 -Wm-xj4 -Wm-xv0 #-Wl-yo4 Master System needs bigger than 32k rom or sram does not work in emulicious, -Wl-ya1 ram bank (not sure it's used with sega), -Wm-xj4 Sms Export region, -Wm-xo0xe, -Wm-xv0 version 0 (or 1st version)
 LCCFLAGS_gg      = -Wl-ya1 -Wm-xj7 -Wm-xv0 #-Wl-yo4 Game gear needs bigger than 32k rom or sram does not work in emulicious, -Wl-ya1 ram bank (not sure it's used with sega), -Wm-xj7 GG international region, -Wm-xo0xe, -Wm-xv0 version 0 (or 1st version)
 
