@@ -42,6 +42,11 @@ void init()
     #ifdef GAMEBOY
         //graphics data is in bank 1
         SWITCH_ROM(1);
+        // this delay is required for PAL SNES
+        for (i = 4; i != 0; i--)
+        {
+            wait_vbl_done();
+        }
         set_sgb_border(gb_border_tiles, sizeof(gb_border_tiles), gb_border_map, sizeof(gb_border_map), gb_border_palettes, sizeof(gb_border_palettes));
     #endif
 
