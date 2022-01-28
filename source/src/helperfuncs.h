@@ -6,7 +6,7 @@
 void pushBank();
 void popBank();
 void setBlockTilesAsBackground();
-void performantdelay(uint8_t numloops);
+inline void performantdelay(uint8_t numloops);
 void updateSwitches();
 void initBankStack();
 #endif

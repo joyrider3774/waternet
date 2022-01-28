@@ -41,7 +41,7 @@ void setBlockTilesAsBackground()
     popBank();
 }
 
-void performantdelay(uint8_t numloops) 
+inline void performantdelay(uint8_t numloops) 
 {
     for(i = 0; i != numloops; i++) 
     {
