@@ -3,6 +3,6 @@
 
 BANKREF_EXTERN(TITLESCREEN)
 
-void titleScreen();
+void titleScreen() BANKED;
 
 #endif

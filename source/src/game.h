@@ -3,6 +3,6 @@
 
 BANKREF_EXTERN(GAME)
 
-void game();
+void game() BANKED;
 
 #endif

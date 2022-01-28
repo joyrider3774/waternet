@@ -3,6 +3,6 @@
 
 BANKREF_EXTERN(LEVELSELECT)
 
-void levelSelect();
+void levelSelect() BANKED;
 
 #endif

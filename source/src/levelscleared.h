@@ -3,6 +3,6 @@
 
 BANKREF_EXTERN(LEVELSCLEARED)
 
-void levelsCleared();
+void levelsCleared() BANKED;
 
 #endif
