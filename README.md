@@ -52,7 +52,7 @@ I highly advise anyone making similar games to do the same as initially everythi
 To create the cartridge graphics i used a [template](https://www.deviantart.com/armando92/art/Label-Template-for-Gameboy-Gameboy-Color-Carts-418758475) made by armando92 to start with in Gimp and then added different pictures i found on [cleanpng](https://www.cleanpng.com) to create the Cartridge Label and the logo i created using a [free logo creator](https://www.flamingtext.com/) site. You can see the end result below. 
 
 ### Game Boy (Color) - 4.2 x 3.7 cm.
-<img src="images/cartridge_labels/waternet.gbc.png" height="250">
+<img src="images/cartridge_labels/waternet.gb.png" height="250">
 
 ### Game Gear
 <img src="images/cartridge_labels/waternet.gg.png" height="250">
