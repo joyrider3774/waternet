@@ -11,7 +11,7 @@ LCC = $(GBDK_HOME)bin/lcc
 # Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
 # They can also be built/cleaned individually: "make gg" and "make gg-clean"
 # Possible are: gb gbc pocket megaduck sms gg
-TARGETS=gbc gbc-batteryless-gen_WR-555-A9 pocket megaduck gg sms
+TARGETS=gbc gbc-batteryless-DMG_Generic_WR_555_A9 pocket megaduck gg sms
 
 #when changing this value don't forget to change _CODE_4 in dummydata.s, this value is the (rom) bank nr and must be multiple of 4 + make sure it not overwrites current code
 START_SAVE=4

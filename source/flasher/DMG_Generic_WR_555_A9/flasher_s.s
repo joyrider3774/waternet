@@ -1,3 +1,4 @@
+;# Generic Flash Cartridge (WR/555/A9)
 		.include "global.s"
 		
         .globl  .start_save

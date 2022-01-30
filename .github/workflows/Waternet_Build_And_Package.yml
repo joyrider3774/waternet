@@ -17,7 +17,8 @@ jobs:
       matrix:
         target:
           - gbc
-          - gbc-batteryless-gen_WR-555-A9
+          - gbc-batteryless-DMG_AM29LV160MB
+          - gbc-batteryless-DMG_Generic_WR_555_A9
           - gg
           - pocket
           - sms
@@ -27,10 +28,14 @@ jobs:
             ext: gbc
             cartridge: waternet.gb.png
             name: Nintendo Game Boy (Color)
-          - target: gbc-batteryless-gen_WR-555-A9
-            ext: batterylesssave.gen_WR-555-A9.gbc
+          - target: gbc-batteryless-DMG_Generic_WR_555_A9
+            ext: batteryless-DMG_Generic_WR_555_A9.gbc
             cartridge: waternet.gb.png
-            name: Nintendo Game Boy (Color) - Batteryless Save - Generic Flash Cartridge (WR-555-A9)
+            name: Nintendo Game Boy (Color) Batteryless Save Generic Flash Cartridge (WR-555-A9)
+          - target: gbc-batteryless-DMG_AM29LV160MB
+            ext: batteryless-DMG_AM29LV160MB.gbc
+            cartridge: waternet.gb.png
+            name: Nintendo Game Boy (Color) Batteryless Save Flash Cartridge (DMG_AM29LV160MB)
           - target: gg
             ext: gg
             cartridge: waternet.gg.png
@@ -54,7 +59,7 @@ jobs:
       - name: Install Make
         run: sudo apt-get install -y make
         
-       # ==== Build Steps ====
+      # ==== Build Steps ====
       - name: Check out Sources
         uses: actions/checkout@v2
         with:
@@ -95,6 +100,6 @@ jobs:
       - name: Store build
         uses: actions/upload-artifact@v2
         with:
-          name: Waternet - ${{ matrix.name }}
+          name: Waternet ${{ matrix.name }}
           path: package/
           # retention-days: 30
