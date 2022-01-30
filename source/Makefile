@@ -17,30 +17,43 @@ TARGETS=gbc gbc-batteryless-gen_WR-555-A9 pocket megaduck gg sms
 START_SAVE=4
 
 # Configure platform specific LCC flags here:
-LCCFLAGS_gb     = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B -Wm-ys # (-Wl-yt0x1B Set cartridge type (ROM+MBC5+RAM+BATT)) (-Wl-ya1 = 1x 8k ram bank) (-Wm-ys for sgb border stuff)
-LCCFLAGS_duck   = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B # (-Wl-yt0x1B Set cartridge type (ROM+MBC5+RAM+BATT)) (-Wl-ya1 = 1x 8k ram bank) (NO SGB STUFF HERE)
-LCCFLAGS_pocket = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B -Wm-ys -Wm-yc #(-Wl-yt0x1B Set cartridge type (ROM+MBC5+RAM+BATT)) (-Wl-ya1 = 1x 8k ram bank) (-Wm-ys for sgb border stuff) (-Wm-yc (gb & gbc) or Wm-yC (gbc exclusive))
-LCCFLAGS_gbc    = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B -Wm-ys -Wm-yc #(-Wl-yt0x1B Set cartridge type (ROM+MBC5+RAM+BATT)) (-Wl-ya1 = 1x 8k ram bank) (-Wm-ys for sgb border stuff) (-Wm-yc (gb & gbc) or Wm-yC (gbc exclusive))
-LCCFLAGS_sms    = -Wl-ya1 -Wm-xj4 -Wm-xv0 #-Wl-yo4 Master System needs bigger than 32k rom or sram does not work in emulicious, -Wl-ya1 ram bank (not sure it's used with sega), -Wm-xj4 Sms Export region, -Wm-xo0xe, -Wm-xv0 version 0 (or 1st version)
-LCCFLAGS_gg     = -Wl-ya1 -Wm-xj7 -Wm-xv0 #-Wl-yo4 Game gear needs bigger than 32k rom or sram does not work in emulicious, -Wl-ya1 ram bank (not sure it's used with sega), -Wm-xj7 GG international region, -Wm-xo0xe, -Wm-xv0 version 0 (or 1st version)
-#batteryless saves gameboy
-LCCFLAGS_batterylesssave.gen_WR-555-A9.gb = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1A -Wm-ys # (-Wl-yt0x1A Set cartridge type (ROM+MBC5+RAM)) (-Wl-ya1 = 1x 8k ram bank) (-Wm-ys for sgb border stuff)
-#batteryless saves gameboy color
-LCCFLAGS_batterylesssave.gen_WR-555-A9.gbc = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1A -Wm-ys -Wm-yc #(-Wl-yt0x1A Set cartridge type (ROM+MBC5+RAM)) (-Wl-ya1 = 1x 8k ram bank) (-Wm-ys for sgb border stuff) (-Wm-yc (gb & gbc) or Wm-yC (gbc exclusive))
+
+# For normal Rom with cartridge with battery
+# -Wl-yt0x1B  Set cartridge type (ROM+MBC5+RAM+BATT)
+# -Wl-ya1     1x 8k ram bank
+# -Wm-yoA     Auto RomBanking
+
+# For Batteryless Saving roms, catridges without battery
+# -Wl-yt0x1A  Set cartridge type (ROM+MBC5+RAM) 
+# -Wl-ya4     4x 8k ram bank the flasher will always spoil 4 rom banks because of 64k sector size 
+# -Wm-yo8     8x 16k rom bank startsave bank is 4 + 4 spoiled rombanks from flasher (must make sure rom does not exceed 4 rom banks in this case)
+
+# Other things
+# -Wm-ys for sgb border stuff etc
+# -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
+# -Wm-xj4 Sms Export region, 
+# -Wm-xj7 GG international region
+# -Wm-xv0 version 0 (or 1st version)
+
+LCCFLAGS_gb     = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B -Wm-ys 
+LCCFLAGS_duck   = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B #NO SGB STUFF HERE
+LCCFLAGS_pocket = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B -Wm-ys -Wm-yc
+LCCFLAGS_gbc    = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B -Wm-ys -Wm-yc 
+LCCFLAGS_sms    = -Wl-ya1 -Wm-yoA -Wm-xj4 -Wm-xv0 #Master System needs bigger than 32k rom or sram does not work in emulicious, my game is bigger
+LCCFLAGS_gg     = -Wl-ya1 -Wm-yoA -Wm-xj7 -Wm-xv0 #Game gear needs bigger than 32k rom or sram does not work in emulicious, my game is bigger
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
-LCCFLAGS += -Wm-yoA -autobank -Wb-ext=.rel -Wb-v # Autobanking related flags
+#batteryless saves gameboy color settings defined when CARTTYPEDIR is supplied so that i don't have to keep repeating the settings
+ifneq ($(strip $(CARTTYPEDIR)),) 
+	LCCFLAGS += -Wm-yn"WATERNET" -Wl-ya4 -Wm-yo8 -Wl-yt0x1A -Wm-ys -Wm-yc
+endif
+
+LCCFLAGS += -autobank -Wb-ext=.rel -Wb-v # Autobanking related flags
 LCCFLAGS += -Wl-m -Wa-l # Wl-m = generate map files, -Wa-l = generate assembler listing
 # LCCFLAGS += -v   # Uncomment for lcc verbose output
 
 CFLAGS += -debug # Uncomment to enable debug output, (this sets --debug for sdcc (lcc equiv: -Wf-debug), -y enables .cdb output for sdldgb (lcc equiv: -Wl-y), -j enables .noi output for sdldgb (lcc equiv: -Wl-j))
-
-#Set define to use batterylesssave for the code
-ifeq ($(strip $(USEBATTERYLESSSAVE)),1) 
-    CFLAGS +=-DBATTERYLESSSAVE
-endif
-
 CFLAGS_RELEASE = -Wf"--max-allocs-per-node 1000000" # will be added to CFLAGS with make ##-release targets like for example `make gb-release` or `make release` for all platforms
 
 # You can set the name of the ROM file here
@@ -52,18 +65,18 @@ OBJDIR        = obj/$(EXT)
 RESDIR        = res
 BINDIR        = build/$(EXT)
 MKDIRS        = $(OBJDIR) $(BINDIR) # See bottom of Makefile for directory auto-creation
-
 BINS          = $(OBJDIR)/$(PROJECTNAME).$(EXT)
 ASMFLASHERDIR =
 SRCFLASHERDIR =
 ASMFLASHERSRM = 
 
 #include flasher sources from TOXA adapted to my cartridge when using batterylesssave
-ifeq ($(strip $(USEBATTERYLESSSAVE)),1) 
-    SRCFLASHERDIR  = flasher
-    ASMFLASHERDIR  = flasher/$(CARTTYPEDIR)
+ifneq ($(strip $(CARTTYPEDIR)),) 
+    SRCFLASHERDIR = flasher
+    ASMFLASHERDIR = flasher/$(CARTTYPEDIR)
     ASMFLASHERSRM = flasher/sram_init
     LCCFLAGS += -Wl-g.start_save=$(START_SAVE)
+	CFLAGS += -DBATTERYLESSSAVE
 endif
 
 CSOURCES    = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c))) $(foreach dir,$(SRCFLASHERDIR),$(notdir $(wildcard $(dir)/*.c))) $(foreach dir,$(RESDIR),$(notdir $(wildcard $(dir)/*.c)))
