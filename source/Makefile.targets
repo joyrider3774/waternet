@@ -24,6 +24,12 @@ gb:
 gb-release:
 	${MAKE} build-target PORT=gbz80 PLAT=gb EXT=gb RELEASE=1
 
+gb-batteryless-gen_WR-555-A9-clean:
+	${MAKE} clean-target EXT=batterylesssave.gen_WR-555-A9.gb USEBATTERYLESSSAVE=1 CARTTYPEDIR=generic_flash_cartridge_WR-555-A9
+gb-batteryless-gen_WR-555-A9:
+	${MAKE} build-target PORT=gbz80 PLAT=gb EXT=batterylesssave.gen_WR-555-A9.gb USEBATTERYLESSSAVE=1 CARTTYPEDIR=generic_flash_cartridge_WR-555-A9
+gb-batteryless-gen_(WR-555-A9)-release:
+	${MAKE} build-target PORT=gbz80 PLAT=gb EXT=batterylesssave.gen_WR-555-A9.gb USEBATTERYLESSSAVE=1 CARTTYPEDIR=generic_flash_cartridge_WR-555-A9 RELEASE=1
 
 gbc-clean:
 	${MAKE} clean-target EXT=gbc
@@ -32,6 +38,12 @@ gbc:
 gbc-release:
 	${MAKE} build-target PORT=gbz80 PLAT=gb EXT=gbc RELEASE=1
 
+gbc-batteryless-gen_WR-555-A9-clean:
+	${MAKE} clean-target EXT=batterylesssave.gen_WR-555-A9.gbc USEBATTERYLESSSAVE=1 CARTTYPEDIR=generic_flash_cartridge_WR-555-A9
+gbc-batteryless-gen_WR-555-A9:
+	${MAKE} build-target PORT=gbz80 PLAT=gb EXT=batterylesssave.gen_WR-555-A9.gbc USEBATTERYLESSSAVE=1 CARTTYPEDIR=generic_flash_cartridge_WR-555-A9
+gbc-batteryless-gen_WR-555-A9-release:
+	${MAKE} build-target PORT=gbz80 PLAT=gb EXT=batterylesssave.gen_WR-555-A9.gbc USEBATTERYLESSSAVE=1 CARTTYPEDIR=generic_flash_cartridge_WR-555-A9 RELEASE=1
 
 pocket-clean:
 	${MAKE} clean-target EXT=pocket

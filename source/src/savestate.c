@@ -4,6 +4,11 @@
 
 
 #if defined(NINTENDO)
+
+#ifdef BATTERYLESSSAVE
+#include "../flasher/flasher.h"
+#endif
+
 uint8_t AT(0xA000) header[20];
 uint8_t AT(0xA014) levelLocks[gmCount][diffCount][levelCount];
 uint8_t AT(0xA1D6) musicOn;
@@ -56,6 +61,10 @@ void initSaveState()
         soundOn = 1;
         strcpy(header, "waternet_003");
     }
+    
+#ifdef BATTERYLESSSAVE
+    save_sram();
+#endif
     DISABLE_RAM;
     #endif
 }
@@ -65,6 +74,9 @@ void setMusicOnSaveState(uint8_t value)
     #ifndef MEGADUCK
     ENABLE_RAM;
         musicOn = value;
+#ifdef BATTERYLESSSAVE
+    save_sram();
+#endif
     DISABLE_RAM;
     #endif
 }
@@ -87,6 +99,9 @@ void setSoundOnSaveState(uint8_t value)
     #ifndef MEGADUCK
     ENABLE_RAM;
         soundOn = value;
+#ifdef BATTERYLESSSAVE
+    save_sram();
+#endif
     DISABLE_RAM;
     #endif
 }
@@ -109,6 +124,9 @@ void unlockLevel(uint8_t mode, uint8_t diff, uint8_t level)
     #ifndef MEGADUCK
     ENABLE_RAM;
     levelLocks[mode][diff][level] = 1;
+#ifdef BATTERYLESSSAVE
+    save_sram();
+#endif
     DISABLE_RAM;
     #endif
 }

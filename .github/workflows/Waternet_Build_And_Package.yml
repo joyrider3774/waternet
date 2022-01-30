@@ -8,38 +8,44 @@ on:
   # pull_request:
   #  branches: [ main ]
 
-  # Allows you to run this workflow manually from the Actions tab
+  # Allows you to run this workflow manually ftarget the Actions tab
   workflow_dispatch:
 
 jobs:
   build:
     strategy:
       matrix:
-        rom:
-          - gb 
+        target:
           - gbc
+          - gbc-batteryless-gen_WR-555-A9
           - gg
           - pocket
           - sms
           - megaduck
         include:
-          - rom: gb
-            ext: gb
-            name: Nintendo Game Boy
-          - rom: gbc
+          - target: gbc
             ext: gbc
-            name: Nintendo Game Boy Color
-          - rom: gg
+            cartridge: waternet.gb.png
+            name: Nintendo Game Boy (Color)
+          - target: gbc-batteryless-gen_WR-555-A9
+            ext: batterylesssave.gen_WR-555-A9.gbc
+            cartridge: waternet.gb
+            name: Nintendo Game Boy (Color) - Batteryless Save - Generic Flash Cartridge (WR-555-A9)
+          - target: gg
             ext: gg
+            cartridge: waternet.gg.png
             name: Sega Game Gear
-          - rom: pocket
+          - target: pocket
             ext: pocket
+            cartridge: waternet.gb.png
             name: Analogue Pocket
-          - rom: sms
+          - target: sms
             ext: sms
+            cartridge: waternet.sms.png
             name: Sega Master System
-          - rom: megaduck
+          - target: megaduck
             ext: duck
+            cartridge: waternet.gb.png
             name: Mega Duck
     runs-on: ubuntu-latest
         
@@ -65,7 +71,7 @@ jobs:
           export GBDK_HOME="$PWD/gdbk_build/gbdk/"
           echo $GBDK_HOME
           cd source
-          make ${{ matrix.rom }}-release
+          make ${{ matrix.target }}-release
           cd ..
           
       - name: Prepare artifacts
@@ -73,7 +79,7 @@ jobs:
           mkdir -p package
           cp "source/build/${{ matrix.ext }}/waternet.${{ matrix.ext }}" package
           cp LICENSE package
-          cp "images/cartridge_labels/waternet.${{ matrix.rom }}.png" package
+          cp "images/cartridge_labels/${{ matrix.cartridge }}" package
       
       - name: Make Readme.pdf
         uses: baileyjm02/markdown-to-pdf@v1

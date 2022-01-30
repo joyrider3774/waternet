@@ -23,7 +23,13 @@
 #ifdef NINTENDO
 #include "sgb_border.h"
 #include "../res/gb_border.h"
+
+#ifdef BATTERYLESSSAVE
+#include "../flasher/flasher.h"
 #endif
+
+#endif
+
 
 //intialisation of game & global variables
 void init() 
@@ -37,6 +43,15 @@ void init()
     #endif
     
     setBlackPalette();
+
+#ifdef BATTERYLESSSAVE
+#ifndef MEGADUCK
+    ENABLE_RAM;
+    restore_sram();
+    DISABLE_RAM;
+#endif
+#endif
+
     DISPLAY_ON;
     
     #ifdef GAMEBOY

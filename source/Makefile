@@ -11,15 +11,22 @@ LCC = $(GBDK_HOME)bin/lcc
 # Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
 # They can also be built/cleaned individually: "make gg" and "make gg-clean"
 # Possible are: gb gbc pocket megaduck sms gg
-TARGETS=gb gbc pocket megaduck gg sms
+TARGETS=gbc gbc-batteryless-gen_WR-555-A9 pocket megaduck gg sms
+
+#when changing this value don't forget to change _CODE_4 in dummydata.s, this value is the (rom) bank nr and must be multiple of 4 + make sure it not overwrites current code
+START_SAVE=4
 
 # Configure platform specific LCC flags here:
-LCCFLAGS_gb      = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B -Wm-ys # (-Wl-yt0x1B Set an MBC for banking (ROM+MBC5+RAM+BATT)) (-Wl-ya1 = 1x 8k ram bank)
-LCCFLAGS_pocket  = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B -Wm-yc # Usually the same as required for .gbc
-LCCFLAGS_duck    = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B # Usually the same as required for .gb
-LCCFLAGS_gbc     = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B -Wm-ys -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
-LCCFLAGS_sms     = -Wl-ya1 -Wm-xj4 -Wm-xv0 #-Wl-yo4 Master System needs bigger than 32k rom or sram does not work in emulicious, -Wl-ya1 ram bank (not sure it's used with sega), -Wm-xj4 Sms Export region, -Wm-xo0xe, -Wm-xv0 version 0 (or 1st version)
-LCCFLAGS_gg      = -Wl-ya1 -Wm-xj7 -Wm-xv0 #-Wl-yo4 Game gear needs bigger than 32k rom or sram does not work in emulicious, -Wl-ya1 ram bank (not sure it's used with sega), -Wm-xj7 GG international region, -Wm-xo0xe, -Wm-xv0 version 0 (or 1st version)
+LCCFLAGS_gb     = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B -Wm-ys # (-Wl-yt0x1B Set cartridge type (ROM+MBC5+RAM+BATT)) (-Wl-ya1 = 1x 8k ram bank) (-Wm-ys for sgb border stuff)
+LCCFLAGS_duck   = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B # (-Wl-yt0x1B Set cartridge type (ROM+MBC5+RAM+BATT)) (-Wl-ya1 = 1x 8k ram bank) (NO SGB STUFF HERE)
+LCCFLAGS_pocket = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B -Wm-ys -Wm-yc #(-Wl-yt0x1B Set cartridge type (ROM+MBC5+RAM+BATT)) (-Wl-ya1 = 1x 8k ram bank) (-Wm-ys for sgb border stuff) (-Wm-yc (gb & gbc) or Wm-yC (gbc exclusive))
+LCCFLAGS_gbc    = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1B -Wm-ys -Wm-yc #(-Wl-yt0x1B Set cartridge type (ROM+MBC5+RAM+BATT)) (-Wl-ya1 = 1x 8k ram bank) (-Wm-ys for sgb border stuff) (-Wm-yc (gb & gbc) or Wm-yC (gbc exclusive))
+LCCFLAGS_sms    = -Wl-ya1 -Wm-xj4 -Wm-xv0 #-Wl-yo4 Master System needs bigger than 32k rom or sram does not work in emulicious, -Wl-ya1 ram bank (not sure it's used with sega), -Wm-xj4 Sms Export region, -Wm-xo0xe, -Wm-xv0 version 0 (or 1st version)
+LCCFLAGS_gg     = -Wl-ya1 -Wm-xj7 -Wm-xv0 #-Wl-yo4 Game gear needs bigger than 32k rom or sram does not work in emulicious, -Wl-ya1 ram bank (not sure it's used with sega), -Wm-xj7 GG international region, -Wm-xo0xe, -Wm-xv0 version 0 (or 1st version)
+#batteryless saves gameboy
+LCCFLAGS_batterylesssave.gen_WR-555-A9.gb = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1A -Wm-ys # (-Wl-yt0x1A Set cartridge type (ROM+MBC5+RAM)) (-Wl-ya1 = 1x 8k ram bank) (-Wm-ys for sgb border stuff)
+#batteryless saves gameboy color
+LCCFLAGS_batterylesssave.gen_WR-555-A9.gbc = -Wm-yn"WATERNET" -Wl-ya1 -Wl-yt0x1A -Wm-ys -Wm-yc #(-Wl-yt0x1A Set cartridge type (ROM+MBC5+RAM)) (-Wl-ya1 = 1x 8k ram bank) (-Wm-ys for sgb border stuff) (-Wm-yc (gb & gbc) or Wm-yC (gbc exclusive))
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
@@ -27,7 +34,12 @@ LCCFLAGS += -Wm-yoA -autobank -Wb-ext=.rel -Wb-v # Autobanking related flags
 LCCFLAGS += -Wl-m -Wa-l # Wl-m = generate map files, -Wa-l = generate assembler listing
 # LCCFLAGS += -v   # Uncomment for lcc verbose output
 
-CFLAGS +=  -debug # Uncomment to enable debug output, (this sets --debug for sdcc (lcc equiv: -Wf-debug), -y enables .cdb output for sdldgb (lcc equiv: -Wl-y), -j enables .noi output for sdldgb (lcc equiv: -Wl-j))
+CFLAGS += -debug # Uncomment to enable debug output, (this sets --debug for sdcc (lcc equiv: -Wf-debug), -y enables .cdb output for sdldgb (lcc equiv: -Wl-y), -j enables .noi output for sdldgb (lcc equiv: -Wl-j))
+
+#Set define to use batterylesssave for the code
+ifeq ($(strip $(USEBATTERYLESSSAVE)),1) 
+    CFLAGS +=-DBATTERYLESSSAVE
+endif
 
 CFLAGS_RELEASE = -Wf"--max-allocs-per-node 1000000" # will be added to CFLAGS with make ##-release targets like for example `make gb-release` or `make release` for all platforms
 
@@ -35,39 +47,68 @@ CFLAGS_RELEASE = -Wf"--max-allocs-per-node 1000000" # will be added to CFLAGS wi
 PROJECTNAME = waternet
 
 # EXT?=gb # Only sets extension to default (game boy .gb) if not populated
-SRCDIR      = src
-OBJDIR      = obj/$(EXT)
-RESDIR      = res
-BINDIR      = build/$(EXT)
-MKDIRS      = $(OBJDIR) $(BINDIR) # See bottom of Makefile for directory auto-creation
+SRCDIR        = src
+OBJDIR        = obj/$(EXT)
+RESDIR        = res
+BINDIR        = build/$(EXT)
+MKDIRS        = $(OBJDIR) $(BINDIR) # See bottom of Makefile for directory auto-creation
 
-BINS	    = $(OBJDIR)/$(PROJECTNAME).$(EXT)
-CSOURCES    = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c))) $(foreach dir,$(RESDIR),$(notdir $(wildcard $(dir)/*.c)))
-ASMSOURCES  = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.s)))
-OBJS       = $(CSOURCES:%.c=$(OBJDIR)/%.o) $(ASMSOURCES:%.s=$(OBJDIR)/%.o)
+BINS          = $(OBJDIR)/$(PROJECTNAME).$(EXT)
+ASMFLASHERDIR =
+SRCFLASHERDIR =
+ASMFLASHERSRM = 
+
+#include flasher sources from TOXA adapted to my cartridge when using batterylesssave
+ifeq ($(strip $(USEBATTERYLESSSAVE)),1) 
+    SRCFLASHERDIR  = flasher
+    ASMFLASHERDIR  = flasher/$(CARTTYPEDIR)
+    ASMFLASHERSRM = flasher/sram_init
+    LCCFLAGS += -Wl-g.start_save=$(START_SAVE)
+endif
+
+CSOURCES    = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c))) $(foreach dir,$(SRCFLASHERDIR),$(notdir $(wildcard $(dir)/*.c))) $(foreach dir,$(RESDIR),$(notdir $(wildcard $(dir)/*.c)))
+ASMSOURCES  = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.s))) $(foreach dir,$(ASMFLASHERDIR),$(notdir $(wildcard $(dir)/*.s))) $(foreach dir,$(ASMFLASHERSRM),$(notdir $(wildcard $(dir)/*.s)))
+OBJS        = $(CSOURCES:%.c=$(OBJDIR)/%.o) $(ASMSOURCES:%.s=$(OBJDIR)/%.o)
 
 # Builds all targets sequentially
 all: $(TARGETS)
 
+# Compile .c files in "flasher/" to .o object files
+$(OBJDIR)/%.o: $(SRCFLASHERDIR)/%.c $(SRCFLASHERDIR)/%.h
+	$(LCC) $(CFLAGS) -c -o $@ $<
+
 # Compile .c files in "src/" to .o object files
-$(OBJDIR)/%.o:	$(SRCDIR)/%.c
+$(OBJDIR)/%.o: $(SRCDIR)/%.c $(SRCDIR)/%.h
 	$(LCC) $(CFLAGS) -c -o $@ $<
 
 # Compile .c files in "res/" to .o object files
-$(OBJDIR)/%.o:	$(RESDIR)/%.c
+$(OBJDIR)/%.o: $(RESDIR)/%.c  $(RESDIR)/%.h
+	$(LCC) $(CFLAGS) -c -o $@ $<
+
+# Compile .s assembly files in "Flasher/sram_init" to .o object files
+$(OBJDIR)/%.o: $(ASMFLASHERSRM)/%.s
+	$(LCC) $(CFLAGS) -c -o $@ $<
+
+# Compile .s assembly files in "Flasher/XXXX" to .o object files
+$(OBJDIR)/%.o: $(ASMFLASHERDIR)/%.s
 	$(LCC) $(CFLAGS) -c -o $@ $<
 
 # Compile .s assembly files in "src/" to .o object files
-$(OBJDIR)/%.o:	$(SRCDIR)/%.s
+$(OBJDIR)/%.o: $(SRCDIR)/%.s
 	$(LCC) $(CFLAGS) -c -o $@ $<
 
-# If needed, compile .c files i n"src/" to .s assembly files
+# If needed, compile .c files in "src/" to .s assembly files
 # (not required if .c is compiled directly to .o)
-$(OBJDIR)/%.s:	$(SRCDIR)/%.c
+$(OBJDIR)/%.s: $(SRCDIR)/%.c
+	$(LCC) $(CFLAGS) -S -o $@ $<
+
+# If needed, compile .c files in "FLASHER/" to .s assembly files
+# (not required if .c is compiled directly to .o)
+$(OBJDIR)/%.s: $(SRCFLASHERDIR)/%.c
 	$(LCC) $(CFLAGS) -S -o $@ $<
 
 # Link the compiled object files into a .gb ROM file
-$(BINS):	$(OBJS)
+$(BINS): $(OBJS)
 	$(LCC) $(LCCFLAGS) $(CFLAGS) -o $(BINDIR)/$(PROJECTNAME).$(EXT) $(OBJS)
 
 clean:
@@ -83,7 +124,6 @@ release:
 
 # Include available build targets
 include Makefile.targets
-
 
 # create necessary directories after Makefile is parsed but before build
 # info prevents the command from being pasted into the makefile
