@@ -29,7 +29,7 @@ jobs:
             name: Nintendo Game Boy (Color)
           - target: gbc-batteryless-gen_WR-555-A9
             ext: batterylesssave.gen_WR-555-A9.gbc
-            cartridge: waternet.gb
+            cartridge: waternet.gb.png
             name: Nintendo Game Boy (Color) - Batteryless Save - Generic Flash Cartridge (WR-555-A9)
           - target: gg
             ext: gg
