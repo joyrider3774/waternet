@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 #include <string.h>
-
 #include "flasher.h"
+#include "../src/printfuncs.h"
 
 extern const uint8_t save_rom_bank;
 
@@ -25,5 +25,17 @@ extern uint8_t save_sram_banks(uint8_t count) OLDCALL;  // copies up to count SR
 
 uint8_t save_sram() {
     if (!erase_flash()) return 0;
-    return save_sram_banks(1);
+    uint8_t t = save_sram_banks(1);
+
+#ifdef DEBUGFLASHSAVE
+    if(t)
+    {
+        printDebug(0,0,"FLASH SAVE OK",13,61, 60*2);
+    }
+    else
+    {
+        printDebug(0,0,"FLASH SAVE NOT OK",17,61,60*2);
+    }
+#endif
+    return t;
 }

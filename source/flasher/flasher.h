@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+//#define DEBUGFLASHSAVE
+
 void restore_sram_bank(uint8_t bank);
 void restore_sram();
 
