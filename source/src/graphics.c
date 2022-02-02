@@ -1,7 +1,10 @@
 #include <stdint.h>
 #include <gbdk/platform.h>
+#include <gb/sgb.h>
 #include <string.h>
 #include "graphics.h"
+#include "commonvars.h"
+
 
 uint8_t fadein, fadeCounter,fadeStep, startFade, fadeSteps;
 palette_color_t  toPallette[4];
@@ -23,6 +26,14 @@ const palette_color_t bkgPaletteTitle[4] = {
     RGB8(128u,128u,128u), RGB8(0,0,255u), RGB8(0,0,128u), RGB8(0,0,64u)
 };
 
+const palette_color_t bkgSgbPaletteGame[4] = {
+    RGB8(128u,128u,128u), RGB8(28u,90u,143u), RGB8(55u,129u,190u), RGB8(11u,47u,79u)
+};
+
+const palette_color_t bkgSgbPaletteTitle[4] = {
+    RGB8(128u,128u,128u), RGB8(55u,129u,190u), RGB8(28u,90u,143u), RGB8(11u,47u,79u)
+};
+
 void clearBackgroundLayer(uint8_t tile)
 {
     fill_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, tile);
@@ -31,9 +42,13 @@ void clearBackgroundLayer(uint8_t tile)
 void setBlackPalette()
 {
     #ifdef NINTENDO
-    if (_cpu == CGB_TYPE) 
+    if ((_cpu == CGB_TYPE) || sgb_enabled)  
     {
     #endif
+        if(sgb_enabled)
+        {
+            set_sgb_palette(SGB_PAL_01, blackPallette);
+        }
         set_bkg_palette(0, 1, blackPallette);
         set_sprite_palette(0, 1, blackPallette);
     #ifdef NINTENDO
@@ -45,19 +60,54 @@ void setBlackPalette()
     #endif
 }
 
+void set_sgb_palette_colors(uint8_t pal, uint16_t c1, uint16_t c2, uint16_t c3, uint16_t c4)
+{
+    #ifdef NINTENDO
+    if(sgb_enabled)
+    {
+        struct {
+            uint8_t cmd;
+            uint16_t pal0[4];
+            uint16_t pal1[3];
+            uint8_t unused;
+        } SGB_PAL_PACKET = {
+            .cmd = (pal << 3) | 1,
+            .pal0 = {c1, c2, c3, c4},
+            .pal1 = {0, 0, 0},
+            .unused = 0 
+        };
+        sgb_transfer((void *)&SGB_PAL_PACKET);
+    }
+    #endif
+}
+
+void set_sgb_palette(uint8_t pal, palette_color_t palette[4])
+{
+    #ifdef NINTENDO
+    set_sgb_palette_colors(pal, palette[0], palette[1], palette[2], palette[3]);
+    #endif
+}
+
 //set the fade flag to fade in or not and increase the fadecounter to startvalue
 void startfade(uint8_t afadein, uint8_t ForTitle)
 {
     #ifdef NINTENDO
-    if(_cpu == CGB_TYPE)
+    if((_cpu == CGB_TYPE) || sgb_enabled)
     {
     #endif
 
         //6 steps on color gameboy to go from default pallete to black and vice versa (goes from 0 to fadesteps)
         #ifdef NINTENDO
         fadeSteps = 5;
-         //skips per fadestep to prolong fade effect
-        startFade = 7;
+        //skips per fadestep to prolong fade effect
+        if(_cpu == CGB_TYPE)
+        {
+            startFade = 7;
+        }
+        else
+        {
+            startFade = 3;
+        }
         #endif
         #ifdef GAMEGEAR
         fadeSteps = 4;
@@ -71,7 +121,7 @@ void startfade(uint8_t afadein, uint8_t ForTitle)
         #endif
 
         //counts from 1 to startfade above then increases fadestep 
-        fadeCounter = 0;
+        fadeCounter = 1;
         //fade step we are at (will go until fadestep > fadesteps)
         fadeStep = 0;
     #ifdef NINTENDO
@@ -89,14 +139,34 @@ void startfade(uint8_t afadein, uint8_t ForTitle)
     
     fadein = afadein;
 
+    uint8_t sgbpal;
+    sgbpal = 0;
+    #ifdef SEGA
+    sgbpal = 1;
+    #endif
+    sgbpal = sgbpal | sgb_enabled;
     //set temporary palette based on title or gameplay (screen is only faded on 2 places)
     if (ForTitle)
     {
-        memcpy(toPallette, bkgPaletteTitle, sizeof(toPallette));   
+        if (sgbpal)
+        {
+            memcpy(toPallette, bkgSgbPaletteTitle, sizeof(toPallette));
+        }
+        else
+        {
+            memcpy(toPallette, bkgPaletteTitle, sizeof(toPallette));
+        }
     }
     else
     {
-        memcpy(toPallette, bkgPaletteGame, sizeof(toPallette));
+        if (sgbpal)
+        {
+            memcpy(toPallette, bkgSgbPaletteGame, sizeof(toPallette));
+        }
+        else
+        {
+            memcpy(toPallette, bkgPaletteGame, sizeof(toPallette));
+        }
     }
 }
 
@@ -121,9 +191,16 @@ void fadeInCGB()
         palette[c] = fadeBlack(fadeSteps - fadeStep, toPallette[c]);
     }
     set_bkg_palette(0, 1, palette);
+    if(sgb_enabled)
+    {
+        set_sgb_palette(SGB_PAL_01, palette);
+    }
+    
     //first color of sprite pallete (2nd pallete) on sms is used for
     //border colors by default, but cursor only uses last color (black)
     sprPalette[0] = palette[0];
+    //selector color
+    sprPalette[3] = palette[3];
     set_sprite_palette(0, 1, sprPalette);
 }
 
@@ -137,9 +214,16 @@ void fadeOutCGB()
         palette[c] = fadeBlack(fadeStep, toPallette[c]);
     }
     set_bkg_palette(0, 1, palette);
+    if(sgb_enabled)
+    {
+        set_sgb_palette(SGB_PAL_01, palette);
+    }
+    
     //first color of sprite pallete (2nd pallete) on sms is used for
     //border colors by default, but cursor only uses last color (black)
     sprPalette[0] = palette[0];
+    //selector color
+    sprPalette[3] = palette[3];
     set_sprite_palette(0, 1, sprPalette);
 }
 
@@ -153,16 +237,19 @@ uint8_t fadecgb()
     }
     else
     {
-        //fade based on what we need todo (in/out)
-        if(fadein)
+         //fade based on what we need todo (in/out)
+        if(fadeCounter == 1)
         {
-            fadeInCGB();
+            if(fadein)
+            {
+                fadeInCGB();
+            }
+            else
+            {
+                fadeOutCGB();
+            }
         }
-        else
-        {
-            fadeOutCGB();
-        }
-            
+
         //inc fadecounter 
         fadeCounter++;
         //if fadecounter reaches skip limit 
@@ -252,7 +339,7 @@ uint8_t fade()
 {
     
     #ifdef NINTENDO
-    if(_cpu == CGB_TYPE)
+    if((_cpu == CGB_TYPE) || sgb_enabled)
     {
     #endif
         return fadecgb();

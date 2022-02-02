@@ -34,6 +34,7 @@
 //intialisation of game & global variables
 void init() 
 {
+    sgb_enabled = 0;
     initBankStack();
     #ifdef NINTENDO
     if(_cpu == CGB_TYPE)
@@ -41,8 +42,6 @@ void init()
         cpu_fast();
     }
     #endif
-    
-    setBlackPalette();
 
 #ifdef BATTERYLESSSAVE
 #ifndef MEGADUCK
@@ -62,9 +61,10 @@ void init()
         {
             wait_vbl_done();
         }
+        sgb_enabled = sgb_check();
         set_sgb_border(gb_border_tiles, sizeof(gb_border_tiles), gb_border_map, sizeof(gb_border_map), gb_border_palettes, sizeof(gb_border_palettes));
     #endif
-
+    setBlackPalette();
     prevBoardHeight = 0;
     prevBoardWidth = 0;
     maxcc = 0;

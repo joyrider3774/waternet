@@ -8,7 +8,7 @@ uint8_t startPos, menuPos,
         i, j, x, y, rnd, index, cc, maxcc, clearbit, redrawLevelbit, levelDone,
         prevJoyPad, titleStep, gameMode, posAdd, redrawLevelDoneBit,
         tmp, tmp2, tmp3, tmp4, tmp5, tmp6, neighboursFound, selectedNeighbour, currentPoint, visitedRooms,  mainMenu,
-        option, paused, wasMusicOn, wasSoundOn, realPause, lookUpX, lookUpY, savedBank;
+        option, paused, wasMusicOn, wasSoundOn, realPause, lookUpX, lookUpY, savedBank, sgb_enabled;
         
 int16_t selectionX, selectionY, i16;
 uint16_t randomSeed, moves;
