@@ -1,7 +1,9 @@
 #ifndef SOUND_H
 #define SOUND_H
 
+#include <gbdk/platform.h>
 #include <stdint.h>
+
 
 #define musGame 1
 #define musTitle 2
@@ -32,4 +34,25 @@ void setMusicOn(uint8_t value);
 void setSoundOn(uint8_t value);
 uint8_t isMusicOn();
 uint8_t isSoundOn();
+
+#ifdef NINTENDO
+void playNintendoCh1(int REG_10, int REG_11, int REG_12, int REG_13, int REG_14);
+void playNintendoCh2(int REG_21, int REG_22, int REG_23, int REG_24);
+#endif
+
+#ifdef SEGA
+void playSegaSfxTone(int val); 
+void playSegaSfxNoise(int val);
+void playSegaSfxToneCritical(int val); 
+void playSegaSfxNoiseCritical(int val);
+void playSegaMusTone(int val);
+void SegaMusVolumeOff();
+void SegaSfxVolumeOff();
+void SegaNoiseVolumeOff();
+void SegaNoiseVolumeMax();
+void SegaSfxVolumeMax();
+void SegaMusVolumeMax();
+void SegaStopSound();
+#endif
+
 #endif

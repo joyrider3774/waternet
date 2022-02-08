@@ -13,7 +13,8 @@
 //      Sheep it up! - A tiny GB/GBC game for the bitbitjam4 game jam
 //      by Dr. Ludos (http://www.ludoscience.com)
 
-uint8_t music_note, music_tempo, music_length, music_loop, prev_music, sustain_note, sfx_sustain, music_on, sound_on;
+uint8_t music_note, music_tempo, music_length, music_loop, prev_music, music_sustain_note, music_on, sound_on, sfx_sustain;
+volatile uint8_t sfx_setting_note, sfx_sustain_zero_set, music_sustain_zero_set, selecting_music;
 uint8_t musicArray[255];
 
 //Here is kind of "quick'n dirty" custom music player made using solely the Channel 2 of the GB
@@ -240,7 +241,7 @@ const uint8_t music_game[198] ={
 };
 
 //https://onlinesequencer.net/2484977
-const uint8_t music_intro[98] ={
+const uint8_t music_intro[98] = {
     C4,  PAUSE,
     C4,  PAUSE * 2,
     D4,  PAUSE,
@@ -296,33 +297,45 @@ const uint8_t music_intro[98] ={
     P,   PAUSE * 4
 };
 
-void setSfxSustain(uint8_t value)
-{
-    CRITICAL {
-        sfx_sustain = value;
-    }
-}
-
 void setMusicOn(uint8_t value)
 {
     CRITICAL {
         music_on = value;
+        #ifdef SEGA
+        if (music_on)
+        {
+            playSegaMusTone(0);
+            SegaMusVolumeMax();
+        }
+        else
+        {
+            SegaMusVolumeOff();
+        }
+        #endif
     }
 }
 
 void setSoundOn(uint8_t value)
 {
-    sound_on = value;
+    CRITICAL {
+        sound_on = value;
+        #ifdef SEGA
+        if (sound_on)
+        {
+            playSegaSfxTone(0);
+            SegaSfxVolumeMax();
+        }
+        else
+        {
+            SegaSfxVolumeOff();
+        }
+        #endif
+    }
 }
 
 uint8_t isMusicOn()
 {
-    uint8_t tmp;
-    tmp = 1;
-    CRITICAL {
-        tmp = music_on;
-    }
-    return tmp;
+    return music_on;
 }
 
 uint8_t isSoundOn()
@@ -337,18 +350,166 @@ void initSound()
     NR52_REG = 0x80; // is 1000 0000 in binary and turns on sound
     NR50_REG = 0x77; // sets the volume for both left and right channel just set to max 0x77
     NR51_REG = 0xFF; // is 1111 1111 in binary, select which chanels we want to use in this case all of them. One bit for the L one bit for the R of all four channels
+    #else
+    CRITICAL {
+        sfx_sustain_zero_set = 1;
+        sfx_sustain = 0;
+        sfx_setting_note = 0;
+    }
     #endif
 }
+
+#ifdef NINTENDO
+void playNintendoCh1(int REG_10, int REG_11, int REG_12, int REG_13, int REG_14)
+{
+    NR10_REG = REG_10;
+    NR11_REG = REG_11;
+    NR12_REG = REG_12;
+    NR13_REG = REG_13;
+    NR14_REG = REG_14;
+}
+
+void playNintendoCh2(int REG_21, int REG_22, int REG_23, int REG_24)
+{
+    NR21_REG = REG_21;
+    NR22_REG = REG_22;
+    NR23_REG = REG_23;
+    NR24_REG = REG_24;
+}
+#endif
+
+#ifdef SEGA
+
+void playSegaSfxToneCritical(int val)
+{
+    CRITICAL {
+        playSegaSfxTone(val);   
+    }
+}
+
+void playSegaSfxTone(int val) 
+{
+    sfx_setting_note = 1;
+    PSG = PSG_LATCH | PSG_CH0 | val;
+    PSG = val;
+    //0 freqency don't reset sfx_sustain_zero_set and sfx_sustain
+    //otherwise we'll get and infinite loop when its called from
+    //ProcessSegaSound
+    if (val != 0)
+    {
+        sfx_sustain_zero_set = 0;
+        sfx_sustain = SFX_SUSTAIN;
+    }
+    sfx_setting_note = 0;
+}
+
+
+void playSegaSfxNoiseCritical(int val)
+{
+    CRITICAL {
+        playSegaSfxNoise(val);
+    }
+} 
+
+void playSegaSfxNoise(int val) 
+{
+    sfx_setting_note = 1;
+    sfx_sustain_zero_set = 0;
+    PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | PSG_VOLUME_MAX;
+    PSG = PSG_LATCH | PSG_CH3 | val;
+    sfx_sustain = SFX_SUSTAIN * 3;
+    sfx_setting_note = 0;
+}
+
+void playSegaMusTone(int val) 
+{
+    PSG = PSG_LATCH | PSG_CH1 | ((val) & 0xf);
+    PSG = (((val) >> 4) & 0x3f);
+    if (val != 0)
+    {
+        music_sustain_zero_set = 0;
+    }
+}
+
+void SegaMusVolumeOff()
+{
+    PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_OFF;
+}
+
+void SegaMusVolumeMax()
+{
+    PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_MAX;
+}
+
+void SegaSfxVolumeOff()
+{
+    sfx_setting_note = 1;
+    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_OFF;
+    sfx_setting_note = 0;
+}
+
+void SegaSfxVolumeMax()
+{
+    sfx_setting_note = 1;
+    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
+    sfx_setting_note = 0;
+}
+
+
+void SegaNoiseVolumeOff()
+{
+    sfx_setting_note = 1;
+    PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | PSG_VOLUME_OFF;
+    sfx_setting_note = 0;
+}
+
+void SegaNoiseVolumeMax()
+{
+    sfx_setting_note = 1;
+    PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | PSG_VOLUME_MAX;
+    sfx_setting_note = 0;
+}
+
+void SegaStopSound()
+{
+    SegaMusVolumeOff();
+    SegaSfxVolumeOff();
+    SegaNoiseVolumeOff();
+}
+
+void processSoundSega()
+{
+    if (sfx_setting_note || selecting_music)
+    {
+        return;
+    }
+    
+    musicTimer();
+    if(sfx_sustain == 0)
+    {
+        if (!sfx_sustain_zero_set)
+        {
+            playSegaSfxTone(0);
+            SegaNoiseVolumeOff();
+            sfx_sustain_zero_set = 1;
+        }
+    }
+    else
+    {
+        sfx_sustain--;
+    }
+}
+
+#endif
+
 
 void SelectMusic(uint8_t musicFile, uint8_t loop)
 {
     if (prev_music != musicFile)
     {
-        prev_music = musicFile;
-        CRITICAL {
-            music_note = 0;
-            music_tempo = 0;
-            music_loop = loop;
+        selecting_music = 1;
+        CRITICAL {            
+            prev_music = musicFile;
             memset(musicArray, 0, sizeof(musicArray));
             switch (musicFile) 
             {
@@ -369,7 +530,13 @@ void SelectMusic(uint8_t musicFile, uint8_t loop)
                     music_length = sizeof(music_game);
                     break;
             }
+            music_note = 0;
+            music_tempo = 0;
+            music_loop = loop;
+            music_sustain_zero_set = 1;
+            music_sustain_note = 0;
         }
+        selecting_music = 0;
     }
 }
 
@@ -380,24 +547,23 @@ void playNote()
         //Play current note ( << 2 is like a *4 (bitshift is faster than * for the GB), because music note is 0,1,2,3,4... while our actual note array uses 4 entry per note, 
         //so we have to multiply note by 4 to get the actual registers index for each note)
         #ifdef NINTENDO
-        NR21_REG = music_notes_gb[ musicArray[music_note]<<2 ];
-        NR22_REG = music_notes_gb[ (musicArray[music_note]<<2)+1 ];
-        NR23_REG = music_notes_gb[ (musicArray[music_note]<<2)+2 ];
-        NR24_REG = music_notes_gb[ (musicArray[music_note]<<2)+3 ];
-        sustain_note = 0;
-        #else 
-        PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_MAX;
-        PSG = PSG_LATCH | PSG_CH1 |  (music_notes_gg[ musicArray[music_note] ]) & 0xf;
-        PSG = ((music_notes_gg[ musicArray[music_note] ]) >> 4) & 0x3f;
-        sustain_note = 10;
+        playNintendoCh2(music_notes_gb[(musicArray[music_note] << 2)],
+            music_notes_gb[(musicArray[music_note] << 2) + 1],
+            music_notes_gb[(musicArray[music_note] << 2) + 2],
+            music_notes_gb[(musicArray[music_note] << 2) + 3]);
+        music_sustain_note = 0;
+        #else
+        playSegaMusTone(music_notes_gg[musicArray[music_note]]);
+        music_sustain_note = 10;
         #endif
+
         //Set the new delay to wait
-        music_tempo = musicArray[ music_note+1 ];
+        music_tempo = musicArray[music_note + 1];
 
         //Skip to the next note
         music_note += 2;
                
-        if (music_note > music_length-1 )
+        if (music_note > music_length - 1)
         {
             if(music_loop)
             {
@@ -406,19 +572,24 @@ void playNote()
             else
             {
                 #ifdef SEGA
-                PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_OFF;
+                playSegaMusTone(0);
                 #endif
             }
         }
     }
-
 }
 
 
 void musicTimer()
 {
+    //for nintendo systems as sega one checks it earlier
+    if (selecting_music)
+    {
+        return;
+    }
+
     //Play some music
-    if( music_tempo == 0 )
+    if (music_tempo == 0)
     {
         if(music_on)
         {
@@ -429,17 +600,19 @@ void musicTimer()
     else 
     {
         music_tempo--;
-        if(sustain_note == 0)
+        if(music_sustain_note == 0)
         {
-            #ifdef SEGA
-            PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_MAX;
-            PSG = PSG_LATCH | PSG_CH1 |  0;
-            PSG = 0;
-            #endif    
+            if (!music_sustain_zero_set)
+            {
+                #ifdef SEGA
+                playSegaMusTone(0);
+                #endif
+                music_sustain_zero_set = 1;
+            }
         }
         else
         {
-            sustain_note--;
+            music_sustain_note--;
         }
     }
 }
@@ -448,18 +621,20 @@ void initMusic()
 {
     
     CRITICAL {
+        music_sustain_note = 0;
+        prev_music = 0;
+        music_note = 0;
+        music_length = 0;
+        music_tempo = 0;
+        music_loop = 0;
+        //set to 1 so nothing plays until a music was selected
+        selecting_music = 1;
+        music_sustain_zero_set = 1;
         #ifdef NINTENDO
         add_TIM(musicTimer);
         #else
         add_VBL(processSoundSega);
         #endif
-        sfx_sustain = 0;
-        sustain_note = 0;
-        prev_music = 0;
-        music_note = 1;
-        music_length = 1;
-        music_tempo = 0;
-        music_loop = 0;
     }
     #ifdef NINTENDO
     if (_cpu == CGB_TYPE)
@@ -472,45 +647,9 @@ void initMusic()
         TMA_REG = 0xC0;
         TAC_REG = 0x4U;    
     }
-    #endif
     set_interrupts(TIM_IFLAG | VBL_IFLAG); 
-}
-
-void stopSoundSega()
-{
-    #ifdef SEGA
-    //music 0 frequency
-    PSG = PSG_LATCH | PSG_CH1 | PSG_VOLUME | PSG_VOLUME_MAX;
-    PSG = PSG_LATCH | PSG_CH1 |  0;
-    PSG = 0; 
-
-    //sound 0 frequency
-    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
-    PSG = PSG_LATCH | PSG_CH0 |  0;
-    PSG = 0;  
-
-    //Noise
-    PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | PSG_VOLUME_OFF;
-    #endif
-}
-
-void processSoundSega()
-{
-    #ifdef SEGA
-    musicTimer();
-    if(sfx_sustain == 0)
-    {
-        //tone
-        PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
-        PSG = PSG_LATCH | PSG_CH0 |  0;
-        PSG = 0;
-        //noise (error sound)
-        PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | PSG_VOLUME_OFF;
-    }
-    else
-    {
-        sfx_sustain--;
-    }
+    #else
+    set_interrupts(VBL_IFLAG); 
     #endif
 }
 
@@ -521,17 +660,9 @@ void playGameMoveSound()
         return;
     }
     #ifdef NINTENDO
-    NR10_REG = 0x00;
-    NR11_REG = 0x40;
-    NR12_REG = 0x63;
-    NR13_REG = 0x06;
-    NR14_REG = 0x87;
+    playNintendoCh1(0x00, 0x40, 0x63, 0x06, 0x87);
     #else
-    //tone
-    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
-    PSG = PSG_LATCH | PSG_CH0 | 0x6;
-    PSG = 0x6;
-    setSfxSustain(SFX_SUSTAIN);
+    playSegaSfxToneCritical(0x6);
     #endif
 }
 
@@ -542,16 +673,9 @@ void playErrorSound()
         return;
     }
     #ifdef NINTENDO
-    NR10_REG = 0x19;
-    NR11_REG = 0xC2;
-    NR12_REG = 0x93;
-    NR13_REG = 0x73;
-    NR14_REG = 0xC6;
+    playNintendoCh1(0x19, 0xC2, 0x93, 0x73, 0xC6);
     #else
-    //noise channel
-    PSG = PSG_LATCH | PSG_CH3 | PSG_VOLUME | PSG_VOLUME_MAX;
-    PSG = PSG_LATCH | PSG_CH3 | 0x2;
-    setSfxSustain(SFX_SUSTAIN*3);
+    playSegaSfxNoiseCritical(0x2);
     #endif
 }
 
@@ -562,17 +686,9 @@ void playMenuSelectSound()
         return;
     }
     #ifdef NINTENDO
-    NR10_REG = 0x00;
-    NR11_REG = 0x00;
-    NR12_REG = 0x63;
-    NR13_REG = 0x9E;
-    NR14_REG = 0x87;
+    playNintendoCh1(0x00, 0x00, 0x63, 0x9E, 0x87);
     #else
-    //tone
-    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
-    PSG = PSG_LATCH | PSG_CH0 | 0x3;
-	PSG = 0x3;
-    setSfxSustain(SFX_SUSTAIN);
+    playSegaSfxToneCritical(0x3);
     #endif
 }
 
@@ -583,17 +699,9 @@ void playMenuBackSound()
         return;
     }
     #ifdef NINTENDO
-    NR10_REG = 0x00;
-    NR11_REG = 0x81;
-    NR12_REG = 0x63;
-    NR13_REG = 0xE8;
-    NR14_REG = 0x83;
+    playNintendoCh1(0x00, 0x81, 0x63, 0xE8, 0x83);
     #else
-    //tone
-    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
-    PSG = PSG_LATCH | PSG_CH0 | 0xF;
-    PSG = 0xf;
-    setSfxSustain(SFX_SUSTAIN);
+    playSegaSfxToneCritical(0xF);
     #endif
 }
 
@@ -604,17 +712,9 @@ void playMenuAcknowlege()
         return;
     }
     #ifdef NINTENDO
-    NR10_REG = 0x57;
-    NR11_REG = 0x03;
-    NR12_REG = 0x5e;
-    NR13_REG = 0xd0;
-    NR14_REG = 0x87;
+    playNintendoCh1(0x57, 0x03, 0x5e, 0xd0, 0x87);
     #else
-    //tone
-    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
-    PSG = PSG_LATCH | PSG_CH0 | 0x7;
-    PSG = 0x7;
-    setSfxSustain(SFX_SUSTAIN);
+    playSegaSfxToneCritical(0x7);
     #endif
 }
 
@@ -625,16 +725,8 @@ void playGameAction()
         return;
     }
     #ifdef NINTENDO
-    NR10_REG = 0x00;
-    NR11_REG = 0x80;
-    NR12_REG = 0x63;
-    NR13_REG = 0x6f;
-    NR14_REG = 0x86;
+    playNintendoCh1(0x00, 0x80, 0x63, 0x6f, 0x86);
     #else
-    //tone
-    PSG = PSG_LATCH | PSG_CH0 | PSG_VOLUME | PSG_VOLUME_MAX;
-    PSG = PSG_LATCH | PSG_CH0 | 0x9;
-    PSG = 0x9;
-    setSfxSustain(SFX_SUSTAIN);
+    playSegaSfxToneCritical(0x9);
     #endif
 }
