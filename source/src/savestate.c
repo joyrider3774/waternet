@@ -23,8 +23,8 @@ uint8_t AT(0x81D7) soundOn;
 
 void initSaveState()
 {
-    uint8_t i, j, y;
     #ifndef MEGADUCK
+    uint8_t i, j, y;
     ENABLE_RAM;
     //only music option got added and this makes
     //sure that people who had the previous save state / rom
@@ -71,6 +71,7 @@ void initSaveState()
 
 void setMusicOnSaveState(uint8_t value)
 {
+    value; //avoid megaduck warning
     #ifndef MEGADUCK
     ENABLE_RAM;
         musicOn = value;
@@ -96,6 +97,7 @@ uint8_t isMusicOnSaveState()
 
 void setSoundOnSaveState(uint8_t value)
 {
+    value; //avoid megaduck warning
     #ifndef MEGADUCK
     ENABLE_RAM;
         soundOn = value;
@@ -121,6 +123,7 @@ uint8_t isSoundOnSaveState()
 
 void unlockLevel(uint8_t mode, uint8_t diff, uint8_t level)
 {
+    mode; diff; level; //avoid megaduck warning
     #ifndef MEGADUCK
     ENABLE_RAM;
     levelLocks[mode][diff][level] = 1;
@@ -133,9 +136,9 @@ void unlockLevel(uint8_t mode, uint8_t diff, uint8_t level)
 
 uint8_t levelUnlocked(uint8_t mode, uint8_t diff, uint8_t level)
 {
+    mode; diff; level; //avoid megaduck warning
     uint8_t tmp;
     tmp = 1;
-    
     #ifndef MEGADUCK
     ENABLE_RAM;
     tmp = levelLocks[mode][diff][level];
@@ -147,9 +150,9 @@ uint8_t levelUnlocked(uint8_t mode, uint8_t diff, uint8_t level)
 
 uint8_t lastUnlockedLevel(uint8_t mode, uint8_t diff)
 {
+    mode; diff; //avoid megaduck warning
     uint8_t tmp, level;
     tmp = 1;
-   
     #ifndef MEGADUCK
     ENABLE_RAM;
     for (level = 0; level < levelCount; level++)

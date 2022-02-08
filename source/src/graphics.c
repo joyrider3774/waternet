@@ -62,6 +62,7 @@ void setBlackPalette()
 
 void set_sgb_palette_colors(uint8_t pal, uint16_t c1, uint16_t c2, uint16_t c3, uint16_t c4)
 {
+    pal; c1; c2; c3; c4; //avoid sega warnings
     #ifdef NINTENDO
     if(sgb_enabled)
     {
@@ -83,9 +84,7 @@ void set_sgb_palette_colors(uint8_t pal, uint16_t c1, uint16_t c2, uint16_t c3, 
 
 void set_sgb_palette(uint8_t pal, palette_color_t palette[4])
 {
-    #ifdef NINTENDO
     set_sgb_palette_colors(pal, palette[0], palette[1], palette[2], palette[3]);
-    #endif
 }
 
 //set the fade flag to fade in or not and increase the fadecounter to startvalue
