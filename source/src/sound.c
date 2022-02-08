@@ -360,7 +360,7 @@ void initSound()
 }
 
 #ifdef NINTENDO
-void playNintendoCh1(int REG_10, int REG_11, int REG_12, int REG_13, int REG_14)
+void playNintendoCh1(uint8_t REG_10, uint8_t REG_11, uint8_t REG_12, uint8_t REG_13, uint8_t REG_14)
 {
     NR10_REG = REG_10;
     NR11_REG = REG_11;
@@ -369,7 +369,7 @@ void playNintendoCh1(int REG_10, int REG_11, int REG_12, int REG_13, int REG_14)
     NR14_REG = REG_14;
 }
 
-void playNintendoCh2(int REG_21, int REG_22, int REG_23, int REG_24)
+void playNintendoCh2(uint8_t REG_21, uint8_t REG_22, uint8_t REG_23, uint8_t REG_24)
 {
     NR21_REG = REG_21;
     NR22_REG = REG_22;
