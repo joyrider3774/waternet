@@ -1,6 +1,7 @@
 #pragma bank 255
 
 #include <gbdk/platform.h>
+#include <gbdk/gbdecompress.h>
 #include <stdint.h>
 #include <time.h>
 
@@ -166,7 +167,7 @@ void initTitleScreen() NONBANKED
 {
     pushBank();
     SWITCH_ROM(BANK(titletiles));
-    set_bkg_data(0, 126, titleTiles);
+    set_bkg_data(0, gb_decompress(titleTiles, tileBuffer) >> 4, tileBuffer);
     popBank();
     
     clearBackgroundLayer(0);

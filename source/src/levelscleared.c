@@ -1,4 +1,5 @@
 #include <gbdk/platform.h>
+#include <gbdk/gbdecompress.h>
 #include <stdint.h>
 
 #include "commonvars.h"
@@ -17,7 +18,7 @@ void initLevelsCleared() NONBANKED
 {
     pushBank();
     SWITCH_ROM(BANK(congratsscreentiles));
-    set_bkg_data(0, 91, congratsScreenTiles);
+    set_bkg_data(0, gb_decompress(congratsScreenTiles, tileBuffer) >> 4, tileBuffer);
     popBank();
     clearBackgroundLayer(0);
     pushBank();

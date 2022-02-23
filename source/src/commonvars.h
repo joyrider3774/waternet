@@ -86,5 +86,5 @@ extern uint8_t neighbours[4];
 extern uint8_t cellStack[maxBoardSize+1];
 extern point lookUpTable[maxBoardSize];
 extern unsigned char level[maxBoardSize];
-
+extern uint8_t tileBuffer[4096];
 #endif

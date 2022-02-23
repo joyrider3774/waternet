@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <gbdk/platform.h>
+#include <gbdk/gbdecompress.h>
 #include "cursor.h"
 #include "commonvars.h"
 #include "helperfuncs.h"
@@ -106,7 +107,7 @@ void initCursors()
 {
     pushBank();
     SWITCH_ROM(BANK(selectortiles));
-    set_sprite_data(0, 41, selectorTiles);
+    set_sprite_data(0, gb_decompress(selectorTiles, tileBuffer) >> 4, tileBuffer);
     popBank();
 
     //cursor 0

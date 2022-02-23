@@ -7,7 +7,7 @@
  Info:
   Form                 : All tiles as one unit.
   Format               : Gameboy 4 color.
-  Compression          : None.
+  Compression          : GB-Compress.
   Counter              : None.
   Tile size            : 8 x 8
   Tiles                : 0 to 125
@@ -29,7 +29,7 @@
 BANKREF_EXTERN(titletiles)
 
 /* Bank of tiles. */
-#define titleTilesBank 0
+#define titleTilesBank 255
 /* Start of tile array. */
 extern const unsigned char titleTiles[];
 

@@ -1,6 +1,7 @@
 #include <gbdk/platform.h>
-
+#include <gbdk/gbdecompress.h>
 #include "../res/blocktiles.h"
+#include "../res/segabuttontiles.h"
 
 #include "helperfuncs.h"
 #include "commonvars.h"
@@ -32,13 +33,17 @@ void setBlockTilesAsBackground()
 {
     pushBank();
     SWITCH_ROM(BANK(blocktiles));
-    set_bkg_data(0, 128, blockTiles);
+    set_bkg_data(0, gb_decompress(blockTiles, tileBuffer) >> 4, tileBuffer);
+    popBank();
     //Assign 1 & 2 instead A & B for SEGA
     #ifdef SEGA
-    set_bkg_data(117,1, blockTiles+(125*16));
-    set_bkg_data(119,1, blockTiles+(124*16));
-    #endif
+    pushBank();
+    SWITCH_ROM(BANK(segabuttontiles));
+    set_bkg_data(117, gb_decompress(segaButtonTiles, tileBuffer) >> 4, tileBuffer);
+    //Assign 1 & 2 instead A & B for SEGA
     popBank();
+    #endif
+
 }
 
 inline void performantdelay(uint8_t numloops) 

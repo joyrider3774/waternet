@@ -1,6 +1,6 @@
 /*
 
- CONGRATSSCREENTILES.H
+ SEGABUTTONTILES.H
 
  Include File.
 
@@ -10,7 +10,7 @@
   Compression          : GB-Compress.
   Counter              : None.
   Tile size            : 8 x 8
-  Tiles                : 0 to 90
+  Tiles                : 0 to 2
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -22,18 +22,18 @@
 
 */
 
-#ifndef __congratsscreentiles_h_INCLUDE
-#define __congratsscreentiles_h_INCLUDE
+#ifndef __segabuttontiles_h_INCLUDE
+#define __segabuttontiles_h_INCLUDE
 
 #include <gbdk/platform.h>
 
-BANKREF_EXTERN(congratsscreentiles)
+BANKREF_EXTERN(segabuttontiles)
 
 /* Bank of tiles. */
-#define congratsScreenTilesBank 255
+#define segaButtonTilesBank 255
 /* Start of tile array. */
-extern const unsigned char congratsScreenTiles[];
+extern const unsigned char segaButtonTiles[];
 
 #endif
 
-/* End of CONGRATSSCREENTILES.H */
+/* End of SEGABUTTONTILES.H */
