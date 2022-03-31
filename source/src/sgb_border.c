@@ -1,5 +1,3 @@
-#pragma bank 1
-
 #include "sgb_border.h"
 #include <gbdk/platform.h>
 

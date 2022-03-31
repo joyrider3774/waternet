@@ -25,12 +25,8 @@
 #ifndef __segabuttontiles_h_INCLUDE
 #define __segabuttontiles_h_INCLUDE
 
-#include <gbdk/platform.h>
-
-BANKREF_EXTERN(segabuttontiles)
-
 /* Bank of tiles. */
-#define segaButtonTilesBank 255
+#define segaButtonTilesBank 0
 /* Start of tile array. */
 extern const unsigned char segaButtonTiles[];
 

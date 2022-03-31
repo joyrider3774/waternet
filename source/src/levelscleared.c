@@ -12,19 +12,11 @@
 #include "../res/congratsscreentiles.h"
 #include "../res/congratsscreenmap.h"
 
-BANKREF(LEVELSCLEARED)
-
-void initLevelsCleared() NONBANKED
+void initLevelsCleared()
 {
-    pushBank();
-    SWITCH_ROM(BANK(congratsscreentiles));
     set_bkg_data(0, gb_decompress(congratsScreenTiles, tileBuffer) >> 4, tileBuffer);
-    popBank();
     clearBackgroundLayer(0);
-    pushBank();
-    SWITCH_ROM(BANK(congratsscreenmap));
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, congratsMapWidth, congratsMapHeight, congratsMap);
-    popBank();
     if(difficulty == diffVeryEasy)
     {
         printCongratsScreen(1 + SCREENSTARTX, 7 + SCREENSTARTY, "VERY EASY  LEVELS", 17, 0);
@@ -48,7 +40,7 @@ void initLevelsCleared() NONBANKED
     SelectMusic(musAllLevelsClear, 1);
 }
 
-void levelsCleared() BANKED
+void levelsCleared() NONBANKED
 {
     initLevelsCleared();
     

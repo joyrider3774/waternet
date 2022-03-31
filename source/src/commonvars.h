@@ -36,7 +36,8 @@
 #define mmStartGame 0
 #define mmHelp 1
 #define mmOptions 2
-#define mmCount 3
+#define mmPassword 3
+#define mmCount 4
 
 #define opMusic 0
 #define opSound 1
@@ -46,8 +47,9 @@
 #define tsGameMode 1
 #define tsDifficulty 2
 #define tsOptions 3
+#define tsPassword 4
 
-#define levelCount 25
+#define levelCount 15
 
 #define arrowDown 122
 #define arrowUp	120
@@ -55,6 +57,9 @@
 #define arrowRight 121
 #define leftMenu 97
 
+#define maxPasswordX 7
+#define maxPasswordY 1
+ 
 //only SMS has different screen res 
 //it is used to center the screen
 #ifdef MASTERSYSTEM
@@ -87,4 +92,5 @@ extern uint8_t cellStack[maxBoardSize+1];
 extern point lookUpTable[maxBoardSize];
 extern unsigned char level[maxBoardSize];
 extern uint8_t tileBuffer[4096];
+extern unsigned char statePassword[16];
 #endif

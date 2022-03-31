@@ -105,10 +105,7 @@ void setCursorPos(uint8_t cursorNr, uint8_t xPos, uint8_t yPos)
 
 void initCursors()
 {
-    pushBank();
-    SWITCH_ROM(BANK(selectortiles));
     set_sprite_data(0, gb_decompress(selectorTiles, tileBuffer) >> 4, tileBuffer);
-    popBank();
 
     //cursor 0
     set_sprite_tile(0, 8);

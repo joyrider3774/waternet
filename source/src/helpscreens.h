@@ -5,11 +5,11 @@
 
 BANKREF_EXTERN(HELPSCREENS)
 
-void helpRotateSlide() BANKED;
-void helpRotateSlide2() BANKED;
-void helpRotate() BANKED;
-void helpRotate2() BANKED;
-void helpSlide() BANKED;
-void helpSlide2() BANKED;
+void helpRotateSlide();
+void helpRotateSlide2();
+void helpRotate();
+void helpRotate2();
+void helpSlide();
+void helpSlide2();
 
 #endif

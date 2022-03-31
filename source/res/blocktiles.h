@@ -25,12 +25,8 @@
 #ifndef __blocktiles_h_INCLUDE
 #define __blocktiles_h_INCLUDE
 
-#include <gbdk/platform.h>
-
-BANKREF_EXTERN(blocktiles)
-
 /* Bank of tiles. */
-#define blockTilesBank 255
+#define blockTilesBank 0
 /* Start of tile array. */
 extern const unsigned char blockTiles[];
 

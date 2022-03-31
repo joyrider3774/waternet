@@ -17,3 +17,4 @@ uint8_t cellStack[maxBoardSize+1];
 point lookUpTable[maxBoardSize];
 unsigned char level[maxBoardSize];
 uint8_t tileBuffer[4096];
+unsigned char statePassword[16];

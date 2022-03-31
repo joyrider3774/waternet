@@ -1,5 +1,3 @@
-#pragma bank 255
-
 #include <gbdk/platform.h>
 
 #include "../res/helprotatemap.h"
@@ -15,21 +13,16 @@
 #include "graphics.h"
 #include "sound.h"
 
-BANKREF(HELPSCREENS)
-
-void initHelpRotateSlide() NONBANKED
+void initHelpRotateSlide()
 {
     setBlockTilesAsBackground();
     clearBackgroundLayer(48);
-    pushBank();
-    SWITCH_ROM(BANK(helprotateslidemap));
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpRotateSlideMapWidth, helpRotateSlideMapHeight, helpRotateSlideMap);
-    popBank();
     SelectMusic(musTitle, 1);
 
 }
 
-void helpRotateSlide() BANKED
+void helpRotateSlide()
 {
     initHelpRotateSlide();
    
@@ -60,14 +53,11 @@ void helpRotateSlide() BANKED
     }
 }
 
-void initHelpRotateSlide2() NONBANKED
+void initHelpRotateSlide2()
 {
     setBlockTilesAsBackground();
     clearBackgroundLayer(48);
-    pushBank();
-    SWITCH_ROM(BANK(helprotateslide2map));
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpRotateSlide2MapWidth, helpRotateSlide2MapHeight, helpRotateSlide2Map);
-    popBank();
     SelectMusic(musTitle, 1);
 
     //DRAW CURSOR SPRITES
@@ -81,7 +71,7 @@ void initHelpRotateSlide2() NONBANKED
     showCursors();
 }
 
-void helpRotateSlide2() BANKED
+void helpRotateSlide2()
 {
     initHelpRotateSlide2();
    
@@ -114,18 +104,15 @@ void helpRotateSlide2() BANKED
     hideCursors();
 }
 
-void initHelpRotate() NONBANKED
+void initHelpRotate()
 {
     setBlockTilesAsBackground();
     clearBackgroundLayer(48);
-    pushBank();
-    SWITCH_ROM(BANK(helprotatemap));
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpRotateMapWidth, helpRotateMapHeight, helpRotateMap);
-    popBank();
     SelectMusic(musTitle, 1);
 }
 
-void helpRotate() BANKED
+void helpRotate()
 {
     initHelpRotate();
    
@@ -155,14 +142,11 @@ void helpRotate() BANKED
     }
 }
 
-void initHelpRotate2() NONBANKED
+void initHelpRotate2()
 {
     setBlockTilesAsBackground();
     clearBackgroundLayer(48);
-    pushBank();
-    SWITCH_ROM(BANK(helprotate2map));
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpRotate2MapWidth, helpRotate2MapHeight, helpRotate2Map);
-    popBank();
     SelectMusic(musTitle, 1);
 
     //DRAW CURSOR SPRITES
@@ -172,7 +156,7 @@ void initHelpRotate2() NONBANKED
     showCursors();
 }
 
-void helpRotate2() BANKED
+void helpRotate2()
 {
     initHelpRotate2();
    
@@ -208,18 +192,15 @@ void helpRotate2() BANKED
 }
 
 
-void initHelpSlide() NONBANKED
+void initHelpSlide()
 {
     setBlockTilesAsBackground();
     clearBackgroundLayer(48);
-    pushBank();
-    SWITCH_ROM(BANK(helpslidemap));
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpSlideMapWidth, helpSlideMapHeight, helpSlideMap);
-    popBank();
     SelectMusic(musTitle, 1);
 }
 
-void helpSlide() BANKED
+void helpSlide()
 {
     initHelpSlide();
    
@@ -249,14 +230,11 @@ void helpSlide() BANKED
     }
 }
 
-void initHelpSlide2() NONBANKED
+void initHelpSlide2()
 {
     setBlockTilesAsBackground();
     clearBackgroundLayer(48);
-    pushBank();
-    SWITCH_ROM(BANK(helpslide2map));
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, helpSlide2MapWidth, helpSlide2MapHeight, helpSlide2Map);
-    popBank();
     SelectMusic(musTitle, 1);
     
     //DRAW CURSOR SPRITES
@@ -268,7 +246,7 @@ void initHelpSlide2() NONBANKED
     showCursors();
 }
 
-void helpSlide2() BANKED
+void helpSlide2() NONBANKED
 {
     initHelpSlide2();
    

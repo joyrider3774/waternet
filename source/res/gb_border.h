@@ -14,8 +14,6 @@
 #define gb_border_MAP_ATTRIBUTES 0
 #define gb_border_TILE_PALS 0
 
-BANKREF_EXTERN(gb_border)
-
 extern const palette_color_t gb_border_palettes[16];
 extern const uint8_t gb_border_tiles[1952];
 extern const unsigned char gb_border_map[1792];

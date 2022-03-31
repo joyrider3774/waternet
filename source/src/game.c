@@ -1,8 +1,7 @@
-#pragma bank 255
-
 #include <gbdk/platform.h>
 #include <stdint.h>
 #include <time.h>
+#include <string.h>
 
 #include "../res/gamebackgroundmap.h"
 #include "level.h"
@@ -14,15 +13,11 @@
 #include "cursor.h"
 #include "savestate.h"
 
-BANKREF(GAME)
-
 void updateBackgroundGame() NONBANKED
 {
     //background
     if(clearbit)
     {
-        pushBank();
-        SWITCH_ROM(BANK(gamebackgroundmap));
         i16 = 0;
         for (y = 0; y != gameBackgroundMapHeight; y++)
         {
@@ -50,7 +45,6 @@ void updateBackgroundGame() NONBANKED
                 i16++;
             }
         }
-        popBank();
 
          //LEVEL:
         printLevelSelectGame(0 + SCREENSTARTX, 16 + SCREENSTARTY, "LEVEL:", 6, 61);
@@ -131,11 +125,34 @@ void updateBackgroundGame() NONBANKED
     //level done
     if(redrawLevelDoneBit)
     {
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 2 + SCREENSTARTY, "[************]", 14, 61);
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 1 + SCREENSTARTY, "| LEVEL DONE +", 14, 61);
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1)     + SCREENSTARTY ,"|            +", 14, 61);
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 1 + SCREENSTARTY ,"| a CONTINUE +", 14, 61);
-        printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 2 + SCREENSTARTY, "<############>", 14, 61);
+        if( difficulty == diffRandom)
+        {
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 2 + SCREENSTARTY, "[************]", 14, 61);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 1 + SCREENSTARTY, "| LEVEL DONE +", 14, 61);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1)     + SCREENSTARTY ,"|            +", 14, 61);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 1 + SCREENSTARTY ,"| a CONTINUE +", 14, 61);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 2 + SCREENSTARTY, "<############>", 14, 61);
+        }
+        else
+        {
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 5 + SCREENSTARTY, "[************]", 14, 61);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 4 + SCREENSTARTY, "| LEVEL DONE +", 14, 61);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 3 + SCREENSTARTY ,"|            +", 14, 61);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 2 + SCREENSTARTY ,"| PASSWORD:  +", 14, 61);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) - 1 + SCREENSTARTY ,"|            +", 14, 61);
+            unsigned char passwordSplit[14];
+            memset(passwordSplit, ' ', 14);
+            passwordSplit[0] = '|';
+            passwordSplit[13] = '+';
+            memcpy(passwordSplit+2, statePassword, 8);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1)     + SCREENSTARTY , passwordSplit,   14, 61);
+            memcpy(passwordSplit+2, statePassword+8, 8);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 1 + SCREENSTARTY , passwordSplit,   14, 61);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 2 + SCREENSTARTY ,"|            +", 14, 61);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 3 + SCREENSTARTY ,"| a CONTINUE +", 14, 61);
+            printLevelSelectGame(((maxBoardBgWidth - 12) >> 1) + SCREENSTARTX, (maxBoardBgHeight >> 1) + 4 + SCREENSTARTY, "<############>", 14, 61);
+            
+        }
         redrawLevelDoneBit = 0;
     }
 
@@ -158,7 +175,7 @@ void initGame() NONBANKED
 
 }
 
-void doPause(uint8_t isRealPause) BANKED
+void doPause(uint8_t isRealPause) NONBANKED
 {
     paused = 1;
     wasSoundOn = isSoundOn();
@@ -190,7 +207,7 @@ void doPause(uint8_t isRealPause) BANKED
     
 }
 
-void doUnPause() BANKED
+void doUnPause() NONBANKED
 {
     paused = 0;
     setMusicOn(wasMusicOn);
@@ -200,7 +217,7 @@ void doUnPause() BANKED
     showCursors();
 }
 
-void game() BANKED
+void game() NONBANKED
 {
     initGame();
     uint8_t delay;
@@ -378,12 +395,18 @@ void game() BANKED
                         //1 forces level to be drawn (only) one last time the other call uses levelDone
                         redrawLevelbit = 1;
                         redrawLevelDoneBit = 1;
+
+                        //inc level, unlock level and set new password
+                        selectedLevel++;
+                        unlockLevel(gameMode, difficulty, selectedLevel-1);
+                        EncryptState(statePassword);
+
                         updateBackgroundGame();
                         //need to wait until its actually drawn on screen.
                         performantdelay(1);
                         SelectMusic(musLevelClear, 0);
                         //hide cursor it's only sprite we use
-                        hideCursors();
+                        hideCursors();                        
                     }
                 }
                 else
@@ -408,9 +431,7 @@ void game() BANKED
                     {   
                         //goto next level if any
                         if (selectedLevel < maxLevel)
-                        {
-                            selectedLevel++;
-                            unlockLevel(gameMode, difficulty, selectedLevel-1);
+                        {                            
                             initLevel(randomSeed);
                             //redraw levelnr + level + background
                             clearbit = 1;

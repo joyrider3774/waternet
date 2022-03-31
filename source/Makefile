@@ -11,7 +11,7 @@ LCC = $(GBDK_HOME)bin/lcc
 # Set platforms to build here, spaced separated. (These are in the separate Makefile.targets)
 # They can also be built/cleaned individually: "make gg" and "make gg-clean"
 # Possible are: gb gbc pocket megaduck sms gg
-TARGETS=gbc gbc-batteryless-DMG_Generic_WR_555_A9 pocket megaduck gg sms
+TARGETS=gbc pocket megaduck gg sms
 
 #when changing this value don't forget to change _CODE_4 in dummydata.s, this value is the (rom) bank nr and must be multiple of 4 + make sure it not overwrites current code
 START_SAVE=4
@@ -35,12 +35,12 @@ START_SAVE=4
 # -Wm-xj7 GG international region
 # -Wm-xv0 version 0 (or 1st version)
 
-LCCFLAGS_gb     = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B -Wm-ys 
-LCCFLAGS_duck   = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B #NO SGB STUFF HERE
-LCCFLAGS_pocket = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B -Wm-ys -Wm-yc
-LCCFLAGS_gbc    = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B -Wm-ys -Wm-yc 
-LCCFLAGS_sms    = -Wl-ya1 -Wm-yoA -Wm-xj4 -Wm-xv0 #Master System needs bigger than 32k rom or sram does not work in emulicious, my game is bigger
-LCCFLAGS_gg     = -Wl-ya1 -Wm-yoA -Wm-xj7 -Wm-xv0 #Game gear needs bigger than 32k rom or sram does not work in emulicious, my game is bigger
+LCCFLAGS_gb     = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yo2 -Wl-yt0x0 -Wm-ys 
+LCCFLAGS_duck   = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yo2 -Wl-yt0x0 #NO SGB STUFF HERE
+LCCFLAGS_pocket = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yo2 -Wl-yt0x0 -Wm-ys -Wm-yc
+LCCFLAGS_gbc    = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yo2 -Wl-yt0x0 -Wm-ys -Wm-yc 
+LCCFLAGS_sms    = -Wm-yo2 -Wm-xj4 -Wm-xv0 
+LCCFLAGS_gg     = -Wm-yo2 -Wm-xj7 -Wm-xv0
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
@@ -49,7 +49,6 @@ ifneq ($(strip $(CARTTYPEDIR)),)
 	LCCFLAGS += -Wm-yn"WATERNET" -Wl-ya4 -Wm-yo8 -Wl-yt0x1A -Wm-ys -Wm-yc
 endif
 
-LCCFLAGS += -autobank -Wb-ext=.rel -Wb-v # Autobanking related flags
 LCCFLAGS += -Wl-m -Wa-l # Wl-m = generate map files, -Wa-l = generate assembler listing
 # LCCFLAGS += -v   # Uncomment for lcc verbose output
 

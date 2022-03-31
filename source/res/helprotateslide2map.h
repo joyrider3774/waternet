@@ -20,10 +20,6 @@
 #ifndef __helprotateslide2map_h_INCLUDE
 #define __helprotateslide2map_h_INCLUDE
 
-#include <gbdk/platform.h>
-
-BANKREF_EXTERN(helprotateslide2map)
-
 #define helpRotateSlide2MapWidth 20
 #define helpRotateSlide2MapHeight 18
 #define helpRotateSlide2MapBank 0

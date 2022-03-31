@@ -116,13 +116,20 @@ void printTitle(uint8_t ax, uint8_t ay, unsigned char amsg[], uint8_t length, ui
         }
         else
         {
-            if (amsg[c] != 0)
+            if (amsg[c] == '^')
             {
-                set_bkg_tile_xy(ax + c, ay, amsg[c] + 34);
+                set_bkg_tile_xy(ax + c, ay, 126);
             }
             else
             {
-                break;
+                if (amsg[c] != 0)
+                {
+                    set_bkg_tile_xy(ax + c, ay, amsg[c] + 34);
+                }
+                else
+                {
+                    break;
+                }
             }
         }    
     }

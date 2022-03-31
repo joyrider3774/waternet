@@ -54,8 +54,6 @@ void init()
     DISPLAY_ON;
     
     #ifdef GAMEBOY
-        //graphics data is in bank 1
-        SWITCH_ROM(1);
         // this delay is required for PAL SNES
         for (i = 4; i != 0; i--)
         {
@@ -79,8 +77,8 @@ void init()
     joyPad = joypad();
     prevJoyPad = joyPad;
     initSaveState();
-    setMusicOn(isMusicOnSaveState());
-    setSoundOn(isSoundOnSaveState());
+    setMusicOn(1);
+    setSoundOn(1);
     startfade(FADEIN, 1);
     initSound();
     initMusic();

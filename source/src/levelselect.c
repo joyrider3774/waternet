@@ -1,5 +1,3 @@
-#pragma bank 255
-
 #include <gbdk/platform.h>
 #include <time.h>
 
@@ -13,18 +11,14 @@
 #include "sound.h"
 #include "level.h"
 
-BANKREF(LEVELSELECT)
-
 //NONBANKED because of gameBackgroundMap
-void updateBackgroundLevelSelect() NONBANKED 
+void updateBackgroundLevelSelect() 
 {
     //clearbit will clear the background tiles
     //this is only needed for random selection and initial call to set the tiles
     //otherwise the screen acted weird for some reason causing a glitch
     if(clearbit)
     {
-        pushBank();
-        SWITCH_ROM(BANK(gamebackgroundmap));
         //only redraw changed tiles
         i16 = 0;
         for (y = 0; y != gameBackgroundMapHeight; y++)
@@ -55,7 +49,6 @@ void updateBackgroundLevelSelect() NONBANKED
                 i16++;
             }
         }
-        popBank();
         //LEVEL:
         printLevelSelectGame(0 + SCREENSTARTX, 16 + SCREENSTARTY, "LEVEL:", 6, 61);
         
@@ -128,7 +121,7 @@ void updateBackgroundLevelSelect() NONBANKED
 }
 
 //NONBANKED because setBlockTilesAsBackground
-void initLevelSelect() NONBANKED
+void initLevelSelect()
 {
     setBlockTilesAsBackground();
     clearBackgroundLayer(48);
@@ -138,7 +131,7 @@ void initLevelSelect() NONBANKED
     SelectMusic(musTitle, 1);
 }
 
-void levelSelect() BANKED
+void levelSelect()
 {
     uint8_t tmpUnlocked;
     tmpUnlocked = levelUnlocked(gameMode, difficulty, selectedLevel -1);
@@ -222,6 +215,12 @@ void levelSelect() BANKED
                 }
             }
             printNumber(6 + SCREENSTARTX, 16 + SCREENSTARTY, selectedLevel, 2, 61);
+        }
+        if ((joyPad & J_SELECT) && (!(prevJoyPad & J_SELECT)))
+        {
+            unsigned char tmpbuf[18];
+            EncryptState(tmpbuf);
+            printLevelSelectGame(0, 0, tmpbuf, 18, 61);
         }
         if ((joyPad & J_RIGHT) && (!(prevJoyPad & J_RIGHT)))
         {

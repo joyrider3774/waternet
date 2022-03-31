@@ -31,17 +31,11 @@ void popBank()
 
 void setBlockTilesAsBackground()
 {
-    pushBank();
-    SWITCH_ROM(BANK(blocktiles));
     set_bkg_data(0, gb_decompress(blockTiles, tileBuffer) >> 4, tileBuffer);
-    popBank();
     //Assign 1 & 2 instead A & B for SEGA
     #ifdef SEGA
-    pushBank();
-    SWITCH_ROM(BANK(segabuttontiles));
     set_bkg_data(117, gb_decompress(segaButtonTiles, tileBuffer) >> 4, tileBuffer);
     //Assign 1 & 2 instead A & B for SEGA
-    popBank();
     #endif
 
 }

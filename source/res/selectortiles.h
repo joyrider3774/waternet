@@ -25,12 +25,8 @@
 #ifndef __selectortiles_h_INCLUDE
 #define __selectortiles_h_INCLUDE
 
-#include <gbdk/platform.h>
-
-BANKREF_EXTERN(selectortiles)
-
 /* Bank of tiles. */
-#define selectorTilesBank 255
+#define selectorTilesBank 0
 /* Start of tile array. */
 extern const unsigned char selectorTiles[];
 

@@ -1,8 +1,7 @@
-#pragma bank 255
-
 #include <gbdk/platform.h>
 #include <gbdk/gbdecompress.h>
 #include <stdint.h>
+#include <string.h>
 #include <time.h>
 
 #include "../res/titletiles.h"
@@ -14,24 +13,22 @@
 #include "printfuncs.h"
 #include "savestate.h"
 
-BANKREF(TITLESCREEN)
+uint8_t passX, passY;
 
-void updateBackgroundTitleScreen() NONBANKED
+void updateBackgroundTitleScreen()
 {
     //if background needs clearing draw background and menu
     if(clearbit)
     {
-        pushBank();
-        SWITCH_ROM(BANK(titlescreenmap));
         set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, titlescreenMapWidth, titlescreenMapHeight, titlescreenMap);
-        popBank();
 
         if (titleStep == tsMainMenu)
         {
-            printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY, "MAIN MENU", 9, 0);
+            printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY,  "MAIN MENU", 9, 0);
             printTitle(7 + SCREENSTARTX, 10 + SCREENSTARTY, "START", 5, 0);
             printTitle(7 + SCREENSTARTX, 11 + SCREENSTARTY, "HELP",4, 0);
             printTitle(7 + SCREENSTARTX, 12 + SCREENSTARTY, "OPTIONS", 7, 0);
+            printTitle(7 + SCREENSTARTX, 13 + SCREENSTARTY, "PASSWORD", 8, 0);
         }
         else
         {
@@ -67,13 +64,31 @@ void updateBackgroundTitleScreen() NONBANKED
                     {
                         printTitle(7 + SCREENSTARTX, 8 + SCREENSTARTY, "OPTIONS", 7, 0);
                     }
-                }
+                    else
+                    {
+                        if (titleStep == tsPassword)
+                        {
+                            printTitle(6 + SCREENSTARTX, 8 + SCREENSTARTY, "PASSWORD", 8, 0);
+                        }
+                    }
+                }               
             }
         }
     }
     
     if(clearbit || redrawLevelbit)
     {
+        if(titleStep == tsPassword)
+        {
+            unsigned char passwordSplit[8];
+            memcpy(passwordSplit, statePassword, 8);
+            printTitle(6 + SCREENSTARTX, 10 + SCREENSTARTY, passwordSplit, 8, 0);
+            memcpy(passwordSplit, statePassword+8, 8);
+            printTitle(6 + SCREENSTARTX, 12 + SCREENSTARTY, passwordSplit, 8, 0);
+            printTitle(6 + SCREENSTARTX, 11 + SCREENSTARTY, "        ", 8, 0);
+            printTitle(6 + SCREENSTARTX, 13 + SCREENSTARTY, "        ", 8, 0);
+            printTitle(6 + passX + SCREENSTARTX, 11 + (passY << 1) + SCREENSTARTY, "^", 1, 0);
+        }
         if(titleStep == tsOptions)
         {
             if(isMusicOn())
@@ -163,25 +178,22 @@ void updateBackgroundTitleScreen() NONBANKED
 
 }
 
-void initTitleScreen() NONBANKED
+void initTitleScreen()
 {
-    pushBank();
-    SWITCH_ROM(BANK(titletiles));
+    EncryptState(statePassword);
+    passX = 0;
+    passY = 0;
+
     set_bkg_data(0, gb_decompress(titleTiles, tileBuffer) >> 4, tileBuffer);
-    popBank();
     
     clearBackgroundLayer(0);
-    
-    pushBank();
-    SWITCH_ROM(BANK(titlescreenmap));
     set_bkg_tiles(SCREENSTARTX, SCREENSTARTY, titlescreenMapWidth, titlescreenMapHeight, titlescreenMap);
-    popBank();
     
     clearbit = 1;
     SelectMusic(musTitle, 1);
 }
 
-void titleScreen() BANKED
+void titleScreen()
 {
     initTitleScreen();
     
@@ -197,6 +209,46 @@ void titleScreen() BANKED
 
         prevJoyPad = joyPad;
         joyPad = joypad();
+        if ((joyPad & J_LEFT) && (!(prevJoyPad & J_LEFT)))
+        {
+            if(titleStep == tsPassword)
+            {
+                if(passX == 0)
+                {
+                    if(passY == 0)
+                    {
+                        passY = maxPasswordY;
+                    } 
+                    else
+                    {
+                        passY--;
+                    }
+                    passX = maxPasswordX;
+                }
+                else
+                {
+                    passX--;
+                }
+                redrawLevelbit = 1;
+            }
+        }
+        if ((joyPad & J_RIGHT) && (!(prevJoyPad & J_RIGHT)))
+        {
+            if(titleStep == tsPassword)
+            {
+                passX++;
+                if(passX > maxPasswordX)
+                {
+                    passY++;
+                    if(passY > maxPasswordY)
+                    {
+                        passY = 0;
+                    }
+                    passX =  0;
+                }
+                redrawLevelbit = 1;
+            }
+        }
         if ((joyPad & J_UP) && (!(prevJoyPad & J_UP)))
         {
             if (titleStep == tsMainMenu)
@@ -238,6 +290,18 @@ void titleScreen() BANKED
                             {
                                 playMenuSelectSound();
                                 option--;
+                                redrawLevelbit = 1;
+                            }
+                        }
+                        else
+                        {
+                            if(titleStep == tsPassword)
+                            {   
+                                statePassword[passY * (maxPasswordX + 1) + passX]++;
+                                if (statePassword[passY * (maxPasswordX + 1) + passX] > 90) //Z
+                                {
+                                    statePassword[passY * (maxPasswordX + 1) + passX] = 65; //A
+                                }                                                             
                                 redrawLevelbit = 1;
                             }
                         }
@@ -289,13 +353,25 @@ void titleScreen() BANKED
                                 redrawLevelbit = 1;
                             }
                         }
+                        else
+                        {
+                            if(titleStep == tsPassword)
+                            {                                
+                                statePassword[passY * (maxPasswordX + 1) + passX]--;
+                                if (statePassword[passY * (maxPasswordX + 1) + passX] < 65) //A
+                                {
+                                    statePassword[passY * (maxPasswordX + 1) + passX] = 90; //Z
+                                }
+                                redrawLevelbit = 1;
+                            }
+                        }
                     }
                 }
             }
         }
         if ((joyPad & J_B) && (!(prevJoyPad && J_B)))
         {
-            if (titleStep == tsOptions)
+            if ((titleStep == tsOptions) || (titleStep == tsPassword))
             {
                 titleStep = tsMainMenu;
                 clearbit = 1;
@@ -315,6 +391,30 @@ void titleScreen() BANKED
             ((joyPad & J_START) && (!(prevJoyPad && J_START))))
         {
             playMenuAcknowlege();
+            if (mainMenu == mmPassword)
+            {
+                if(titleStep != tsPassword)
+                {
+                    EncryptState(statePassword);
+                    passX = 0;
+                    passY = 0;
+                    titleStep = tsPassword;
+                    clearbit = 1;
+                }
+                else
+                {
+                    if (DecryptState(statePassword) == 1)
+                    {
+                        playMenuAcknowlege();
+                        titleStep = tsMainMenu;
+                        clearbit = 1;
+                    }
+                    else
+                    {
+                        playErrorSound();
+                    }
+                }
+            }
             if (mainMenu == mmOptions)
             {
                 if(titleStep != tsOptions)
@@ -328,12 +428,10 @@ void titleScreen() BANKED
                     {
                         case opMusic:
                             setMusicOn(!isMusicOn());
-                            setMusicOnSaveState(isMusicOn());
                             redrawLevelbit = 1;
                             break;
                         case opSound:
                             setSoundOn(!isSoundOn());;
-                            setSoundOnSaveState(isSoundOn());
                             redrawLevelbit = 1;
                             break;
                     }
