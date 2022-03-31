@@ -585,7 +585,7 @@ void initLevel(uint16_t aRandomSeed)
     }
     else
     {
-        initrand(aRandomSeed); 
+        initrand(randomSeed++); 
     }
     //set boardsize and max level based on difficulty
     switch (difficulty)
@@ -617,9 +617,11 @@ void initLevel(uint16_t aRandomSeed)
             break;    
         case diffRandom:
             rnd = (uint8_t)rand();
-            boardWidth = 6 + (rnd % (maxBoardWidth -5));  
+            //boardWidth = 6 + (rnd % (maxBoardWidth -5));  
+            boardWidth = 18;
             rnd = (uint8_t)rand();
-            boardHeight = 6 + (rnd % (maxBoardHeight -5));
+            //boardHeight = 6 + (rnd % (maxBoardHeight -5));
+            boardHeight = 14;
             maxLevel = 0; //special value with random
             break;
     }
@@ -640,7 +642,7 @@ void initLevel(uint16_t aRandomSeed)
     selectionY = boardHeight >> 1;
 
     //level is currently the solution so we still need to shuffle it
-    shuffleLevel();
+    //shuffleLevel();
     //update possibly connected tiles already starting from startpoint
     updateConnected();
 }
@@ -2141,7 +2143,7 @@ void main()
                 //but not when going back from
                 //level playing to level selector
                 //when calling init level there
-                randomSeed = clock();
+                randomSeed = 0;
                 initLevel(randomSeed);
                 break;
             case gsLevelSelect:
