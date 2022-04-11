@@ -1,4 +1,6 @@
 # Waternet Multiplatform Retro Game
+![DownloadCountTotal](https://img.shields.io/github/downloads/joyrider3774/waternet/total?label=total%20downloads&style=plastic) ![DownloadCountLatest](https://img.shields.io/github/downloads/joyrider3774/waternet/latest/total?style=plastic) ![LatestVersion](https://img.shields.io/github/v/tag/joyrider3774/waternet?label=Latest%20version&style=plastic) ![License](https://img.shields.io/github/license/joyrider3774/waternet?style=plastic)
+
 Waternet is a multiplatform puzzle game written for old consoles and handhelds like Game Boy (Color), Game Gear, Master System, Analogue Pocket and Mega Duck using the gbdk sdk. 
 
 ## Buy me a "koffie" if you feel like supporting 
