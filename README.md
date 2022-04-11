@@ -54,6 +54,9 @@ It allowed me to put my compiled rom on a sd card and then load that rom from th
 I'm guessing these flash cardridges flash a certain chip on the fly with the provided rom, but it allowed me to test my game's on a real hardware. 
 I highly advise anyone making similar games to do the same as initially everything looked fine on an emulator on pc but as soon as i tested on the real hardware like the original Game Boy i noticed some tiles were not really visible and i had to adapt the tiles i initially created.
 
+## Making your own Waternet (gameboy) cartridge
+The game for GB / GBC requires a MBC5 type cartridge with at least 32KB Rom + 8k RAM + BATTERY to save your progress. I personally used [flashgbx](https://github.com/lesserkuma/FlashGBX) with a chinese bootleg cartridge of Penta Dragon and the [GBxCart RW](https://www.gbxcart.com/) cartridge rom dumper / flasher. The batteryless save versions require specific bootleg cartridges and allows you to save your progress without the need of having a battery attached to your cartridge, it will (re)write the sram at the end of where the rom is saved while playing the game.
+
 ## Cartridge Graphics
 To create the cartridge graphics i used a [template](https://www.deviantart.com/armando92/art/Label-Template-for-Gameboy-Gameboy-Color-Carts-418758475) made by armando92 to start with in Gimp and then added different pictures i found on [cleanpng](https://www.cleanpng.com) to create the Cartridge Label and the logo i created using a [free logo creator](https://www.flamingtext.com/) site. You can see the end result below. 
 
