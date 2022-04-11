@@ -28,6 +28,11 @@ START_SAVE=4
 # -Wl-ya4     4x 8k ram bank the flasher will always spoil 4 rom banks because of 64k sector size 
 # -Wm-yo8     8x 16k rom bank startsave bank is 4 + 4 spoiled rombanks from flasher (must make sure rom does not exceed 4 rom banks in this case)
 
+# for game gear / master system
+# Game Gear / Master System needs bigger than 32k rom or sram does not work in emulicious
+# it still uses autorombanking so it would normally not exceed 32 kb hence i apply the parameter below to force 64k rom
+# -Wm-yo4 use 4x 16k rom bank
+
 # Other things
 # -Wm-ys for sgb border stuff etc
 # -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
@@ -35,12 +40,12 @@ START_SAVE=4
 # -Wm-xj7 GG international region
 # -Wm-xv0 version 0 (or 1st version)
 
-LCCFLAGS_gb     = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B -Wm-ys 
+LCCFLAGS_gb     = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B -Wm-ys
 LCCFLAGS_duck   = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B #NO SGB STUFF HERE
 LCCFLAGS_pocket = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B -Wm-ys -Wm-yc
-LCCFLAGS_gbc    = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B -Wm-ys -Wm-yc 
-LCCFLAGS_sms    = -Wl-ya1 -Wm-yoA -Wm-xj4 -Wm-xv0 #Master System needs bigger than 32k rom or sram does not work in emulicious, my game is bigger
-LCCFLAGS_gg     = -Wl-ya1 -Wm-yoA -Wm-xj7 -Wm-xv0 #Game gear needs bigger than 32k rom or sram does not work in emulicious, my game is bigger
+LCCFLAGS_gbc    = -Wm-yn"WATERNET" -Wl-ya1 -Wm-yoA -Wl-yt0x1B -Wm-ys -Wm-yc
+LCCFLAGS_sms    = -Wl-ya1 -Wm-yo4 -Wm-xj4 -Wm-xv0
+LCCFLAGS_gg     = -Wl-ya1 -Wm-yo4 -Wm-xj7 -Wm-xv0
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 
