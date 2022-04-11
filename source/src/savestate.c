@@ -151,9 +151,10 @@ uint8_t levelUnlocked(uint8_t mode, uint8_t diff, uint8_t level)
 uint8_t lastUnlockedLevel(uint8_t mode, uint8_t diff)
 {
     mode; diff; //avoid megaduck warning
-    uint8_t tmp, level;
+    uint8_t tmp;
     tmp = 1;
     #ifndef MEGADUCK
+    uint8_t level;
     ENABLE_RAM;
     for (level = 0; level < levelCount; level++)
     {
