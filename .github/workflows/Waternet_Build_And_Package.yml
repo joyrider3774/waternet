@@ -61,7 +61,7 @@ jobs:
         
       # ==== Build Steps ====
       - name: Check out Sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: false
       
@@ -98,7 +98,7 @@ jobs:
           build_html: false
                
       - name: Store build
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Waternet ${{ matrix.name }}
           path: package/
