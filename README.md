@@ -86,6 +86,9 @@ To create the cartridge graphics i used a [template](https://www.deviantart.com/
 ### Gb Boy Colour
 <img src="images/gbco_menu.jpg" height="450"> <img src="images/gbco_level.jpg" height="450">
 
+### Mega Duck (thanks to [bbbbbr](https://github.com/bbbbbr))
+<img src="images/megaduck_menu.jpg" height="450"> <img src="images/megaduck_level.jpg" height="450">
+
 ## Credits
 Waternet game concept is based on the Net and Netslide game from the [Simon Tatham's Portable Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtatham/puzzles/),
 it's my own implementation of these 2 game concepts
