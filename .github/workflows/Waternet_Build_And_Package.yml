@@ -90,7 +90,7 @@ jobs:
         uses: baileyjm02/markdown-to-pdf@v1.2.0
         with:
           input_path: ./
-          output_dir: ./package
+          output_dir: package
           images_dir: ./images
           # for example <img src="./images/file-name.png">
           image_import: images
